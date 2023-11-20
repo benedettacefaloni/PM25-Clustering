@@ -26,21 +26,33 @@ s_coords = ro.r["matrix"](s_float, nrow=int(nobs), ncol=2)
 print("data")
 r_data_test = {
     "y": ro.FloatVector([1, 1, 1]),
-    # "s": s_coords,
-    "s": ro.r["matrix"](ro.FloatVector([1, 1, 1, 1, 1, 1]), nrow=int(nobs), ncol=2),
+    "s": s_coords,
     "cohesion": 2,
-    # "M": 2,
-    # "modelPriors": ro.FloatVector([0, 100**2, 10, 10]),
-    # "cParms": ro.FloatVector([1, 1.5, 0, 1, 2, 2]),
-    # "mh": ro.FloatVector([0.5, 0.5]),
-    # "draws": 10000,
-    # "burn": 100,
-    # "thin": 10,
+    "M": 2,
+    "modelPriors": ro.FloatVector([0, 100**2, 10, 10]),
+    "cParms": ro.FloatVector([1, 1.5, 0, 1, 2, 2]),
+    "mh": ro.FloatVector([0.5, 0.5]),
+    "draws": 10000,
+    "burn": 100,
+    "thin": 10,
 }
 
 # Call the simplified drpm_fit function
 result = ppmSuite.sppm(**r_data_test)
 print("worked")
+"""The result is of the following structure:
+    - Mu double [990 x 6]
+    - sig2 double [990 x 6]
+    - Si integer (990 x 6]
+    - like double [990 × 6]
+    - fitted double [990 × 6]
+    - ppred double [990 x 0]
+    - muO double [990]
+    - sig20 double [990]
+    - nclus integer [990]
+    - WAIC double [1]
+    - Ipmi double [1]
+"""
 
 # Convert the result to a Python object if needed
 # print(result.r_repr())
