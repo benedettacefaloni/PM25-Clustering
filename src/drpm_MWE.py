@@ -4,8 +4,6 @@ import rpy2.robjects as ro
 import rpy2.robjects.packages as rpackages
 from rpy2.robjects import pandas2ri
 
-# Minimal Working Example to call the sppm function in Python
-
 # Activate automatic conversion of pandas objects to R objects
 # pandas2ri.activate()
 
@@ -60,4 +58,3 @@ result = drpm_fit(**r_data_test)
 
 # Convert the result to a Python object if needed
 # print(result.r_repr())
-# result_python = pandas2ri.ri2py(result)

@@ -4,8 +4,6 @@ import rpy2.robjects as ro
 import rpy2.robjects.packages as rpackages
 from rpy2.robjects import pandas2ri
 
-# Minimal Working Example to call the sppm function in Python
-
 # Activate automatic conversion of pandas objects to R objects
 # pandas2ri.activate()
 
@@ -25,7 +23,7 @@ s_coords = ro.r["matrix"](s_float, nrow=int(nobs), ncol=2)
 
 print("data")
 r_data_test = {
-    "y": ro.FloatVector([1, 1, 1]),
+    "y": v,
     "s": s_coords,
     "cohesion": 2,
     "M": 2,
@@ -37,15 +35,14 @@ r_data_test = {
     "thin": 10,
 }
 
-# Call the simplified drpm_fit function
 result = ppmSuite.sppm(**r_data_test)
 print("worked")
 """The result is of the following structure:
     - Mu double [990 x 6]
     - sig2 double [990 x 6]
     - Si integer (990 x 6]
-    - like double [990 × 6]
-    - fitted double [990 × 6]
+    - like double [990 x 6]
+    - fitted double [990 x 6]
     - ppred double [990 x 0]
     - muO double [990]
     - sig20 double [990]
@@ -56,4 +53,3 @@ print("worked")
 
 # Convert the result to a Python object if needed
 # print(result.r_repr())
-# result_python = pandas2ri.ri2py(result)
