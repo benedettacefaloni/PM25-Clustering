@@ -55,6 +55,24 @@ r_data_test = {
 
 # Call the simplified drpm_fit function
 result = drpm_fit(**r_data_test)
+"""Object attributes are
+- "Si"
+- "gamma"
+- "mu"
+- "sig2"
+- "alpha"
+- "theta"            
+- "tau2"
+- "eta1"
+- "phi0"     
+- "phi1" 
+- "lam2"
+- "llike"            
+- "fitted"
+- "lpml" 
+- "waic"             
+- "initial_partition"
+"""
 
 # Convert the result to a Python object if needed
 # print(result.r_repr())
