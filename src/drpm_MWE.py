@@ -4,6 +4,8 @@ import rpy2.robjects as ro
 import rpy2.robjects.packages as rpackages
 from rpy2.robjects import pandas2ri
 
+from utils import Cluster
+
 # Activate automatic conversion of pandas objects to R objects
 # pandas2ri.activate()
 
@@ -53,6 +55,8 @@ r_data_test = {
     "thin": 10,
 }
 
+res = Cluster.cluster(method="drpm", **r_data_test)
+print(res.keys())
 # Call the simplified drpm_fit function
 result = drpm_fit(**r_data_test)
 """Object attributes are
