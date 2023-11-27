@@ -15,6 +15,7 @@ def load_data(year: int, week: int = None, log_scale: bool = True) -> pd.DataFra
     # convert time
     data["Time"] = pd.to_datetime(data["Time"])
 
+    data.dropna(subset=["AQ_pm25"], inplace=True)
     if log_scale:
         data["log_AQ_pm25"] = np.log(data["AQ_pm25"])
     res = data[data["Time"].dt.year == year]
@@ -30,4 +31,6 @@ def to_r_vector(data):
 
 def to_r_matrix(data: np.ndarray):
     nrow, ncol = data.shape[0], data.shape[1]
+    # we need to flatten the vector and then reshape in R
+    data = data.flatten()
     return ro.r["matrix"](ro.FloatVector(data), nrow=nrow, ncol=ncol)

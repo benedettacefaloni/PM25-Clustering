@@ -38,7 +38,7 @@ drpm_args = {
     "SpatialCohesion": 4,
     "cParms": ro.FloatVector([0, 1, 2, 1]),
     "mh": ro.FloatVector([0.5, 1, 0.1, 0.1, 0.1]),
-    "verbose": True,
+    "verbose": False,
     "draws": 10000,
     "burn": 100,
     "thin": 10,
@@ -49,5 +49,6 @@ if __name__ == "__main__":
     methods_args = {"sppm": sppm_args, "drpm": drpm_args}
 
     for method in methods:
+        print("Method name {}".format(method))
         result = Cluster.cluster(method=method, **methods_args[method])
-        print("worked")
+        print("Method name {} FINISHED".format(method))

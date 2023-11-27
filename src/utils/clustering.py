@@ -7,6 +7,8 @@ import rpy2.robjects as ro
 import rpy2.robjects.packages as rpackages
 from rpy2.robjects import pandas2ri
 
+from utils.magic import log_time
+
 drpm = rpackages.importr("drpm")
 ppmSuite = rpackages.importr("ppmSuite")
 
@@ -19,6 +21,7 @@ ppmSuite = rpackages.importr("ppmSuite")
 
 class Cluster:
     @staticmethod
+    @log_time(get_time=False)
     def cluster(method: str, as_dict: bool = True, **kwargs):
         if method == "sppm":
             res = ppmSuite.sppm(**kwargs)
