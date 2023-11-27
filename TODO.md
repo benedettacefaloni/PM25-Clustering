@@ -22,9 +22,14 @@
 - Decide on evaluation criteria
 - General framework for automatic evaluation
 - Prior parameter choice?
+- Use salsa (?) package to evaluate the clustering itself
+- implement visualization method for report and sanity checks
+    - plot pm2.5 concentration and clustering at the same time
 
 ### Optional
 - Streamlit application for interactive visualization
+    - over time
+    - values for params of the methods (input is a dict with prewritten values in a text field)
 
 ## Report
 - Formulate the Introduction of the slides into text (explain pm2.5, causes, etc.)
