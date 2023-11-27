@@ -4,7 +4,7 @@ import rpy2.robjects as ro
 from utils import Cluster
 from utils.data_loader import load_data, to_r_matrix, to_r_vector
 
-data = load_data(year=2018, log_scale=False)
+data = load_data(year=2018, week=1, log_scale=False)
 y = to_r_vector(data["AQ_pm25"])
 s_coords = to_r_matrix(data[["Latitude", "Longitude"]].to_numpy())
 

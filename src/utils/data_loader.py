@@ -10,14 +10,18 @@ data_path = os.path.join(
 )
 
 
-def load_data(year: int, log_scale: bool = True) -> pd.DataFrame:
+def load_data(year: int, week: int = None, log_scale: bool = True) -> pd.DataFrame:
     data = pd.read_csv(data_path)
     # convert time
     data["Time"] = pd.to_datetime(data["Time"])
 
     if log_scale:
         data["log_AQ_pm25"] = np.log(data["AQ_pm25"])
-    return data[data["Time"].dt.year == year]
+    res = data[data["Time"].dt.year == year]
+    if week is not None:
+        data["week_number"] = data["Time"].dt.isocalendar().week
+        res = data[data["week_number"] == week]
+    return res
 
 
 def to_r_vector(data):
