@@ -24,10 +24,14 @@ class Cluster:
     @log_time(get_time=False)
     def cluster(method: str, as_dict: bool = True, **kwargs):
         if method == "sppm":
+            # input shapes: Y = (n_stations,) , s_coords = (n_stations, 2)
             res = ppmSuite.sppm(**kwargs)
         elif method == "ppmx":
+            # input shapes: Y = (n_stations,) , s_coords = (n_stations, 2)
             res = ppmSuite.gaussian_ppmx(**kwargs)
         elif method == "drpm":
+            # input shapes: Y = (n_stations, n_time_steps) time_steps have to be ordered
+            # s_coords = (n_time_steps, 2) or s_coords = (n_stations, 2)
             res = drpm.drpm_fit(**kwargs)
         else:
             raise NotImplementedError("Invalid choice of method.")

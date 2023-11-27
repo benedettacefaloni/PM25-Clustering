@@ -8,6 +8,8 @@
 - Save filtered and cleaned data as a new table
 
 - Integrate into data loader to easily filter the data by week
+    - write subfunctions to provide data for sppm (weekly) and drpm (full time-series,
+    reshape to n_stations, time with increasing values)
 - Add the documentation part into the section "Data Preparation
     and Initial Data Analysis" of the report
 - Upload the original aggregation code onto Github

@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import rpy2.robjects as ro
 
@@ -6,7 +7,24 @@ from utils.data_loader import load_data, to_r_matrix, to_r_vector
 
 data = load_data(year=2018, week=1, log_scale=False)
 y = to_r_vector(data["AQ_pm25"])
+print(data["AQ_pm25"].to_numpy().shape)
+
 s_coords = to_r_matrix(data[["Latitude", "Longitude"]].to_numpy())
+
+data_yearly = load_data(year=2018, log_scale=False, time_to_unix=True)
+
+# y=(3,10) and s=(3,2)
+print(
+    # data_yearly[["AQ_pm25", "Unix_Time"]].to_numpy().shape
+    data_yearly["AQ_pm25"]
+    .to_numpy()[np.newaxis, :]
+    .shape
+)
+print(data_yearly[["Latitude", "Longitude"]].to_numpy().shape)
+
+# reshape: we need (n_stations, T)
+y_yearly = to_r_matrix(data_yearly["AQ_pm25"].to_numpy()[:, np.newaxis])
+s_coords_yearly = to_r_matrix(data_yearly[["Latitude", "Longitude"]].to_numpy())
 
 
 sppm_args = {
@@ -22,8 +40,8 @@ sppm_args = {
     "thin": 10,
 }
 drpm_args = {
-    "y": y,
-    "s_coords": s_coords,
+    "y": y_yearly,
+    "s_coords": s_coords_yearly,
     "M": 2,
     "starting_alpha": 0.1,
     "unit_specific_alpha": False,
@@ -38,14 +56,15 @@ drpm_args = {
     "SpatialCohesion": 4,
     "cParms": ro.FloatVector([0, 1, 2, 1]),
     "mh": ro.FloatVector([0.5, 1, 0.1, 0.1, 0.1]),
-    "verbose": False,
+    "verbose": True,
     "draws": 10000,
     "burn": 100,
     "thin": 10,
 }
 
 if __name__ == "__main__":
-    methods = ["sppm", "drpm"]
+    # methods = ["sppm", "drpm"]
+    methods = ["drpm"]
     methods_args = {"sppm": sppm_args, "drpm": drpm_args}
 
     for method in methods:

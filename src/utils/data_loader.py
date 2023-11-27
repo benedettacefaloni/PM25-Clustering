@@ -10,19 +10,27 @@ data_path = os.path.join(
 )
 
 
-def load_data(year: int, week: int = None, log_scale: bool = True) -> pd.DataFrame:
+def load_data(
+    year: int, week: int = None, log_scale: bool = True, time_to_unix: bool = False
+) -> pd.DataFrame:
     data = pd.read_csv(data_path)
     # convert time
     data["Time"] = pd.to_datetime(data["Time"])
 
     data.dropna(subset=["AQ_pm25"], inplace=True)
+
     if log_scale:
-        data["log_AQ_pm25"] = np.log(data["AQ_pm25"])
-    res = data[data["Time"].dt.year == year]
+        # shift by 1 for numerical stability
+        data["log_AQ_pm25"] = np.log(data["AQ_pm25"] + 1)
+
+    data = data[data["Time"].dt.year == year]
+
     if week is not None:
         data["week_number"] = data["Time"].dt.isocalendar().week
-        res = data[data["week_number"] == week]
-    return res
+        data = data[data["week_number"] == week]
+    if time_to_unix:
+        data["Unix_Time"] = data["Time"].apply(lambda x: x.value)
+    return data
 
 
 def to_r_vector(data):

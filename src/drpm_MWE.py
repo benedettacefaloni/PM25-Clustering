@@ -15,22 +15,59 @@ drpm = rpackages.importr("drpm")
 # Simplify the call to the drpm_fit function
 drpm_fit = drpm.drpm_fit
 
-nobs = 100
+n_obs = 10
 
 # Response variable (y)
-y = np.random.normal(0, 1, nobs)
+n_stations = 3
+n_timesteps = 3
 
-y_test = [1, 1, 1, 1, 1, 1]
+y_test = np.random.uniform(0, 1, size=(n_stations, n_obs))
+
+y_test = np.array(
+    [
+        [31.85714286],
+        [25.42857143],
+        [26.85714286],
+        [38.14285714],
+        [23.42857143],
+        [20.42857143],
+        [34.85714286],
+        [34.0],
+        [33.42857143],
+        [19.42857143],
+    ]
+)
+s = np.array(
+    [
+        [46.1678524, 9.87920992],
+        [46.1678524, 9.87920992],
+        [46.1678524, 9.87920992],
+        [46.1678524, 9.87920992],
+        [46.1678524, 9.87920992],
+        [46.1678524, 9.87920992],
+        [46.1678524, 9.87920992],
+        [46.1678524, 9.87920992],
+        [46.1678524, 9.87920992],
+        [46.1678524, 9.87920992],
+    ]
+)
+
+# y_test = [1, 1, 1, 2, 2, 2]
+
+print("y_test.shape = ", y_test.shape)
+print(y_test.shape)
 v = ro.FloatVector(y_test)
-m = ro.r["matrix"](v, nrow=2)
+m = ro.r["matrix"](v, nrow=1)
 print("m = ")
 print(type(m))
 print(m)
 
 # Spatial coordinates (s1, s2)
-s = np.random.uniform(0, 10, nobs * 2)
-s_float = ro.FloatVector(s)
-s_coords = ro.r["matrix"](s_float, nrow=int(nobs), ncol=2)
+# s = np.random.uniform(0, 10, (n_stations, 2))
+print("s.shape = ", s.shape)
+s_float = ro.FloatVector(s.flatten())
+s_coords = ro.r["matrix"](s_float, ncol=2)
+print(s_coords)
 
 r_data_test = {
     "y": m,
