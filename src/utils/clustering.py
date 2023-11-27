@@ -11,10 +11,6 @@ drpm = rpackages.importr("drpm")
 ppmSuite = rpackages.importr("ppmSuite")
 
 
-data_path = os.path.join(
-    Path(__file__).parent.parent.parent, "data/data_aggregated.csv"
-)
-
 # TODO:
 # dataloader --> log-scale
 # return object
@@ -32,6 +28,7 @@ class Cluster:
             res = drpm.drpm_fit(**kwargs)
         else:
             raise NotImplementedError("Invalid choice of method.")
+        # conversion of the return types
         if as_dict:
             return convert_to_dict(res)
         else:

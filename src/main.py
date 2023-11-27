@@ -2,14 +2,11 @@ import pandas as pd
 import rpy2.robjects as ro
 
 from utils import Cluster
-from utils.clustering import data_path
+from utils.data_loader import load_data, to_r_matrix, to_r_vector
 
-print(data_path)
-data = pd.read_csv(data_path)
-
-data_year = data[data["year" == 2018]]
-y = data_year["pm25"]
-s_coords = data_year["test"]
+data = load_data(year=2018, log_scale=False)
+y = to_r_vector(data["AQ_pm25"])
+s_coords = to_r_matrix(data[["Latitude", "Longitude"]].to_numpy())
 
 
 sppm_args = {
@@ -52,4 +49,5 @@ if __name__ == "__main__":
     methods_args = {"sppm": sppm_args, "drpm": drpm_args}
 
     for method in methods:
-        result = Cluster.cluster(method=method, kwargs=methods_args[method])
+        result = Cluster.cluster(method=method, **methods_args[method])
+        print("worked")
