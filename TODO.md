@@ -29,7 +29,15 @@
         - M: different values 5*10e-3, 0.01, 0.1, 1.0
         - C1:
             - alpha: 1.0 and 2.0
-        - C2: 
+        - C2:
+    - tRPM:
+        - A_sigma = 5 or 0.5*sd(Yvec) (temporally indipendent CRP and temporally static CRP) or 1 (Space-time data generation) or 15 (2 to account for the higher variability present in the data)
+        - A_tau = 10 or 100  (temporally indipendent CRP and temporally static CRP) or 2 (Space-time data generation)
+        - A_lambda = 10
+        - m0 = 0
+        - S0 = 100
+        - a_alpha = b_alpha = M = 1
+        - alpha(t) = alpha 
 
 - Use salso package to evaluate the clustering itself
 - implement visualization method for report and sanity checks
