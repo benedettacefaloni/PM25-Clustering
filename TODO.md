@@ -85,8 +85,5 @@ Questions:
     - Pros and Cons and our expectations from the models
     - Explain priors and extensions in detail
     - Paper citations
-<<<<<<< HEAD
-=======
 
 - Salso Package: give short insights about the methods idea
->>>>>>> methods
