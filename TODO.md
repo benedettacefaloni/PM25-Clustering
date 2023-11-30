@@ -10,9 +10,10 @@
 - Integrate into data loader to easily filter the data by week
     - write subfunctions to provide data for sppm (weekly) and drpm (full time-series,
     reshape to n_stations, time with increasing values)
+- Document the aggregation
 - Add the documentation part into the section "Data Preparation
     and Initial Data Analysis" of the report
-- Upload the original aggregation code onto Github
+- Upload the the code which created the aggregation onto Github
 
 ### Optional
 - Repeat with another year (maybe a covid year) so we can later on work on a comparison
@@ -30,6 +31,7 @@
 - Streamlit application for interactive visualization
     - over time
     - values for params of the methods (input is a dict with prewritten values in a text field)
+    - see: https://streamlit.io/ for more details, the deployment is free to host the app
 
 ## Report
 - Formulate the Introduction of the slides into text (explain pm2.5, causes, etc.)
