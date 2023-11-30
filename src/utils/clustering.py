@@ -42,5 +42,9 @@ class Cluster:
             return res
 
 
+def salso_clustering():
+    pass
+
+
 def convert_to_dict(result: ro.vectors.ListVector) -> dict:
     return {name: np.array(result[idx]) for idx, name in enumerate(result.names)}

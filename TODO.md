@@ -21,9 +21,17 @@
 
 ## Coding
 - Decide on evaluation criteria
+    - MSE on the prediction values
+
 - General framework for automatic evaluation
 - Prior parameter choice?
-- Use salsa (?) package to evaluate the clustering itself
+    - SPPM:
+        - M: different values 5*10e-3, 0.01, 0.1, 1.0
+        - C1:
+            - alpha: 1.0 and 2.0
+        - C2: 
+
+- Use salso package to evaluate the clustering itself
 - implement visualization method for report and sanity checks
     - plot pm2.5 concentration and clustering at the same time
 
