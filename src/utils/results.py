@@ -23,7 +23,13 @@ class YearlyResults:
             self.yearly = self.analyse_yearly(yearly_result)
 
     def aggegrate_weekly_to_yearly(self, weekly_results):
-        # TODO: find out if lower/higher is better
+        """
+        Aggregate the weekly data (dict each) into yearly values.
+        Decide for each attribute how to aggregate.
+        """
+        # TODO:
+        # - find out if lower/higher is better
+        # - compute the MSE
         agg_mapping = {
             "lpml": max,
             "waic": max,
@@ -54,6 +60,10 @@ class Analyse:
     def analyze_weekly_result(
         py_res: dict, salso_args: dict = {"loss": "binder", "maxNCluster": 0}
     ) -> dict:
+        """
+        Aggregate one weekly result into a dict of aggregated values. Salso method is
+        executed to reduce the MCMC iterates to a single partition.
+        """
         analysis = {}
         analysis["lpml"] = py_res["lpml"]
         analysis["waic"] = py_res["WAIC"]
@@ -76,16 +86,6 @@ class Analyse:
         analysis["n_clusters_avg"] = np.mean(counts)
         analysis["n_clusters_mode"] = np.median(counts)
         return analysis
-
-    @staticmethod
-    def aggregate_weekly_to_yearly():
-        """
-        for method in method:
-            for config in configurations:
-                --> aggregate
-
-        """
-        pass
 
     @staticmethod
     def analyze_yearly_result(r_res, py_res: dict) -> dict:

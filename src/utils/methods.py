@@ -8,7 +8,7 @@ class Method:
         self, name: str, func_args: dict, uses_weekly_data: bool = True
     ) -> None:
         self.name = name
-        # arguments for the function without the weekly
+        # parameters the method used
         self.func_args = func_args
         self.uses_weekly_data = uses_weekly_data
 
@@ -18,6 +18,11 @@ class Method:
             yield test_case
 
     def _combine_dict_lists(self, input_dict):
+        """
+        For each method with have a dict with keys, lists/single values to easily test
+        multiple configurations. This method generates multiple dicts based on a dict of
+        lists by applying the cartesian product of all combinations.
+        """
         keys = input_dict.keys()
         # the parameters are either lists or single values
         value_combinations = product(
