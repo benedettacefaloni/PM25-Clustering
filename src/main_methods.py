@@ -56,10 +56,14 @@ def main():
                     method_args = test_case | method.load_method_specific_data(
                         week_data
                     )
-                    res_cluster = Cluster.cluster(method=method.name, **method_args)
-                    weekly_results.append(Analyse.analyze_weekly_result(res_cluster))
+                    res_cluster, time_needed = Cluster.cluster(
+                        method=method.name, **method_args
+                    )
+                    weekly_results.append(
+                        Analyse.analyze_weekly_result(res_cluster, time_needed)
+                    )
                 test = YearlyResults(
-                    method.name, test_case, weekly_results=weekly_results
+                    name=method.name, config=test_case, weekly_results=weekly_results
                 )
                 print(test.yearly)
             else:
@@ -67,7 +71,16 @@ def main():
                 method_args = test_case | method.load_method_specific_data(
                     data=data, yearly_time_series=pm25_timeseries
                 )
-                res_cluster = Cluster.cluster(method=method.name, **method_args)
+                res_cluster, time_needed = Cluster.cluster(
+                    method=method.name, **method_args
+                )
+                test2 = YearlyResults(
+                    name=method.name,
+                    config=test_case,
+                    yearly_result=Analyse.analyze_yearly_result(
+                        res_cluster, time_needed=time_needed
+                    ),
+                )
 
 
 if __name__ == "__main__":

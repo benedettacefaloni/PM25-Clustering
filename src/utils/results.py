@@ -20,7 +20,7 @@ class YearlyResults:
         if weekly_results is not None:
             self.yearly = self.aggegrate_weekly_to_yearly(weekly_results)
         else:
-            self.yearly = self.analyse_yearly(yearly_result)
+            self.yearly = yearly_result
 
     def aggegrate_weekly_to_yearly(self, weekly_results):
         """
@@ -33,6 +33,8 @@ class YearlyResults:
         agg_mapping = {
             "lpml": max,
             "waic": max,
+            "time": np.sum,
+            # maybe yearly
             "n_singleton": max,
             "n_clusters": np.average,
             "n_clusters_max": max,
@@ -51,14 +53,13 @@ class YearlyResults:
 
         return res
 
-    def analyse_yearly(self):
-        pass
-
 
 class Analyse:
     @staticmethod
     def analyze_weekly_result(
-        py_res: dict, salso_args: dict = {"loss": "binder", "maxNCluster": 0}
+        py_res: dict,
+        time_needed: float,
+        salso_args: dict = {"loss": "binder", "maxNCluster": 0},
     ) -> dict:
         """
         Aggregate one weekly result into a dict of aggregated values. Salso method is
@@ -85,8 +86,41 @@ class Analyse:
         analysis["n_clusters_min"] = min(counts)
         analysis["n_clusters_avg"] = np.mean(counts)
         analysis["n_clusters_mode"] = np.median(counts)
+
+        analysis["time"] = time_needed
         return analysis
 
     @staticmethod
-    def analyze_yearly_result(r_res, py_res: dict) -> dict:
-        pass
+    def analyze_yearly_result(
+        py_res: dict,
+        time_needed: float,
+        salso_args: dict = {"loss": "binder", "maxNCluster": 0},
+    ) -> dict:
+        analysis = {}
+        analysis["time"] = time_needed
+
+        analysis["lpml"] = py_res["lpml"]
+        analysis["waic"] = py_res["WAIC"]
+
+        # analyse the partitions for each week since salso cannot handle tensors
+        SI_np = np.array(py_res["Si"])
+
+        # TODO: sth. does not work here
+        analysis["partition"] = np.array(
+            [
+                np.array(
+                    salso.salso(
+                        to_r_matrix(SI_np[week, :, :].T),
+                        **salso_args,
+                    )
+                )
+                for week in range(SI_np.shape[0])
+            ]
+        )
+
+        # apply along the zero-th (time)-axis
+        unique, counts = np.unique(analysis["partition"], axis=0, return_counts=True)
+
+        # TODO: evaluate the result
+
+        return analysis

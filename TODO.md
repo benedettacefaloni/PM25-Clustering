@@ -40,6 +40,14 @@ Questions:
     - Switching of a single station
 
 - General framework for automatic evaluation
+
+- Next steps 30.11.2023:
+    - error in the drpm method
+    - covariate transformation
+    - gaussian_ppmx --> covariates
+    - provide a MWE for a single method to plot and test the results
+    - Finish evaluation: table creation
+
 - Prior parameter choice?
     - SPPM:
         - M: different values 5*10e-3, 0.01, 0.1, 1.0
@@ -67,7 +75,7 @@ Questions:
         - alpha(t) = alpha 
             - alpha: 1.0 and 2.0 (lead to similar results)
 
-- Use salso package to evaluate the clustering itself
+- [DONE] Use salso package to evaluate the clustering itself
 - implement visualization method for report and sanity checks
     - plot pm2.5 concentration and clustering at the same time
 

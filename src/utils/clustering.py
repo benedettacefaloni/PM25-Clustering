@@ -21,7 +21,7 @@ ppmSuite = rpackages.importr("ppmSuite")
 
 class Cluster:
     @staticmethod
-    @log_time(get_time=False)
+    @log_time(get_time=True)
     def cluster(method: str, as_dict: bool = True, **kwargs):
         if method == "sppm":
             # input shapes: Y = (n_stations,) , s_coords = (n_stations, 2)
