@@ -1,5 +1,8 @@
 from itertools import product
 
+import numpy as np
+import pandas as pd
+
 from utils.data_loader import to_r_matrix, to_r_vector
 
 
@@ -40,7 +43,9 @@ class Method:
 
         return result_dicts
 
-    def load_method_specific_data(self, data):
+    def load_method_specific_data(
+        self, data: pd.DataFrame, yearly_time_series: np.ndarray = None
+    ):
         # method to select which parts of the data are used as additional
         # parameters for the model
         if self.name == "sppm":
@@ -56,8 +61,8 @@ class Method:
             }
         elif self.name == "drpm":
             return {
-                "y": to_r_vector(data["log_pm25"]),
-                "s_coords": data["coords"],
+                "y": to_r_matrix(yearly_time_series),
+                "s_coords": to_r_matrix(data[["Latitude", "Longitude"]].to_numpy()),
             }
         else:
             raise NotImplementedError
