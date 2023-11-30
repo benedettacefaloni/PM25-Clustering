@@ -1,5 +1,7 @@
 from itertools import product
 
+from utils.data_loader import to_r_matrix, to_r_vector
+
 
 class Method:
     def __init__(
@@ -13,11 +15,19 @@ class Method:
     def yield_test_cases(self, week_data):
         test_cases = self._combine_dict_lists(self.func_args)
         for test_case in test_cases:
-            yield test_case.update(self._create_additional_data(week_data))
+            yield test_case | self._create_additional_data(week_data)
 
     def _combine_dict_lists(self, input_dict):
         keys = input_dict.keys()
-        value_combinations = product(*(input_dict[key] for key in keys))
+        # the parameters are either lists or single values
+        value_combinations = product(
+            *(
+                input_dict[key]
+                if isinstance(input_dict[key], list)
+                else [input_dict[key]]
+                for key in keys
+            )
+        )
 
         result_dicts = [
             dict(zip(keys, combination)) for combination in value_combinations
@@ -29,7 +39,10 @@ class Method:
         # method to select which parts of the data are used as additional
         # parameters for the model
         if self.method == "sppm":
-            return {"y": data["y"], "s": data["coords"]}
+            return {
+                "y": to_r_vector(data["log_pm25"]),
+                "s": to_r_matrix(data[["Latitude", "Longitude"]].to_numpy()),
+            }
         elif self.method == "gaussian_ppmx":
             return {"y": data["y"], "X": data["covariates"]}
         elif self.method == "drpm":

@@ -11,31 +11,7 @@ salso = rpackages.importr("salso")
 
 data = load_data()
 
-
-y = to_r_vector(data["AQ_pm25"])
-print(data["AQ_pm25"].to_numpy().shape)
-
-s_coords = to_r_matrix(data[["Latitude", "Longitude"]].to_numpy())
-
-data_yearly = load_data(year=2018, log_scale=False, time_to_unix=True)
-
-# y=(3,10) and s=(3,2)
-print(
-    # data_yearly[["AQ_pm25", "Unix_Time"]].to_numpy().shape
-    data_yearly["AQ_pm25"]
-    .to_numpy()[np.newaxis, :]
-    .shape
-)
-print(data_yearly[["Latitude", "Longitude"]].to_numpy().shape)
-
-# reshape: we need (n_stations, T)
-y_yearly = to_r_matrix(data_yearly["AQ_pm25"].to_numpy()[:1000, np.newaxis])
-s_coords_yearly = to_r_matrix(data_yearly[["Latitude", "Longitude"]].to_numpy())
-
-
 sppm_args = {
-    "y": y,
-    "s": s_coords,
     "cohesion": 2,
     "M": 2,
     "modelPriors": ro.FloatVector([0, 100**2, 10, 10]),
@@ -45,7 +21,16 @@ sppm_args = {
     "burn": 100,
     "thin": 10,
 }
+methods = [Method("sppm", sppm_args, uses_weekly_data=True)]
 
+for method in methods:
+    for week in range(1, 53):
+        week_data = data[data["Week"] == week]
+        for test_case in method.yield_test_cases(week_data=week_data):
+            r_res, py_res = Cluster.cluster(method=method.method, **test_case)
+
+
+"""
 drpm_args = {
     "y": y_yearly,
     "s_coords": s_coords_yearly,
@@ -87,7 +72,6 @@ if __name__ == "__main__":
         # print("Method name {} FINISHED".format(method))
 
 
-"""
 for method in methods:
     for config in configurations:
         

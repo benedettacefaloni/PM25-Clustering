@@ -6,30 +6,21 @@ import pandas as pd
 import rpy2.robjects as ro
 
 data_path = os.path.join(
-    Path(__file__).parent.parent.parent, "data/data_aggregated.csv"
+    Path(__file__).parent.parent.parent, "data/dataset_{}_cleaned.csv"
 )
 
 
 def load_data(
-    year: int, week: int = None, log_scale: bool = True, time_to_unix: bool = False
+    year: int = 2019,
+    week: int = None,
 ) -> pd.DataFrame:
-    data = pd.read_csv(data_path)
+    data = pd.read_csv(data_path.format(year))
+    print(data.head())
     # convert time
     data["Time"] = pd.to_datetime(data["Time"])
 
-    data.dropna(subset=["AQ_pm25"], inplace=True)
-
-    if log_scale:
-        # shift by 1 for numerical stability
-        data["log_AQ_pm25"] = np.log(data["AQ_pm25"] + 1)
-
-    data = data[data["Time"].dt.year == year]
-
     if week is not None:
-        data["week_number"] = data["Time"].dt.isocalendar().week
-        data = data[data["week_number"] == week]
-    if time_to_unix:
-        data["Unix_Time"] = data["Time"].apply(lambda x: x.value)
+        return data[data["Week"] == week]
     return data
 
 
@@ -42,3 +33,19 @@ def to_r_matrix(data: np.ndarray):
     # we need to flatten the vector and then reshape in R
     data = data.flatten()
     return ro.r["matrix"](ro.FloatVector(data), nrow=nrow, ncol=ncol)
+
+
+def create_matrix_from_dict(dict_stations):
+    """Create a matrix where each row is the pm2.5 value for a station over one year."""
+    # Obtain number of stations and max length of time series
+    num_stations = len(dict_stations)
+    max_length = max(len(series) for series in dict_stations.values())
+
+    # Initialize matrix with NaN values
+    matrix = np.full((num_stations, max_length), np.nan)
+
+    # Put log_pm25 values into matrix
+    for idx, series in enumerate(dict_stations.values()):
+        matrix[idx, : len(series)] = series.values
+
+    return matrix
