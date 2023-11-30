@@ -5,6 +5,7 @@ import rpy2.robjects.packages as rpackages
 
 from utils import Cluster
 from utils.data_loader import load_data, to_r_matrix, to_r_vector
+from utils.methods import Method
 
 salso = rpackages.importr("salso")
 
@@ -26,7 +27,7 @@ print(
 print(data_yearly[["Latitude", "Longitude"]].to_numpy().shape)
 
 # reshape: we need (n_stations, T)
-y_yearly = to_r_matrix(data_yearly["AQ_pm25"].to_numpy()[:, np.newaxis])
+y_yearly = to_r_matrix(data_yearly["AQ_pm25"].to_numpy()[:1000, np.newaxis])
 s_coords_yearly = to_r_matrix(data_yearly[["Latitude", "Longitude"]].to_numpy())
 
 
@@ -42,6 +43,7 @@ sppm_args = {
     "burn": 100,
     "thin": 10,
 }
+
 drpm_args = {
     "y": y_yearly,
     "s_coords": s_coords_yearly,
@@ -67,17 +69,70 @@ drpm_args = {
 
 if __name__ == "__main__":
     # methods = ["sppm", "drpm"]
-    methods = ["sppm"]
-    # methods = ["drpm"]
+    # methods = ["sppm"]
+    methods = ["drpm"]
     methods_args = {"sppm": sppm_args, "drpm": drpm_args}
 
     for method in methods:
         print("Method name {}".format(method))
-        result = Cluster.cluster(method=method, as_dict=False, **methods_args[method])
-        final_partition = salso.salso(result[2], loss="binder", maxNClusters=0)
+        r_res, py_res = Cluster.cluster(method=method, **methods_args[method])
+        final_partition = salso.salso(r_res[2], loss="binder", maxNClusters=0)
         print(final_partition)
         # print(result.keys())
         # print(len(result["nclus"]))
         # print(result["WAIC"])
         # print(result["lpml"])
         # print("Method name {} FINISHED".format(method))
+
+
+"""
+for method in methods:
+    for config in configurations:
+        
+        if weekly:
+            for week in weeks:
+                do sth.
+
+"""
+
+
+class WeeklyResult:
+    pass
+
+
+class MethodResult:
+    def __init__(self, weekly_data: list = None, yearly_data=None):
+        pass
+
+
+# TODO:
+# - function to create the weekly data
+# - ordering is different --> use the python dict and transform it back?
+
+
+class ExperimentResult:
+    def __init__(self, config, yearly_result):
+        pass
+
+    def add_weekly_data():
+        pass
+
+    def yearly_aggregate():
+        pass
+
+
+class YearlyResult:
+    def __init__(self, weekly_data: list[WeeklyResult], yearly_result):
+        self.weekly = []
+
+    def add_weekly(self, week: WeeklyResult):
+        self.weekly.append(week)
+
+
+[method1, Method2]
+for method in methods:
+    for week in weeks:
+        for test in method.generate_test_cases(week):
+            res = method.function(test)
+            method.add_weekly(res)
+    method.aggregate_yearly()

@@ -22,11 +22,11 @@ ppmSuite = rpackages.importr("ppmSuite")
 class Cluster:
     @staticmethod
     @log_time(get_time=False)
-    def cluster(method: str, as_dict: bool = True, **kwargs):
+    def cluster(method: str, **kwargs):
         if method == "sppm":
             # input shapes: Y = (n_stations,) , s_coords = (n_stations, 2)
             res = ppmSuite.sppm(**kwargs)
-        elif method == "ppmx":
+        elif method == "gaussian_ppmx":
             # input shapes: Y = (n_stations,) , s_coords = (n_stations, 2)
             res = ppmSuite.gaussian_ppmx(**kwargs)
         elif method == "drpm":
@@ -36,10 +36,7 @@ class Cluster:
         else:
             raise NotImplementedError("Invalid choice of method.")
         # conversion of the return types
-        if as_dict:
-            return convert_to_dict(res)
-        else:
-            return res
+        return res, convert_to_dict(res)
 
 
 def salso_clustering():
