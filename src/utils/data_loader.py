@@ -15,8 +15,6 @@ def load_data(
     week: int = None,
 ) -> pd.DataFrame:
     data = pd.read_csv(data_path.format(year))
-    print(data.head())
-    # convert time
     data["Time"] = pd.to_datetime(data["Time"])
 
     if week is not None:

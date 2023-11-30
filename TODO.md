@@ -28,8 +28,8 @@ Questions:
     - MSE on the prediction values (lower is better)
     - WAIC lower/higher better?
     - LPML lower/higher better?
-    - number of cluster overall
-    - sizes of clusters
+    - [DONE] number of cluster overall
+    - [DONE] sizes of clusters
         - number of singleton clusters
         - min, max, avg, median size
     - max. distance between two stations in the same cluster
