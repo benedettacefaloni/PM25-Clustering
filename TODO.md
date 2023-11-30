@@ -1,6 +1,10 @@
 # Roadmap for the Project
 
 ## Data Preparation
+Questions:
+- Standardize data
+    - categorical data?
+
 - Decide on year
 - Filter NaN values out
 - Document the loss of data and why the specific year was chosen 
@@ -21,15 +25,38 @@
 
 ## Coding
 - Decide on evaluation criteria
-    - MSE on the prediction values
+    - MSE on the prediction values (lower is better)
+    - WAIC lower/higher better?
+    - LPML lower/higher better?
+    - number of cluster overall
+    - sizes of clusters
+        - number of singleton clusters
+        - min, max, avg, median size
+    - max. distance between two stations in the same cluster
+    - plot the number of clusters for different methods over time in a grid-wise fashion
+
+- Manual checking
+    - Plot clusters with a map
+    - Switching of a single station
 
 - General framework for automatic evaluation
 - Prior parameter choice?
     - SPPM:
         - M: different values 5*10e-3, 0.01, 0.1, 1.0
+        - m = 0, s2 = 10^2, B = 10, A = 10 (page 27 in the reader)
         - C1:
-            - alpha: 1.0 and 2.0
+            - alpha: 1.0 and 2.0 (lead to similar results)
         - C2: 
+            - median distance of all pairwise distances (p. 9 in the reader)
+        - C3 and C4:
+            - mu0 - center of NNIG for cohesion 3 and 4
+            - k0 - scale parm of gaussian part of NNIG for cohesion 3 and 4
+            - v0 - degrees of freedom IG part of NNIG for cohesion 3 and 4
+            - L0 - scale parm (scalar of identity matrix) IG part of NNIG for cohesion 3 and 4
+    - ppmx
+        - v is the kappa since we standardized the Covariates
+        - (m0 = 0, k0 = 1.0,v0 = 10.0, n0 = 2)
+        - and the second (m0 = 0, k0 = 1.0,v0 = 1.0, n0 = 2)
 
 - Use salso package to evaluate the clustering itself
 - implement visualization method for report and sanity checks
@@ -49,3 +76,5 @@
     - Pros and Cons and our expectations from the models
     - Explain priors and extensions in detail
     - Paper citations
+
+- Salso Package: give short insights about the methods idea
