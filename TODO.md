@@ -1,9 +1,6 @@
 # Roadmap for the Project
 
 ## Data Preparation
-Questions:
-- Standardize data
-    - categorical data?
 
 - Decide on year
 - Filter NaN values out
@@ -18,6 +15,11 @@ Questions:
 - Add the documentation part into the section "Data Preparation
     and Initial Data Analysis" of the report
 - Upload the the code which created the aggregation onto Github
+
+Backlog:
+- Standardize data for the covariates
+    - categorical data?
+- Fix issue with week numbers in year 2021
 
 ### Optional
 - Repeat with another year (maybe a covid year) so we can later on work on a comparison
@@ -39,7 +41,7 @@ Questions:
     - Plot clusters with a map
     - Switching of a single station
 
-- General framework for automatic evaluation
+- [Done] General framework for automatic evaluation
 
 - Next steps 30.11.2023:
     - error in the drpm method
@@ -94,4 +96,8 @@ Questions:
     - Explain priors and extensions in detail
     - Paper citations
 
+Backlog:
 - Salso Package: give short insights about the methods idea
+- Give theoretical details about the evaluation criteria used in the report, indicate if higher/lower is better (always in brackets)
+    - e.g. MSE = mean squared error (lower is better)
+- Cite R packages

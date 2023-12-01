@@ -10,6 +10,8 @@ def main():
     data = load_data()
     pm25_timeseries = yearly_data_as_timeseries(data)
 
+    salso_args = {"loss": "binder", "maxNCluster": 0}
+
     sppm_args = {
         "cohesion": 2,
         "M": 2,
@@ -60,7 +62,9 @@ def main():
                         method=method.name, **method_args
                     )
                     weekly_results.append(
-                        Analyse.analyze_weekly_result(res_cluster, time_needed)
+                        Analyse.analyze_weekly_result(
+                            res_cluster, time_needed, salso_args=salso_args
+                        )
                     )
                 test = YearlyResults(
                     name=method.name, config=test_case, weekly_results=weekly_results
@@ -78,7 +82,9 @@ def main():
                     name=method.name,
                     config=test_case,
                     yearly_result=Analyse.analyze_yearly_result(
-                        res_cluster, time_needed=time_needed
+                        res_cluster,
+                        time_needed=time_needed,
+                        salso_args=salso_args,
                     ),
                 )
 

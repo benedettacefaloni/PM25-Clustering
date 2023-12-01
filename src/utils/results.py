@@ -53,6 +53,10 @@ class YearlyResults:
 
         return res
 
+    def to_table_row():
+        # TODO
+        pass
+
 
 class Analyse:
     @staticmethod

@@ -33,22 +33,6 @@ def to_r_matrix(data: np.ndarray):
     return ro.r["matrix"](ro.FloatVector(data), nrow=nrow, ncol=ncol)
 
 
-def create_matrix_from_dict(dict_stations):
-    """Create a matrix where each row is the pm2.5 value for a station over one year."""
-    # Obtain number of stations and max length of time series
-    num_stations = len(dict_stations)
-    max_length = max(len(series) for series in dict_stations.values())
-
-    # Initialize matrix with NaN values
-    matrix = np.full((num_stations, max_length), np.nan)
-
-    # Put log_pm25 values into matrix
-    for idx, series in enumerate(dict_stations.values()):
-        matrix[idx, : len(series)] = series.values
-
-    return matrix
-
-
 def yearly_data_as_timeseries(data):
     """
     Creates a matrix of shape (n_stations, n_timesteps) to have the full
@@ -78,6 +62,7 @@ def _create_time_series(data_frame):
 
 
 def _create_matrix_from_dict(dict_stations):
+    """Create a matrix where each row is the pm2.5 value for a station over one year."""
     # Obtain number of stations and max length of time series
     num_stations = len(dict_stations)
     max_length = max(len(series) for series in dict_stations.values())
