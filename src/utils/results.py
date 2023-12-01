@@ -9,12 +9,10 @@ salso = rpackages.importr("salso")
 class YearlyResults:
     def __init__(
         self,
-        name: str,
         config: dict,
         weekly_results: list = None,
         yearly_result: dict = None,
     ):
-        self.name = name
         self.config = config
 
         if weekly_results is not None:
@@ -53,9 +51,18 @@ class YearlyResults:
 
         return res
 
-    def to_table_row():
+    def to_table_row(self):
         # TODO
         pass
+
+
+class MethodResults:
+    def __init__(self, name: str):
+        self.name = name
+        self.test_cases: list[YearlyResults] = []
+
+    def add_testcase(self, yearly_result: YearlyResults):
+        self.test_cases.append(yearly_result)
 
 
 class Analyse:

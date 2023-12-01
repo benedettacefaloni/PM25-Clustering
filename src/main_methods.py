@@ -3,7 +3,7 @@ import rpy2.robjects as ro
 from utils import Cluster
 from utils.data_loader import load_data, yearly_data_as_timeseries
 from utils.methods import Method
-from utils.results import Analyse, YearlyResults
+from utils.results import Analyse, MethodResults, YearlyResults
 
 
 def main():
@@ -42,17 +42,23 @@ def main():
         "burn": 100,
         "thin": 10,
     }
+
+    num_weeks = 2
+
     methods = [
         Method("sppm", sppm_args, uses_weekly_data=True),
         # Method("gaussian_ppmx", sppm_args, uses_weekly_data=True),
         Method("drpm", drpm_args, uses_weekly_data=False),
     ]
 
+    all_results: list[MethodResults] = []
+
     for method in methods:
+        method_result = MethodResults(name=method.name)
         for test_case in method.yield_test_cases():
             if method.uses_weekly_data:
                 weekly_results = []
-                for week in range(1, 10):
+                for week in range(1, num_weeks):
                     week_data = data[data["Week"] == week]
 
                     method_args = test_case | method.load_method_specific_data(
@@ -66,10 +72,10 @@ def main():
                             res_cluster, time_needed, salso_args=salso_args
                         )
                     )
-                test = YearlyResults(
-                    name=method.name, config=test_case, weekly_results=weekly_results
+                yearly_result = YearlyResults(
+                    config=test_case, weekly_results=weekly_results
                 )
-                print(test.yearly)
+
             else:
                 # use yearly data
                 method_args = test_case | method.load_method_specific_data(
@@ -78,8 +84,7 @@ def main():
                 res_cluster, time_needed = Cluster.cluster(
                     method=method.name, **method_args
                 )
-                test2 = YearlyResults(
-                    name=method.name,
+                yearly_result = YearlyResults(
                     config=test_case,
                     yearly_result=Analyse.analyze_yearly_result(
                         res_cluster,
@@ -87,6 +92,8 @@ def main():
                         salso_args=salso_args,
                     ),
                 )
+            method_result.add_testcase(yearly_result=yearly_result)
+        all_results.append(method_result)
 
 
 if __name__ == "__main__":
