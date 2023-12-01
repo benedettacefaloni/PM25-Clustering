@@ -8,6 +8,7 @@ import rpy2.robjects.packages as rpackages
 from rpy2.robjects import pandas2ri
 
 from utils.magic import log_time
+from utils.models import Model
 from utils.results import Analyse, YearlyResults
 
 drpm = rpackages.importr("drpm")
@@ -15,8 +16,8 @@ ppmSuite = rpackages.importr("ppmSuite")
 
 
 def yearly_evaluation(
-    model,
-    test_case,
+    model: Model,
+    model_params: dict,
     data: pd.DataFrame,
     pm25_timeseries: np.ndarray,
     num_weeks: int,
@@ -27,7 +28,7 @@ def yearly_evaluation(
         for week in range(1, num_weeks):
             week_data = data[data["Week"] == week]
 
-            model_args = test_case | model.load_model_specific_data(week_data)
+            model_args = model_params | model.load_model_specific_data(week_data)
             res_cluster, time_needed = Cluster.cluster(model=model.name, **model_args)
             weekly_results.append(
                 Analyse.analyze_weekly_result(
@@ -37,16 +38,18 @@ def yearly_evaluation(
                     salso_args=salso_args,
                 )
             )
-        yearly_result = YearlyResults(config=test_case, weekly_results=weekly_results)
+        yearly_result = YearlyResults(
+            config=model_params, weekly_results=weekly_results
+        )
 
     else:
         # use yearly data
-        model_args = test_case | model.load_model_specific_data(
+        model_args = model_params | model.load_model_specific_data(
             data=data, yearly_time_series=pm25_timeseries
         )
         res_cluster, time_needed = Cluster.cluster(model=model.name, **model_args)
         yearly_result = YearlyResults(
-            config=test_case,
+            config=model_params,
             yearly_result=Analyse.analyze_yearly_result(
                 py_res=res_cluster,
                 target=pm25_timeseries,

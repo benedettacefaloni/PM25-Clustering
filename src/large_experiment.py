@@ -55,10 +55,10 @@ def main():
 
     for model in models:
         model_result = ModelResults(name=model.name)
-        for test_case in model.yield_test_cases():
+        for model_params in model.yield_test_cases():
             yearly_result = yearly_evaluation(
                 model=model,
-                test_case=test_case,
+                model_params=model_params,
                 data=data,
                 pm25_timeseries=pm25_timeseries,
                 num_weeks=num_weeks,
