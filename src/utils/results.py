@@ -56,7 +56,7 @@ class YearlyResults:
         pass
 
 
-class MethodResults:
+class ModelResults:
     def __init__(self, name: str):
         self.name = name
         self.test_cases: list[YearlyResults] = []
@@ -74,7 +74,7 @@ class Analyse:
         salso_args: dict = {"loss": "binder", "maxNCluster": 0},
     ) -> dict:
         """
-        Aggregate one weekly result into a dict of aggregated values. Salso method is
+        Aggregate one weekly result into a dict of aggregated values. Salso model is
         executed to reduce the MCMC iterates to a single partition.
         """
         analysis = {}

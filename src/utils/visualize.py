@@ -8,12 +8,12 @@ from tabulate import tabulate
 report_path = os.path.join(Path(__file__).parent.parent.parent, "report/")
 
 
-def trace_plots(res: dict, method: str):
-    if method == "sppm":
+def trace_plots(res: dict, model: str):
+    if model == "sppm":
         to_analyse = ["mu", "sig2", "mu0", "sig20"]
-    elif method == "gaussian_ppmx":
+    elif model == "gaussian_ppmx":
         raise NotImplementedError
-    elif method == "drpm":
+    elif model == "drpm":
         raise NotImplementedError
     else:
         raise NotImplementedError
@@ -39,7 +39,7 @@ def trace_plots(res: dict, method: str):
         # ax.set_ylabel("Y-axis")
 
     plt.tight_layout()
-    plt.suptitle("Trace plots for {} method".format(method))
+    plt.suptitle("Trace plots for {} model".format(model))
     plt.show()
 
 

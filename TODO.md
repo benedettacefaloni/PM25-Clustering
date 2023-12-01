@@ -38,7 +38,7 @@ Backlog:
         - number of singleton clusters
         - min, max, avg, median size
     - max. distance between two stations in the same cluster
-    - plot the number of clusters for different methods over time in a grid-wise fashion
+    - plot the number of clusters for different models over time in a grid-wise fashion
 
 - Manual checking
     - Plot clusters with a map
@@ -47,10 +47,10 @@ Backlog:
 - [Done] General framework for automatic evaluation
 
 - Next steps 30.11.2023:
-    - error in the drpm method
+    - error in the drpm model
     - covariate transformation
     - gaussian_ppmx --> covariates
-    - provide a MWE for a single method to plot and test the results
+    - provide a MWE for a single model to plot and test the results
     - Finish evaluation: table creation
 
 - Prior parameter choice?
@@ -81,13 +81,13 @@ Backlog:
             - alpha: 1.0 and 2.0 (lead to similar results)
 
 - [DONE] Use salso package to evaluate the clustering itself
-- implement visualization method for report and sanity checks
+- implement visualization model for report and sanity checks
     - plot pm2.5 concentration and clustering at the same time
 
 ### Optional
 - Streamlit application for interactive visualization
     - over time
-    - values for params of the methods (input is a dict with prewritten values in a text field)
+    - values for params of the models (input is a dict with prewritten values in a text field)
     - see: https://streamlit.io/ for more details, the deployment is free to host the app
 
 ## Report
@@ -100,7 +100,7 @@ Backlog:
     - Paper citations
 
 Backlog:
-- Salso Package: give short insights about the methods idea
+- Salso Package: give short insights about the models idea
 - Give theoretical details about the evaluation criteria used in the report, indicate if higher/lower is better (always in brackets)
     - e.g. MSE = mean squared error (lower is better)
 - Cite R packages

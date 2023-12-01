@@ -6,12 +6,12 @@ import pandas as pd
 from utils.data_loader import to_r_matrix, to_r_vector
 
 
-class Method:
+class Model:
     def __init__(
         self, name: str, func_args: dict, uses_weekly_data: bool = True
     ) -> None:
         self.name = name
-        # parameters the method used
+        # parameters the model used
         self.func_args = func_args
         self.uses_weekly_data = uses_weekly_data
 
@@ -22,8 +22,8 @@ class Method:
 
     def _combine_dict_lists(self, input_dict):
         """
-        For each method with have a dict with keys, lists/single values to easily test
-        multiple configurations. This method generates multiple dicts based on a dict of
+        For each model with have a dict with keys, lists/single values to easily test
+        multiple configurations. This model generates multiple dicts based on a dict of
         lists by applying the cartesian product of all combinations.
         """
         keys = input_dict.keys()
@@ -43,10 +43,10 @@ class Method:
 
         return result_dicts
 
-    def load_method_specific_data(
+    def load_model_specific_data(
         self, data: pd.DataFrame, yearly_time_series: np.ndarray = None
     ):
-        # method to select which parts of the data are used as additional
+        # model to select which parts of the data are used as additional
         # parameters for the model
         if self.name == "sppm":
             return {

@@ -1,9 +1,9 @@
 import rpy2.robjects as ro
 
-from utils import Cluster
+from utils.clustering import yearly_evaluation
 from utils.data_loader import load_data, yearly_data_as_timeseries
-from utils.methods import Method
-from utils.results import Analyse, MethodResults, YearlyResults
+from utils.models import Model
+from utils.results import ModelResults
 
 
 def main():
@@ -45,59 +45,27 @@ def main():
 
     num_weeks = 2
 
-    methods = [
-        Method("sppm", sppm_args, uses_weekly_data=True),
-        # Method("gaussian_ppmx", sppm_args, uses_weekly_data=True),
-        Method("drpm", drpm_args, uses_weekly_data=False),
+    models = [
+        Model("sppm", sppm_args, uses_weekly_data=True),
+        # Model("gaussian_ppmx", sppm_args, uses_weekly_data=True),
+        Model("drpm", drpm_args, uses_weekly_data=False),
     ]
 
-    all_results: list[MethodResults] = []
+    all_results: list[ModelResults] = []
 
-    for method in methods:
-        method_result = MethodResults(name=method.name)
-        for test_case in method.yield_test_cases():
-            if method.uses_weekly_data:
-                weekly_results = []
-                for week in range(1, num_weeks):
-                    week_data = data[data["Week"] == week]
-
-                    method_args = test_case | method.load_method_specific_data(
-                        week_data
-                    )
-                    res_cluster, time_needed = Cluster.cluster(
-                        method=method.name, **method_args
-                    )
-                    weekly_results.append(
-                        Analyse.analyze_weekly_result(
-                            py_res=res_cluster,
-                            target=week_data["log_pm25"],
-                            time_needed=time_needed,
-                            salso_args=salso_args,
-                        )
-                    )
-                yearly_result = YearlyResults(
-                    config=test_case, weekly_results=weekly_results
-                )
-
-            else:
-                # use yearly data
-                method_args = test_case | method.load_method_specific_data(
-                    data=data, yearly_time_series=pm25_timeseries
-                )
-                res_cluster, time_needed = Cluster.cluster(
-                    method=method.name, **method_args
-                )
-                yearly_result = YearlyResults(
-                    config=test_case,
-                    yearly_result=Analyse.analyze_yearly_result(
-                        py_res=res_cluster,
-                        target=pm25_timeseries,
-                        time_needed=time_needed,
-                        salso_args=salso_args,
-                    ),
-                )
-            method_result.add_testcase(yearly_result=yearly_result)
-        all_results.append(method_result)
+    for model in models:
+        model_result = ModelResults(name=model.name)
+        for test_case in model.yield_test_cases():
+            yearly_result = yearly_evaluation(
+                model=model,
+                test_case=test_case,
+                data=data,
+                pm25_timeseries=pm25_timeseries,
+                num_weeks=num_weeks,
+                salso_args=salso_args,
+            )
+            model_result.add_testcase(yearly_result=yearly_result)
+        all_results.append(model_result)
 
 
 if __name__ == "__main__":

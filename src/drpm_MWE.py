@@ -92,7 +92,7 @@ r_data_test = {
     "thin": 10,
 }
 
-r_res, py_res = Cluster.cluster(method="drpm", **r_data_test)
+r_res, py_res = Cluster.cluster(model="drpm", **r_data_test)
 print(py_res.keys())
 # Call the simplified drpm_fit function
 # result = drpm_fit(**r_data_test)
