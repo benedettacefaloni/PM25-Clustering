@@ -69,6 +69,7 @@ class Analyse:
     @staticmethod
     def analyze_weekly_result(
         py_res: dict,
+        target: np.ndarray,
         time_needed: float,
         salso_args: dict = {"loss": "binder", "maxNCluster": 0},
     ) -> dict:
@@ -79,6 +80,9 @@ class Analyse:
         analysis = {}
         analysis["lpml"] = py_res["lpml"]
         analysis["waic"] = py_res["WAIC"]
+        analysis["MSE"] = MSE(
+            target=np.array(target), prediction=py_res["fitted"].mean(axis=0), axis=0
+        )
 
         # analyse number of cluster distribution
         salso_partion = np.array(
@@ -135,3 +139,7 @@ class Analyse:
         # TODO: evaluate the result
 
         return analysis
+
+
+def MSE(target: np.ndarray, prediction: np.ndarray, axis: int):
+    return ((target - prediction) ** 2).mean(axis=axis)

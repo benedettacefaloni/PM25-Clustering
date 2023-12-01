@@ -69,7 +69,10 @@ def main():
                     )
                     weekly_results.append(
                         Analyse.analyze_weekly_result(
-                            res_cluster, time_needed, salso_args=salso_args
+                            py_res=res_cluster,
+                            target=week_data["log_pm25"],
+                            time_needed=time_needed,
+                            salso_args=salso_args,
                         )
                     )
                 yearly_result = YearlyResults(

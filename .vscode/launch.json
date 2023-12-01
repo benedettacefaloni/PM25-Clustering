@@ -20,6 +20,15 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "cwd": "${fileDirname}"
+        },
+        {
+            "name": "Large Exp",
+            "type": "python",
+            "request": "launch",
+            "program": "../src/main_methods.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "cwd": "${fileDirname}",
         }
     ]
 }
