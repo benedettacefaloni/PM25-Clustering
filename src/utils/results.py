@@ -5,6 +5,20 @@ from utils.data_loader import to_r_matrix
 
 salso = rpackages.importr("salso")
 
+# TODO:
+# - find out if lower/higher is better
+agg_mapping = {
+    "lpml": max,
+    "waic": max,
+    "time": np.sum,
+    # maybe yearly
+    "MSE": max,
+    "n_singleton": max,
+    "n_clusters": np.average,
+    "n_clusters_max": max,
+    "n_clusters_min": min,
+}
+
 
 class YearlyResults:
     def __init__(
@@ -25,20 +39,6 @@ class YearlyResults:
         Aggregate the weekly data (dict each) into yearly values.
         Decide for each attribute how to aggregate.
         """
-        # TODO:
-        # - find out if lower/higher is better
-        # - compute the MSE
-        agg_mapping = {
-            "lpml": max,
-            "waic": max,
-            "time": np.sum,
-            # maybe yearly
-            "n_singleton": max,
-            "n_clusters": np.average,
-            "n_clusters_max": max,
-            "n_clusters_min": min,
-        }
-
         res = {}
         # aggregated values
         for key, agg_func in agg_mapping.items():
@@ -108,6 +108,7 @@ class Analyse:
     @staticmethod
     def analyze_yearly_result(
         py_res: dict,
+        target: np.ndarray,
         time_needed: float,
         salso_args: dict = {"loss": "binder", "maxNCluster": 0},
     ) -> dict:
@@ -115,10 +116,15 @@ class Analyse:
         analysis["time"] = time_needed
 
         analysis["lpml"] = py_res["lpml"]
-        analysis["waic"] = py_res["WAIC"]
+        analysis["waic"] = py_res["waic"]
 
         # analyse the partitions for each week since salso cannot handle tensors
         SI_np = np.array(py_res["Si"])
+
+        # weekly MSE
+        mse = list(
+            MSE(target=target, prediction=py_res["fitted"].mean(axis=2).T, axis=0)
+        )
 
         # TODO: sth. does not work here
         analysis["partition"] = np.array(
@@ -137,6 +143,7 @@ class Analyse:
         unique, counts = np.unique(analysis["partition"], axis=0, return_counts=True)
 
         # TODO: evaluate the result
+        # use the mapping above --> make it global
 
         return analysis
 

@@ -24,7 +24,7 @@ def main():
     }
     drpm_args = {
         "M": 2,
-        "starting_alpha": 0.1,
+        "starting_alpha": 0.5,  # 0.1
         "unit_specific_alpha": False,
         "time_specific_alpha": False,
         "alpha_0": False,
@@ -90,7 +90,8 @@ def main():
                 yearly_result = YearlyResults(
                     config=test_case,
                     yearly_result=Analyse.analyze_yearly_result(
-                        res_cluster,
+                        py_res=res_cluster,
+                        target=pm25_timeseries,
                         time_needed=time_needed,
                         salso_args=salso_args,
                     ),

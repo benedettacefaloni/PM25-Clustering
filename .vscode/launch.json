@@ -25,10 +25,10 @@
             "name": "Large Exp",
             "type": "python",
             "request": "launch",
-            "program": "../src/main_methods.py",
+            "program": "../src/large_experiment.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "cwd": "${fileDirname}",
+            "cwd": "../src",
         }
     ]
 }

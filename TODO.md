@@ -20,6 +20,9 @@ Backlog:
 - Standardize data for the covariates
     - categorical data?
 - Fix issue with week numbers in year 2021
+- Give some explorative data analysis:
+    - variance, mean, distribution of pm2.5 values
+    - include correlation analysis
 
 ### Optional
 - Repeat with another year (maybe a covid year) so we can later on work on a comparison
