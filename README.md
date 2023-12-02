@@ -30,3 +30,16 @@ install_github("https://github.com/gpage2990/drpm")
 ```
 
 [Github-site](https://github.com/gpage2990/drpm) of the package
+
+# Use the provided software
+Install required packages
+
+```shell
+pip install -r requirements.txt
+```
+
+Run the main-file with your experiment
+```shell
+python main.py
+```
+
