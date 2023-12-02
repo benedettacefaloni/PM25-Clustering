@@ -2,7 +2,12 @@ import pandas as pd
 import rpy2.robjects as ro
 
 from utils.clustering import Cluster
-from utils.data_loader import load_data, yearly_data_as_timeseries
+from utils.data_loader import (
+    all_covariates,
+    get_covariates,
+    load_data,
+    yearly_data_as_timeseries,
+)
 from utils.models import Model
 from utils.results import Analyse, ModelResults, YearlyResults
 from utils.visualize import plot_clustering, trace_plots
@@ -10,6 +15,7 @@ from utils.visualize import plot_clustering, trace_plots
 
 def main():
     data = load_data()
+    cov_rdf = get_covariates(data)
     pm25_timeseries = yearly_data_as_timeseries(data)
 
     salso_args = {"loss": "binder", "maxNCluster": 0}
@@ -23,6 +29,23 @@ def main():
         "draws": 10000,
         "burn": 100,
         "thin": 10,
+    }
+
+    gaussian_ppmx_args = {
+        "meanModel": 1,
+        "cohesion": 1,
+        "M": 2,
+        "PPM": False,
+        "similarity_function": 1,
+        "consim": 1,
+        "calibrate": 0,
+        "simParms": ro.FloatVector([0.0, 1.0, 0.1, 1.0, 2.0, 0.1, 1]),
+        "modelPriors": ro.FloatVector([0, 100**2, 1, 1]),
+        "mh": ro.FloatVector([0.5, 0.5]),
+        "draws": 10000,
+        "burn": 100,
+        "thin": 10,
+        "verbose": False,
     }
     drpm_args = {
         "M": 2,
@@ -45,14 +68,20 @@ def main():
         "thin": 10,
     }
 
-    num_weeks = 2
+    num_weeks = 53
 
     model = Model("sppm", sppm_args, uses_weekly_data=True)
+    model = Model("gaussian_ppmx", gaussian_ppmx_args, uses_weekly_data=True)
     # model = Model("drpm", drpm_args, uses_weekly_data=False),
 
     all_results: list[ModelResults] = []
 
     model_result = ModelResults(name=model.name)
+    database = pd.DataFrame(
+        columns=["IDStations", "Latitude", "Longitude", "log_pm25", "week", "label"],
+        index=["IDStations"],
+    )
+
     for model_params in model.yield_test_cases():
         if model.uses_weekly_data:
             weekly_results = []
@@ -77,9 +106,12 @@ def main():
                 week_data_with_labels["label"] = pd.Series(
                     weekly_res["salso_partition"]
                 )
+                week_data_with_labels["week"] = week
+                database = pd.concat(
+                    [database, week_data_with_labels], ignore_index=True
+                )
                 weekly_results.append(weekly_res)
-                fig = plot_clustering(week_data_with_labels)
-                fig.show()
+            plot_clustering(database)
             yearly_result = YearlyResults(
                 config=model_params, weekly_results=weekly_results
             )

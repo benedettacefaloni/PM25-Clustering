@@ -4,15 +4,16 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
 import plotly_express as px
 import seaborn as sns
-import streamlit as st
 from tabulate import tabulate
 
 report_path = os.path.join(Path(__file__).parent.parent.parent, "report/")
 
 
-def plot_clustering(data_with_labels: pd.DataFrame):
+def plot_clustering(data_with_labels: pd.DataFrame, method_name: str = ""):
+    data_with_labels = data_with_labels.loc[1:]
     n_colors = data_with_labels["label"].max()
     colors = generate_color_palette(n_colors)
     # data_with_labels["color"] = data_with_labels["label"].apply(lambda x: colors[x - 1])
@@ -28,11 +29,18 @@ def plot_clustering(data_with_labels: pd.DataFrame):
         hover_data="log_pm25",
         size="log_pm25",
         color="cluster",
-        zoom=7.5,
+        animation_frame="week",
+        animation_group="cluster",
+        zoom=7.3,
         color_discrete_map=colors,
+        title="Weekly-based clustering of PM2.5 data using {} method".format(
+            method_name
+        ),
     )
     fig.update_layout(mapbox_style="open-street-map")
-    return fig
+    # Add text input box for selecting the week
+    # Add text annotation for entering week number
+    # fig["layout"].pop("updatemenus")
     fig.show()
 
 

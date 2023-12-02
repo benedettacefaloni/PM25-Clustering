@@ -9,6 +9,57 @@ data_path = os.path.join(
     Path(__file__).parent.parent.parent, "data/dataset_{}_cleaned.csv"
 )
 
+all_covariates = [
+    "Latitude",
+    "Longitude",
+    "Altitude",
+    "AQ_pm10",
+    # "AQ_pm25", # target variable?
+    # "log_pm25", # target variable?
+    "AQ_co",
+    "AQ_nh3",
+    "AQ_nox",
+    "AQ_no2",
+    "AQ_so2",
+    "WE_temp_2m",
+    "WE_wind_speed_10m_mean",
+    "WE_wind_speed_10m_max",
+    "WE_mode_wind_direction_10m",
+    "WE_tot_precipitation",
+    "WE_precipitation_t",
+    "WE_surface_pressure",
+    "WE_solar_radiation",
+    "WE_wind_speed_100m_mean",
+    "WE_wind_speed_100m_max",
+    "WE_mode_wind_direction_100m",
+    "WE_blh_layer_max",
+    "WE_blh_layer_min",
+    "WE_rh_min",
+    "WE_rh_mean",
+    "WE_rh_max",
+    "EM_nh3_livestock_mm",
+    "EM_nh3_agr_soils",
+    "EM_nh3_agr_waste_burn",
+    "EM_nh3_sum",
+    "EM_nox_traffic",
+    "EM_nox_sum",
+    "EM_so2_sum",
+    "LI_pigs",
+    "LI_bovine",
+    "LA_hvi",
+    "LA_lvi",
+    "LA_land_use",
+    "LA_soil_use",
+]
+
+categorical_covariates = [
+    "WE_mode_wind_direction_10m",
+    "WE_precipitation_t",
+    "WE_mode_wind_direction_100m",
+    "LA_land_use",
+    "LA_soil_use",
+]
+
 
 def load_data(
     year: int = 2019,
@@ -22,6 +73,37 @@ def load_data(
     return data
 
 
+def get_covariates(
+    data: pd.DataFrame,
+    normalize_numerical: bool = True,
+    as_r_df: bool = True,
+    ignore_cols: list[str] = None,
+):
+    if normalize_numerical:
+        data = _normalize_numerical_attributes(data, ignore_cols=ignore_cols)
+
+    if not as_r_df:
+        return data
+    return to_r_dataframe(data)
+
+
+def _normalize_numerical_attributes(
+    data: pd.DataFrame, ignore_cols: list[str] = None
+) -> pd.DataFrame:
+    """Mean zero and SD one for all numerical attributes"""
+    data = data[all_covariates].copy()
+    numerical_covariates = [
+        col for col in all_covariates if col not in categorical_covariates
+    ]
+    data[numerical_covariates] = (
+        data[numerical_covariates] - data[numerical_covariates].mean()
+    ) / data[numerical_covariates].std()
+
+    if ignore_cols is not None:
+        data.drop(ignore_cols, inplace=True)
+    return data
+
+
 def to_r_vector(data):
     return ro.FloatVector(data)
 
@@ -31,6 +113,42 @@ def to_r_matrix(data: np.ndarray):
     # we need to flatten the vector and then reshape in R
     data = data.flatten()
     return ro.r["matrix"](ro.FloatVector(data), nrow=nrow, ncol=ncol)
+
+
+def to_r_dataframe(
+    data: pd.DataFrame,
+    types_of_cols: dict[str, str] = None,
+):
+    """types of the form: {col_name: col_type, etc.}"""
+    if types_of_cols is None:
+        types_of_cols = _get_types_of_cols(data)
+
+    with (ro.default_converter + ro.pandas2ri.converter).context():
+        r_df = ro.conversion.get_conversion().py2rpy(data)
+
+    # convert the columns correctly:
+    # - "factor" for categorical attributes
+    # - "numeric" for floats
+    for idx, col_class in enumerate(types_of_cols.values()):
+        r_df[idx] = ro.r[col_class](r_df[idx])
+
+    return r_df
+
+
+def _get_types_of_cols(data: pd.DataFrame):
+    """R types for each column."""
+
+    available_cov = list(data.columns)
+    numerical_covariates = [
+        col for col in available_cov if col not in categorical_covariates
+    ]
+    num_cols = {col_name: "as.numeric" for col_name in numerical_covariates}
+    cat_cols = {
+        col_name: "factor"
+        for col_name in categorical_covariates
+        if col_name in available_cov
+    }
+    return num_cols | cat_cols
 
 
 def yearly_data_as_timeseries(data):
