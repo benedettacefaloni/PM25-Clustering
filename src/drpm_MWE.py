@@ -73,7 +73,7 @@ r_data_test = {
     "y": m,
     "s_coords": s_coords,
     "M": 2,
-    "starting_alpha": 0.1,
+    "starting_alpha": 1,
     "unit_specific_alpha": False,
     "time_specific_alpha": False,
     "alpha_0": False,
@@ -92,8 +92,10 @@ r_data_test = {
     "thin": 10,
 }
 
-r_res, py_res = Cluster.cluster(model="drpm", **r_data_test)
+py_res, time_needed = Cluster.cluster(model="drpm", as_dict=True, **r_data_test)
 print(py_res.keys())
+print(py_res["Si"])
+print("worked")
 # Call the simplified drpm_fit function
 # result = drpm_fit(**r_data_test)
 """Object attributes are

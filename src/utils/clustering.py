@@ -9,7 +9,7 @@ from rpy2.robjects import pandas2ri
 
 from utils.magic import log_time
 from utils.models import Model
-from utils.results import Analyse, YearlyResults
+from utils.results import Analyse, YearlyPerformance
 
 drpm = rpackages.importr("drpm")
 ppmSuite = rpackages.importr("ppmSuite")
@@ -31,14 +31,14 @@ def yearly_evaluation(
             model_args = model_params | model.load_model_specific_data(week_data)
             res_cluster, time_needed = Cluster.cluster(model=model.name, **model_args)
             weekly_results.append(
-                Analyse.analyze_weekly_result(
+                Analyse.analyze_weekly_performance(
                     py_res=res_cluster,
                     target=week_data["log_pm25"],
                     time_needed=time_needed,
                     salso_args=salso_args,
                 )
             )
-        yearly_result = YearlyResults(
+        yearly_result = YearlyPerformance(
             config=model_params, weekly_results=weekly_results
         )
 
@@ -48,9 +48,9 @@ def yearly_evaluation(
             data=data, yearly_time_series=pm25_timeseries
         )
         res_cluster, time_needed = Cluster.cluster(model=model.name, **model_args)
-        yearly_result = YearlyResults(
+        yearly_result = YearlyPerformance(
             config=model_params,
-            yearly_result=Analyse.analyze_yearly_result(
+            yearly_result=Analyse.analyze_yearly_performance(
                 py_res=res_cluster,
                 target=pm25_timeseries,
                 time_needed=time_needed,

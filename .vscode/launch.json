@@ -22,6 +22,15 @@
             "cwd": "${fileDirname}"
         },
         {
+            "name": "Main",
+            "type": "python",
+            "request": "launch",
+            "program": "../src/main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "cwd": "../src",
+        },
+        {
             "name": "Large Exp",
             "type": "python",
             "request": "launch",

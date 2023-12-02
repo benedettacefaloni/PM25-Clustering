@@ -2,6 +2,7 @@ import numpy as np
 import rpy2.robjects.packages as rpackages
 
 from utils.data_loader import to_r_matrix
+from utils.models import get_fitted_attr_name
 
 salso = rpackages.importr("salso")
 
@@ -20,7 +21,7 @@ agg_mapping = {
 }
 
 
-class YearlyResults:
+class YearlyPerformance:
     def __init__(
         self,
         config: dict,
@@ -56,21 +57,22 @@ class YearlyResults:
         pass
 
 
-class ModelResults:
+class ModelPerformance:
     def __init__(self, name: str):
         self.name = name
-        self.test_cases: list[YearlyResults] = []
+        self.test_cases: list[YearlyPerformance] = []
 
-    def add_testcase(self, yearly_result: YearlyResults):
+    def add_testcase(self, yearly_result: YearlyPerformance):
         self.test_cases.append(yearly_result)
 
 
 class Analyse:
     @staticmethod
-    def analyze_weekly_result(
+    def analyze_weekly_performance(
         py_res: dict,
         target: np.ndarray,
         time_needed: float,
+        model_name: str,
         salso_args: dict = {"loss": "binder", "maxNCluster": 0},
     ) -> dict:
         """
@@ -81,7 +83,9 @@ class Analyse:
         analysis["lpml"] = py_res["lpml"]
         analysis["waic"] = py_res["WAIC"]
         analysis["MSE"] = MSE(
-            target=np.array(target), prediction=py_res["fitted"].mean(axis=0), axis=0
+            target=np.array(target),
+            prediction=py_res[get_fitted_attr_name(model_name=model_name)].mean(axis=0),
+            axis=0,
         )
 
         # analyse number of cluster distribution
@@ -106,7 +110,7 @@ class Analyse:
         return analysis
 
     @staticmethod
-    def analyze_yearly_result(
+    def analyze_yearly_performance(
         py_res: dict,
         target: np.ndarray,
         time_needed: float,

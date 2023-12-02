@@ -44,7 +44,11 @@ class Model:
         return result_dicts
 
     def load_model_specific_data(
-        self, data: pd.DataFrame, yearly_time_series: np.ndarray = None
+        self,
+        data: pd.DataFrame,
+        model_params: dict,
+        yearly_time_series: np.ndarray = None,
+        covariates: pd.DataFrame = None,
     ):
         # model to select which parts of the data are used as additional
         # parameters for the model
@@ -54,10 +58,13 @@ class Model:
                 "s": to_r_matrix(data[["Latitude", "Longitude"]].to_numpy()),
             }
         elif self.name == "gaussian_ppmx":
-            return {
+            param = {
                 "y": to_r_vector(data["log_pm25"]),
-                # TODO: extract this --> normalize the data
-                "X": data["covariates"],
+            }
+            if model_params["PPM"]:  # no covariates
+                return param
+            return param | {
+                "X": covariates,
             }
         elif self.name == "drpm":
             return {
@@ -66,3 +73,13 @@ class Model:
             }
         else:
             raise NotImplementedError
+
+
+def get_fitted_attr_name(model_name: str):
+    """Names for the fitted attribute given different models."""
+    if model_name == "sppm":
+        return "fitted"
+    elif model_name == "gaussian_ppmx":
+        return "fitted.values"
+    else:
+        raise NotImplementedError

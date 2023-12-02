@@ -22,7 +22,7 @@ s_float = ro.FloatVector(s)
 s_coords = ro.r["matrix"](s_float, nrow=int(nobs), ncol=2)
 
 print("data")
-r_data_test = {
+sppm_args = {
     "y": v,
     "s": s_coords,
     "cohesion": 2,
@@ -34,8 +34,27 @@ r_data_test = {
     "burn": 100,
     "thin": 10,
 }
+gaussian_ppmx_args = {
+    "y": v,
+    # "X": None,
+    "meanModel": 1,
+    "cohesion": 1,
+    "M": 2,
+    "PPM": True,  # use covariates if FALSE -> supply X
+    "similarity_function": 1,
+    "consim": 1,
+    "calibrate": 0,
+    "simParms": ro.FloatVector([0.0, 1.0, 0.1, 1.0, 2.0, 0.1, 1]),
+    "modelPriors": ro.FloatVector([0, 100**2, 1, 1]),
+    "mh": ro.FloatVector([0.5, 0.5]),
+    "draws": 10000,
+    "burn": 100,
+    "thin": 10,
+    "verbose": False,
+}
 
-result = ppmSuite.sppm(**r_data_test)
+sppm_res = ppmSuite.sppm(**sppm_args)
+ppmx_res = ppmSuite.gaussian_ppmx(**gaussian_ppmx_args)
 print("worked")
 """The result is of the following structure:
     - Mu double [990 x 6]

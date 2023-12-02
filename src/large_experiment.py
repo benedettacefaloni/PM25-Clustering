@@ -3,7 +3,7 @@ import rpy2.robjects as ro
 from utils.clustering import yearly_evaluation
 from utils.data_loader import load_data, yearly_data_as_timeseries
 from utils.models import Model
-from utils.results import ModelResults
+from utils.results import ModelPerformance
 
 
 def main():
@@ -51,10 +51,10 @@ def main():
         Model("drpm", drpm_args, uses_weekly_data=False),
     ]
 
-    all_results: list[ModelResults] = []
+    all_results: list[ModelPerformance] = []
 
     for model in models:
-        model_result = ModelResults(name=model.name)
+        model_result = ModelPerformance(name=model.name)
         for model_params in model.yield_test_cases():
             yearly_result = yearly_evaluation(
                 model=model,

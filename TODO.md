@@ -48,10 +48,10 @@ Backlog:
 
 - Next steps 30.11.2023:
     - error in the drpm model
-    - covariate transformation
-    - gaussian_ppmx --> covariates
+    - error in gaussian_ppmx --> covariates
+    - [Done] covariate transformation
     - Finish evaluation: table creation
-    - clean up the main file
+    - [Done] clean up the main file
     - extract the param dicts into a separate file
 
 - Prior parameter choice?

@@ -10,24 +10,71 @@ import seaborn as sns
 from tabulate import tabulate
 
 report_path = os.path.join(Path(__file__).parent.parent.parent, "report/")
+from abc import ABC
 
 
-def plot_clustering(data_with_labels: pd.DataFrame, method_name: str = ""):
-    data_with_labels = data_with_labels.loc[1:]
-    n_colors = data_with_labels["label"].max()
+class VisualizeClustering(ABC):
+    def get_data(self):
+        raise NotImplementedError
+
+
+class YearlyClustering(VisualizeClustering):
+    def __init__(self, yearly_result):
+        # TODO: transform
+        pass
+
+    def get_data(self):
+        # TODO: get result
+        pass
+
+
+class WeeklyClustering(VisualizeClustering):
+    def __init__(self):
+        self.database = pd.DataFrame(
+            columns=[
+                "IDStations",
+                "Latitude",
+                "Longitude",
+                "AQ_pm25",
+                "week",
+                "cluster",
+            ],
+            index=["IDStations"],
+        )
+
+    def add_week(
+        self, week_number: int, weekly_data: pd.DataFrame, weekly_res: pd.DataFrame
+    ):
+        week_data_with_labels = (
+            weekly_data[["IDStations", "Latitude", "Longitude", "AQ_pm25"]]
+            .copy()
+            .reset_index()
+        )
+        week_data_with_labels["cluster"] = pd.Series(
+            weekly_res["salso_partition"]
+        ).astype(str)
+        week_data_with_labels["week"] = week_number
+        self.database = pd.concat(
+            [self.database, week_data_with_labels], ignore_index=True
+        )
+
+    def get_data(self):
+        return self.database.iloc[1:]
+
+
+def plot_clustering(weekly_clustering: WeeklyClustering, method_name: str = ""):
+    data = weekly_clustering.get_data()
+
+    n_colors = int(data["cluster"].max())
     colors = generate_color_palette(n_colors)
-    # data_with_labels["color"] = data_with_labels["label"].apply(lambda x: colors[x - 1])
-    print(data_with_labels["label"])
-    data_with_labels["log_pm25"] = np.exp(data_with_labels["log_pm25"])
-    data_with_labels["cluster"] = data_with_labels["label"].astype(str)
 
     fig = px.scatter_mapbox(
-        data_frame=data_with_labels,
+        data_frame=data,
         lat="Latitude",
         lon="Longitude",
         hover_name="IDStations",
-        hover_data="log_pm25",
-        size="log_pm25",
+        hover_data="AQ_pm25",
+        size="AQ_pm25",
         color="cluster",
         animation_frame="week",
         animation_group="cluster",
@@ -38,9 +85,7 @@ def plot_clustering(data_with_labels: pd.DataFrame, method_name: str = ""):
         ),
     )
     fig.update_layout(mapbox_style="open-street-map")
-    # Add text input box for selecting the week
-    # Add text annotation for entering week number
-    # fig["layout"].pop("updatemenus")
+    # fig["layout"].pop("updatemenus") # ignore the play/pause button
     fig.show()
 
 

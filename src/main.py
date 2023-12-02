@@ -9,8 +9,8 @@ from utils.data_loader import (
     yearly_data_as_timeseries,
 )
 from utils.models import Model
-from utils.results import Analyse, ModelResults, YearlyResults
-from utils.visualize import plot_clustering, trace_plots
+from utils.results import Analyse, ModelPerformance, YearlyPerformance
+from utils.visualize import WeeklyClustering, plot_clustering, trace_plots
 
 
 def main():
@@ -35,7 +35,7 @@ def main():
         "meanModel": 1,
         "cohesion": 1,
         "M": 2,
-        "PPM": False,
+        "PPM": True,  # use covariates if FALSE -> supply X
         "similarity_function": 1,
         "consim": 1,
         "calibrate": 0,
@@ -74,45 +74,47 @@ def main():
     model = Model("gaussian_ppmx", gaussian_ppmx_args, uses_weekly_data=True)
     # model = Model("drpm", drpm_args, uses_weekly_data=False),
 
-    all_results: list[ModelResults] = []
+    all_results: list[ModelPerformance] = []
 
-    model_result = ModelResults(name=model.name)
+    model_result = ModelPerformance(name=model.name)
     database = pd.DataFrame(
-        columns=["IDStations", "Latitude", "Longitude", "log_pm25", "week", "label"],
+        columns=["IDStations", "Latitude", "Longitude", "AQ_pm25", "week", "label"],
         index=["IDStations"],
     )
 
     for model_params in model.yield_test_cases():
         if model.uses_weekly_data:
+            weekly_clustering = WeeklyClustering()
+
             weekly_results = []
             for week in range(1, num_weeks):
                 week_data = data[data["Week"] == week]
 
-                model_args = model_params | model.load_model_specific_data(week_data)
+                model_args = model_params | model.load_model_specific_data(
+                    week_data, covariates=cov_rdf, model_params=model_params
+                )
                 res_cluster, time_needed = Cluster.cluster(
                     model=model.name, **model_args
                 )
-                weekly_res = Analyse.analyze_weekly_result(
+                weekly_res = Analyse.analyze_weekly_performance(
                     py_res=res_cluster,
                     target=week_data["log_pm25"],
                     time_needed=time_needed,
                     salso_args=salso_args,
+                    model_name=model.name,
                 )
-                week_data_with_labels = (
-                    week_data[["IDStations", "Latitude", "Longitude", "log_pm25"]]
-                    .copy()
-                    .reset_index()
+
+                # save the results for visualization
+                weekly_clustering.add_week(
+                    week_number=week, weekly_data=week_data, weekly_res=weekly_res
                 )
-                week_data_with_labels["label"] = pd.Series(
-                    weekly_res["salso_partition"]
-                )
-                week_data_with_labels["week"] = week
-                database = pd.concat(
-                    [database, week_data_with_labels], ignore_index=True
-                )
+
+                # save the results for performance evaluation
                 weekly_results.append(weekly_res)
-            plot_clustering(database)
-            yearly_result = YearlyResults(
+            plot_clustering(weekly_clustering)
+
+            # aggregate the performance metrics
+            yearly_result = YearlyPerformance(
                 config=model_params, weekly_results=weekly_results
             )
 
@@ -122,9 +124,9 @@ def main():
                 data=data, yearly_time_series=pm25_timeseries
             )
             res_cluster, time_needed = Cluster.cluster(model=model.name, **model_args)
-            yearly_result = YearlyResults(
+            yearly_result = YearlyPerformance(
                 config=model_params,
-                yearly_result=Analyse.analyze_yearly_result(
+                yearly_result=Analyse.analyze_yearly_performance(
                     py_res=res_cluster,
                     target=pm25_timeseries,
                     time_needed=time_needed,
