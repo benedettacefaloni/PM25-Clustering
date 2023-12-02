@@ -1,10 +1,11 @@
+import pandas as pd
 import rpy2.robjects as ro
 
 from utils.clustering import Cluster
 from utils.data_loader import load_data, yearly_data_as_timeseries
 from utils.models import Model
 from utils.results import Analyse, ModelResults, YearlyResults
-from utils.visualize import trace_plots
+from utils.visualize import plot_clustering, trace_plots
 
 
 def main():
@@ -46,7 +47,7 @@ def main():
 
     num_weeks = 2
 
-    model = (Model("sppm", sppm_args, uses_weekly_data=True),)
+    model = Model("sppm", sppm_args, uses_weekly_data=True)
     # model = Model("drpm", drpm_args, uses_weekly_data=False),
 
     all_results: list[ModelResults] = []
@@ -62,14 +63,23 @@ def main():
                 res_cluster, time_needed = Cluster.cluster(
                     model=model.name, **model_args
                 )
-                weekly_results.append(
-                    Analyse.analyze_weekly_result(
-                        py_res=res_cluster,
-                        target=week_data["log_pm25"],
-                        time_needed=time_needed,
-                        salso_args=salso_args,
-                    )
+                weekly_res = Analyse.analyze_weekly_result(
+                    py_res=res_cluster,
+                    target=week_data["log_pm25"],
+                    time_needed=time_needed,
+                    salso_args=salso_args,
                 )
+                week_data_with_labels = (
+                    week_data[["IDStations", "Latitude", "Longitude", "log_pm25"]]
+                    .copy()
+                    .reset_index()
+                )
+                week_data_with_labels["label"] = pd.Series(
+                    weekly_res["salso_partition"]
+                )
+                weekly_results.append(weekly_res)
+                fig = plot_clustering(week_data_with_labels)
+                fig.show()
             yearly_result = YearlyResults(
                 config=model_params, weekly_results=weekly_results
             )

@@ -3,9 +3,45 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import plotly_express as px
+import seaborn as sns
+import streamlit as st
 from tabulate import tabulate
 
 report_path = os.path.join(Path(__file__).parent.parent.parent, "report/")
+
+
+def plot_clustering(data_with_labels: pd.DataFrame):
+    n_colors = data_with_labels["label"].max()
+    colors = generate_color_palette(n_colors)
+    # data_with_labels["color"] = data_with_labels["label"].apply(lambda x: colors[x - 1])
+    print(data_with_labels["label"])
+    data_with_labels["log_pm25"] = np.exp(data_with_labels["log_pm25"])
+    data_with_labels["cluster"] = data_with_labels["label"].astype(str)
+
+    fig = px.scatter_mapbox(
+        data_frame=data_with_labels,
+        lat="Latitude",
+        lon="Longitude",
+        hover_name="IDStations",
+        hover_data="log_pm25",
+        size="log_pm25",
+        color="cluster",
+        zoom=7.5,
+        color_discrete_map=colors,
+    )
+    fig.update_layout(mapbox_style="open-street-map")
+    return fig
+    fig.show()
+
+
+def generate_color_palette(n):
+    # Use the Set1 color palette from ColorBrewer
+    return {
+        str(idx + 1): str(col)
+        for idx, col in enumerate(sns.color_palette("Set1", n_colors=n).as_hex())
+    }
 
 
 def trace_plots(res: dict, model: str):
