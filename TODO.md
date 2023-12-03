@@ -19,6 +19,8 @@
 Backlog:
 - [Done] Standardize data for the covariates
 - Missing values in the covariates
+    - numerical values
+    — categorical values
 - Fix issue with week numbers in year 2021
 - Give some explorative data analysis:
     - variance, mean, distribution of pm2.5 values

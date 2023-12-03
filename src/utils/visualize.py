@@ -80,7 +80,7 @@ def plot_clustering(weekly_clustering: WeeklyClustering, method_name: str = ""):
         animation_group="cluster",
         zoom=7.3,
         color_discrete_map=colors,
-        title="Weekly-based clustering of PM2.5 data using {} method".format(
+        title="Weekly-based clustering of PM2.5 data using {} model.".format(
             method_name
         ),
     )

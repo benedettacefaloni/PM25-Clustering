@@ -28,7 +28,8 @@
             "program": "../src/main.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "cwd": "../src",
+            "cwd": "${fileDirname}"
+            // "cwd": "../src",
         },
         {
             "name": "Large Exp",

@@ -1,3 +1,5 @@
+import logging
+
 import pandas as pd
 import rpy2.robjects as ro
 
@@ -5,7 +7,9 @@ from utils.clustering import Cluster
 from utils.data_loader import (
     all_covariates,
     get_covariates,
+    get_numerical_covariates,
     load_data,
+    to_r_dataframe,
     yearly_data_as_timeseries,
 )
 from utils.models import Model
@@ -15,9 +19,7 @@ from utils.visualize import WeeklyClustering, plot_clustering, trace_plots
 
 def main():
     data = load_data()
-    cov_rdf = get_covariates(data)
     pm25_timeseries = yearly_data_as_timeseries(data)
-
     salso_args = {"loss": "binder", "maxNCluster": 0}
 
     sppm_args = {
@@ -35,7 +37,7 @@ def main():
         "meanModel": 1,
         "cohesion": 1,
         "M": 2,
-        "PPM": True,  # use covariates if FALSE -> supply X
+        "PPM": False,  # use covariates if FALSE -> supply X
         "similarity_function": 1,
         "consim": 1,
         "calibrate": 0,
@@ -68,7 +70,7 @@ def main():
         "thin": 10,
     }
 
-    num_weeks = 53
+    num_weeks = 3
 
     model = Model("sppm", sppm_args, uses_weekly_data=True)
     model = Model("gaussian_ppmx", gaussian_ppmx_args, uses_weekly_data=True)
@@ -77,10 +79,6 @@ def main():
     all_results: list[ModelPerformance] = []
 
     model_result = ModelPerformance(name=model.name)
-    database = pd.DataFrame(
-        columns=["IDStations", "Latitude", "Longitude", "AQ_pm25", "week", "label"],
-        index=["IDStations"],
-    )
 
     for model_params in model.yield_test_cases():
         if model.uses_weekly_data:
@@ -88,10 +86,17 @@ def main():
 
             weekly_results = []
             for week in range(1, num_weeks):
+                logging.info("Week {}/{}".format(week, num_weeks))
                 week_data = data[data["Week"] == week]
 
+                week_cov_rdf = get_covariates(
+                    week_data.copy().drop(columns=["Week"]),
+                    as_r_df=True,
+                    only_numerical=False,
+                )
+
                 model_args = model_params | model.load_model_specific_data(
-                    week_data, covariates=cov_rdf, model_params=model_params
+                    week_data, covariates=week_cov_rdf, model_params=model_params
                 )
                 res_cluster, time_needed = Cluster.cluster(
                     model=model.name, **model_args
@@ -111,7 +116,7 @@ def main():
 
                 # save the results for performance evaluation
                 weekly_results.append(weekly_res)
-            plot_clustering(weekly_clustering)
+            plot_clustering(weekly_clustering, method_name=model.name)
 
             # aggregate the performance metrics
             yearly_result = YearlyPerformance(

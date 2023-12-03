@@ -13,8 +13,12 @@ nobs = 100
 
 # Response variable (y)
 y = np.random.normal(0, 1, nobs)
-
 v = ro.FloatVector(y)
+
+n_cov = 10
+X_py = np.random.normal(0, 20, size=(nobs, n_cov))
+X = ro.r["matrix"](ro.FloatVector(X_py), nrow=int(nobs), ncol=n_cov)
+
 
 # Spatial coordinates (s1, s2)
 s = np.random.uniform(0, 10, nobs * 2)
@@ -36,11 +40,11 @@ sppm_args = {
 }
 gaussian_ppmx_args = {
     "y": v,
-    # "X": None,
+    "X": X,
     "meanModel": 1,
     "cohesion": 1,
     "M": 2,
-    "PPM": True,  # use covariates if FALSE -> supply X
+    "PPM": False,  # use covariates if FALSE -> supply X
     "similarity_function": 1,
     "consim": 1,
     "calibrate": 0,

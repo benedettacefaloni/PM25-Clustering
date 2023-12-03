@@ -4,6 +4,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import rpy2.robjects as ro
+from rpy2.robjects import pandas2ri
+from rpy2.robjects.conversion import localconverter
 
 data_path = os.path.join(
     Path(__file__).parent.parent.parent, "data/dataset_{}_cleaned.csv"
@@ -60,12 +62,33 @@ categorical_covariates = [
     "LA_soil_use",
 ]
 
+ordinal_categorical_covariates = [
+    "WE_precipitation_t",
+    "LA_land_use",
+    "LA_soil_use",
+]
+
+
+def get_numerical_covariates():
+    return [x for x in all_covariates if x not in categorical_covariates]
+
 
 def load_data(
     year: int = 2019,
     week: int = None,
 ) -> pd.DataFrame:
     data = pd.read_csv(data_path.format(year))
+    for col in ordinal_categorical_covariates:
+        data[col] = data[col].astype(str, copy=True)
+    # transform non-numerical values into categorical values
+    for col_name in categorical_covariates:
+        data[col_name] = data[col_name].astype("category")
+
+    # TODO: impute missing data
+    # data = data.fillna(0.0)
+    data = data.fillna(data.mode().iloc[0])  # not an appropriate solution
+
+    # data = data.dropna(axis=0, how="any")
     data["Time"] = pd.to_datetime(data["Time"])
 
     if week is not None:
@@ -78,9 +101,12 @@ def get_covariates(
     normalize_numerical: bool = True,
     as_r_df: bool = True,
     ignore_cols: list[str] = None,
+    only_numerical: bool = False,
 ):
     if normalize_numerical:
         data = _normalize_numerical_attributes(data, ignore_cols=ignore_cols)
+    if only_numerical:
+        data = data[get_numerical_covariates()]
 
     if not as_r_df:
         return data
@@ -91,10 +117,8 @@ def _normalize_numerical_attributes(
     data: pd.DataFrame, ignore_cols: list[str] = None
 ) -> pd.DataFrame:
     """Mean zero and SD one for all numerical attributes"""
-    data = data[all_covariates].copy()
-    numerical_covariates = [
-        col for col in all_covariates if col not in categorical_covariates
-    ]
+    data = data[all_covariates]
+    numerical_covariates = get_numerical_covariates()
     data[numerical_covariates] = (
         data[numerical_covariates] - data[numerical_covariates].mean()
     ) / data[numerical_covariates].std()
@@ -123,22 +147,23 @@ def to_r_dataframe(
     if types_of_cols is None:
         types_of_cols = _get_types_of_cols(data)
 
-    with (ro.default_converter + ro.pandas2ri.converter).context():
-        r_df = ro.conversion.get_conversion().py2rpy(data)
+    # with (ro.default_converter + ro.pandas2ri.converter).context():
+    #     r_df = ro.conversion.get_conversion().py2rpy(data)
+    with localconverter(ro.default_converter + pandas2ri.converter):
+        r_df = ro.conversion.py2rpy(data)
 
     # convert the columns correctly:
     # - "factor" for categorical attributes
     # - "numeric" for floats
-    for idx, col_class in enumerate(types_of_cols.values()):
-        r_df[idx] = ro.r[col_class](r_df[idx])
-
+    for idx, name in enumerate(r_df.names):
+        r_df[idx] = ro.r[types_of_cols[name]](r_df[idx])
     return r_df
 
 
 def _get_types_of_cols(data: pd.DataFrame):
     """R types for each column."""
-
-    available_cov = list(data.columns)
+    # ignore e.g. week column
+    available_cov = [col for col in list(data.columns) if col in all_covariates]
     numerical_covariates = [
         col for col in available_cov if col not in categorical_covariates
     ]
