@@ -39,8 +39,8 @@ Backlog:
     - [DONE] sizes of clusters
         - number of singleton clusters
         - min, max, avg, median size
-    - Error in the drpm model:
-        - results and evaluation
+    - [Done] Error in the drpm model:
+        - [Done] results and evaluation
     - [Done] error in gaussian_ppmx --> covariates
     - [Done] covariate transformation
     - [Done] clean up the main file
