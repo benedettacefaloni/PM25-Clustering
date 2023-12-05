@@ -53,11 +53,15 @@ Backlog:
 
 
 Backlog:
-- Evaluation:
+- Evaluation Criteria:
     - max. distance between two stations in the same cluster, max difference
         of pm2.5 values inside a cluster
     - Plot the number of clusters for different models over time in a grid-wise fashion
     - Finish evaluation: table creation
+- Evaluation:
+    - test different models
+    - plot and analyze results
+    - tune prior params
 
 - Prior parameter choice?
     - SPPM:
@@ -108,6 +112,6 @@ Backlog:
 Backlog:
 - Salso Package: give short insights about the models idea
 - Give theoretical details about the evaluation criteria used in the report, indicate if higher/lower is better (always in brackets)
-    - e.g. MSE = mean squared error (lower is better)
+    - e.g. MSE = mean squared error (lower is better), WAIC, LPML
 - Cite R packages
 - Is it allowed to use pm10 as a covariate?
