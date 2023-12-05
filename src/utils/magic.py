@@ -3,12 +3,22 @@ import time
 from datetime import timedelta
 from functools import partial, wraps
 
+import numpy as np
+import rpy2.robjects as ro
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s.%(msecs)03d %(levelname)s: %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger()
+
+
+def set_r_python_seed(seed: int = 123):
+    np.random.seed(seed)
+    r = ro.r
+    set_seed = r("set.seed")
+    set_seed(seed)
 
 
 def log_time(func=None, get_time: bool = True, time_in_mins: bool = False):

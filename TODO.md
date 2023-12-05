@@ -39,22 +39,25 @@ Backlog:
     - [DONE] sizes of clusters
         - number of singleton clusters
         - min, max, avg, median size
-    - max. distance between two stations in the same cluster
-    - plot the number of clusters for different models over time in a grid-wise fashion
-
-- Manual checking
-    - [Done] Plot clusters with a map
-    - Switching of a single station
+    - Error in the drpm model:
+        - results and evaluation
+    - [Done] error in gaussian_ppmx --> covariates
+    - [Done] covariate transformation
+    - [Done] clean up the main file
+    - extract the param dicts into a separate file?
+    - Manual checking
+        - [Done] Plot clusters with a map
+        - Switching of a single station
 
 - [Done] General framework for automatic evaluation
 
-- Next steps 30.11.2023:
-    - error in the drpm model
-    - error in gaussian_ppmx --> covariates
-    - [Done] covariate transformation
+
+Backlog:
+- Evaluation:
+    - max. distance between two stations in the same cluster, max difference
+        of pm2.5 values inside a cluster
+    - Plot the number of clusters for different models over time in a grid-wise fashion
     - Finish evaluation: table creation
-    - [Done] clean up the main file
-    - extract the param dicts into a separate file
 
 - Prior parameter choice?
     - SPPM:

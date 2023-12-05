@@ -12,17 +12,21 @@ from utils.data_loader import (
     to_r_dataframe,
     yearly_data_as_timeseries,
 )
+from utils.magic import set_r_python_seed
 from utils.models import Model
 from utils.results import Analyse, ModelPerformance, YearlyPerformance
 from utils.visualize import (
     WeeklyClustering,
+    YearlyClustering,
     param_distribution,
     plot_clustering,
+    plot_weekly_clustering_kpi_overview,
     trace_plots,
 )
 
 
 def main():
+    set_r_python_seed()
     data = load_data()
     pm25_timeseries = yearly_data_as_timeseries(data)
     salso_args = {"loss": "binder", "maxNCluster": 0}
@@ -77,9 +81,9 @@ def main():
 
     num_weeks = 3
 
-    model = Model("sppm", sppm_args, uses_weekly_data=True)
+    # model = Model("sppm", sppm_args, uses_weekly_data=True)
     # model = Model("gaussian_ppmx", gaussian_ppmx_args, uses_weekly_data=True)
-    # model = Model("drpm", drpm_args, uses_weekly_data=False),
+    model = Model("drpm", drpm_args, uses_weekly_data=False)
 
     all_results: list[ModelPerformance] = []
 
@@ -87,7 +91,7 @@ def main():
 
     for model_params in model.yield_test_cases():
         if model.uses_weekly_data:
-            weekly_clustering = WeeklyClustering()
+            save_to_visualize_cluster = WeeklyClustering()
 
             weekly_results = []
             for week in range(1, num_weeks):
@@ -116,14 +120,14 @@ def main():
                 )
 
                 # save the results for visualization
-                weekly_clustering.add_week(
+                save_to_visualize_cluster.add_week(
                     week_number=week, weekly_data=week_data, weekly_res=weekly_res
                 )
 
                 # save the results for performance evaluation
                 weekly_results.append(weekly_res)
-            plot_clustering(weekly_clustering, method_name=model.name)
 
+            plot_clustering(save_to_visualize_cluster, method_name=model.name)
             # aggregate the performance metrics
             yearly_result = YearlyPerformance(
                 config=model_params, weekly_results=weekly_results
@@ -132,18 +136,24 @@ def main():
         else:
             # use yearly data
             model_args = model_params | model.load_model_specific_data(
-                data=data, yearly_time_series=pm25_timeseries
+                data=data, yearly_time_series=pm25_timeseries, model_params=model_params
             )
             res_cluster, time_needed = Cluster.cluster(model=model.name, **model_args)
             yearly_result = YearlyPerformance(
                 config=model_params,
-                yearly_result=Analyse.analyze_yearly_performance(
+                yearly_result_decomposed=Analyse.analyze_yearly_performance(
                     py_res=res_cluster,
                     target=pm25_timeseries,
                     time_needed=time_needed,
                     salso_args=salso_args,
                 ),
             )
+            save_to_visualize_cluster = YearlyClustering(
+                yearly_decomposed_result=yearly_result, data=data
+            )
+            plot_weekly_clustering_kpi_overview(yearly_result=yearly_result)
+            plot_clustering(save_to_visualize_cluster, method_name=model.name)
+
         model_result.add_testcase(yearly_result=yearly_result)
     all_results.append(model_result)
 

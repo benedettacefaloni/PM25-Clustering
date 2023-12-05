@@ -8,16 +8,44 @@ salso = rpackages.importr("salso")
 
 # TODO:
 # - find out if lower/higher is better
+# available values to analyze
+kpis = [
+    "lpml",
+    "waic",
+    "time",
+    # maybe yearly
+    "mse",
+    "n_singletons",
+    "n_clusters",
+    "max_cluster_size",
+    "min_cluster_size",
+    "mean_cluster_size",
+    "mode_cluster_size",
+]
+
+# how to evaluate a weekly clustering
+cluster_size_weekly_kpi = {
+    "n_singletons": lambda unique, counts: counts[counts == 1].shape[0],
+    "n_clusters": lambda unique, counts: unique.shape[0],
+    "max_cluster_size": lambda unique, counts: np.max(counts),
+    "min_cluster_size": lambda unique, counts: np.min(counts),
+    "mean_cluster_size": lambda unique, counts: np.mean(counts),
+    "mode_cluster_size": lambda unique, counts: np.median(counts),
+}
+# how to aggregate from weekly to yearly
 agg_mapping = {
     "lpml": max,
     "waic": max,
     "time": np.sum,
     # maybe yearly
-    "MSE": max,
-    "n_singleton": max,
+    "mse": max,
+    "n_singletons": np.max,
     "n_clusters": np.average,
-    "n_clusters_max": max,
-    "n_clusters_min": min,
+    "max_cluster_size": np.max,
+    "min_cluster_size": np.min,
+    # TODO: check this
+    "mean_cluster_size": np.max,
+    "mode_cluster_size": np.max,
 }
 
 
@@ -26,16 +54,29 @@ class YearlyPerformance:
         self,
         config: dict,
         weekly_results: list = None,
-        yearly_result: dict = None,
+        yearly_result_decomposed: dict = None,
     ):
         self.config = config
 
         if weekly_results is not None:
-            self.yearly = self.aggegrate_weekly_to_yearly(weekly_results)
+            self.list_of_weekly = self.combine_weekly_to_yearly(weekly_results)
         else:
-            self.yearly = yearly_result
+            self.list_of_weekly = yearly_result_decomposed
 
-    def aggegrate_weekly_to_yearly(self, weekly_results):
+    def combine_weekly_to_yearly(self, weekly_results: list) -> dict:
+        res = {}
+        # aggregated values
+        for key in kpis.keys():
+            res[key] = np.array([week[key] for week in weekly_results])
+
+        # partition has the shape (n_timesteps, n_stations), i.e. each row is a partition per timestep
+        res["partition"] = np.array(
+            [week["salso_partition"] for week in weekly_results]
+        )
+
+        return res
+
+    def aggegrate_weekly_to_yearly(self, weekly_results: list) -> dict:
         """
         Aggregate the weekly data (dict each) into yearly values.
         Decide for each attribute how to aggregate.
@@ -82,8 +123,9 @@ class Analyse:
         analysis = {}
         analysis["lpml"] = py_res["lpml"]
         analysis["waic"] = py_res["WAIC"]
-        analysis["MSE"] = MSE(
+        analysis["mse"] = MSE(
             target=np.array(target),
+            # we use the mean of the MCMC samples to estimate the prediction value
             prediction=py_res[get_fitted_attr_name(model_name=model_name)].mean(axis=0),
             axis=0,
         )
@@ -99,12 +141,8 @@ class Analyse:
 
         unique, counts = np.unique(salso_partion, return_counts=True)
 
-        analysis["n_singleton"] = counts[counts == 1].shape[0]
-        analysis["n_clusters"] = unique.shape[0]
-        analysis["n_clusters_max"] = max(counts)
-        analysis["n_clusters_min"] = min(counts)
-        analysis["n_clusters_avg"] = np.mean(counts)
-        analysis["n_clusters_mode"] = np.median(counts)
+        for key, lam_eval in cluster_size_weekly_kpi.items():
+            analysis[key].append(lam_eval(unique=unique, counts=counts))
 
         analysis["time"] = time_needed
         return analysis
@@ -125,12 +163,12 @@ class Analyse:
         # analyse the partitions for each week since salso cannot handle tensors
         SI_np = np.array(py_res["Si"])
 
-        # weekly MSE
-        mse = list(
-            MSE(target=target, prediction=py_res["fitted"].mean(axis=2).T, axis=0)
+        # weekly MSE, shape (n_weeks, n_stations)
+        analysis["mse"] = MSE(
+            target=target, prediction=py_res["fitted"].mean(axis=2).T, axis=0
         )
 
-        # TODO: sth. does not work here
+        num_weeks = SI_np.shape[0]
         analysis["partition"] = np.array(
             [
                 np.array(
@@ -139,16 +177,20 @@ class Analyse:
                         **salso_args,
                     )
                 )
-                for week in range(SI_np.shape[0])
+                for week in range(num_weeks)
             ]
         )
 
-        # apply along the zero-th (time)-axis
-        unique, counts = np.unique(analysis["partition"], axis=0, return_counts=True)
+        # decompose the yearly clustering into weekly chunks for detailed analysis
+        for kpi in cluster_size_weekly_kpi.keys():
+            analysis[kpi] = []
 
-        # TODO: evaluate the result
-        # use the mapping above --> make it global
-
+        for week in range(num_weeks):
+            unique, counts = np.unique(
+                analysis["partition"][week, :], return_counts=True
+            )
+            for key, lam_eval in cluster_size_weekly_kpi.items():
+                analysis[key].append(lam_eval(unique=unique, counts=counts))
         return analysis
 
 

@@ -7,6 +7,7 @@ from rpy2.robjects import pandas2ri
 from utils import Cluster
 from utils.clustering import convert_to_dict
 from utils.data_loader import to_r_matrix
+from utils.magic import set_r_python_seed
 
 # Activate automatic conversion of pandas objects to R objects
 # pandas2ri.activate()
@@ -17,8 +18,12 @@ salso = rpackages.importr("salso")
 
 import numpy as np
 
-# Set the seed for reproducibility
-np.random.seed(123)
+set_r_python_seed()
+# # Set the seed for reproducibility
+# np.random.seed(123)
+# r = ro.r
+# set_seed = r("set.seed")
+# set_seed(123)
 
 # Number of observations
 nobs = 10
@@ -35,6 +40,8 @@ y = (
             8.895393,
             6.557058,
             2.891597,
+            6.9070528,
+            7.584595,
             7.883051,
             0.455565,
             4.566147,
@@ -43,6 +50,8 @@ y = (
             6.928034,
             7.085305,
             1.471136,
+            7.9546742,
+            2.164079,
             4.089769,
             5.281055,
             9.568333,
@@ -51,6 +60,8 @@ y = (
             6.405068,
             5.440660,
             9.630242,
+            0.2461368,
+            3.181810,
             8.830174,
             8.924190,
             4.533342,
@@ -59,20 +70,14 @@ y = (
             9.942698,
             5.941420,
             9.022990,
-            6.9070528,
-            7.584595,
-            7.9546742,
-            2.164079,
-            0.2461368,
-            #
             4.7779597,
-            3.181810,
             2.316258,
         ]
     )
-    .reshape((nstations, nobs))
+    .reshape(nstations, nobs)
     .T
 )
+
 
 s = (
     np.array(
@@ -148,18 +153,23 @@ py_res = convert_to_dict(drpm.drpm_fit(**r_data_test))
 
 salso_args: dict = {"loss": "binder", "maxNCluster": 0}
 salso_partion = np.array(
-    salso.salso(
-        to_r_matrix(py_res["Si"]),
-        **salso_args,
-    )
+    [
+        salso.salso(
+            to_r_matrix(py_res["Si"][time_step, :, :].T),
+            **salso_args,
+        )
+        for time_step in range(nobs)
+    ]
 )
-print(salso_partion)
+# print(salso_partion)
 print(py_res.keys())
 print(py_res["Si"])
 print(py_res["fitted"])
+print("Evaluation: lplm = {}, waic = {}".format(py_res["lpml"], py_res["waic"]))
 print(np.min(py_res["Si"]))
 print(np.max(py_res["Si"]))
 print("worked")
+print(salso_partion)
 # Call the simplified drpm_fit function
 # result = drpm_fit(**r_data_test)
 """Object attributes are

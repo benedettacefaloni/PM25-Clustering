@@ -1,3 +1,4 @@
+import itertools
 import os
 from pathlib import Path
 
@@ -9,8 +10,27 @@ import plotly_express as px
 import seaborn as sns
 from tabulate import tabulate
 
+from utils.results import YearlyPerformance, cluster_size_weekly_kpi
+
 report_path = os.path.join(Path(__file__).parent.parent.parent, "report/")
 from abc import ABC
+
+visualize_clustering_cols = [
+    "IDStations",
+    "Latitude",
+    "Longitude",
+    "Altitude",
+    "AQ_pm25",
+    "Week",
+    "Cluster",
+]
+select_from_data = [
+    "IDStations",
+    "Latitude",
+    "Longitude",
+    "Altitude",
+    "AQ_pm25",
+]
 
 
 class VisualizeClustering(ABC):
@@ -19,41 +39,45 @@ class VisualizeClustering(ABC):
 
 
 class YearlyClustering(VisualizeClustering):
-    def __init__(self, yearly_result):
-        # TODO: transform
-        pass
+    def __init__(
+        self,
+        data: pd.DataFrame,
+        yearly_decomposed_result: YearlyPerformance,
+    ):
+        weekly_partitions = yearly_decomposed_result.list_of_weekly["partition"]
+        self.database = data[data["Week"] == 1][select_from_data].copy()
+        self.database["Cluster"] = pd.Series(weekly_partitions[0])
+        self.database["Week"] = 1
+
+        for week_number in range(1, len(weekly_partitions)):
+            week_data_with_labels = data[data["Week"] == week_number + 1][
+                select_from_data
+            ].copy()
+            week_data_with_labels["Cluster"] = pd.Series(weekly_partitions[week_number])
+            week_data_with_labels["Week"] = week_number + 1
+            self.database = pd.concat(
+                [self.database, week_data_with_labels], ignore_index=True
+            )
 
     def get_data(self):
-        # TODO: get result
-        pass
+        return self.database
 
 
 class WeeklyClustering(VisualizeClustering):
     def __init__(self):
         self.database = pd.DataFrame(
-            columns=[
-                "IDStations",
-                "Latitude",
-                "Longitude",
-                "AQ_pm25",
-                "week",
-                "cluster",
-            ],
+            columns=visualize_clustering_cols,
             index=["IDStations"],
         )
 
     def add_week(
         self, week_number: int, weekly_data: pd.DataFrame, weekly_res: pd.DataFrame
     ):
-        week_data_with_labels = (
-            weekly_data[["IDStations", "Latitude", "Longitude", "AQ_pm25"]]
-            .copy()
-            .reset_index()
-        )
-        week_data_with_labels["cluster"] = pd.Series(
+        week_data_with_labels = weekly_data[select_from_data].copy().reset_index()
+        week_data_with_labels["Cluster"] = pd.Series(
             weekly_res["salso_partition"]
         ).astype(str)
-        week_data_with_labels["week"] = week_number
+        week_data_with_labels["Week"] = week_number
         self.database = pd.concat(
             [self.database, week_data_with_labels], ignore_index=True
         )
@@ -62,10 +86,10 @@ class WeeklyClustering(VisualizeClustering):
         return self.database.iloc[1:]
 
 
-def plot_clustering(weekly_clustering: WeeklyClustering, method_name: str = ""):
-    data = weekly_clustering.get_data()
+def plot_clustering(visualize_clustering: VisualizeClustering, method_name: str = ""):
+    data = visualize_clustering.get_data()
 
-    n_colors = int(data["cluster"].max())
+    n_colors = int(data["Cluster"].max())
     colors = generate_color_palette(n_colors)
 
     fig = px.scatter_mapbox(
@@ -73,11 +97,11 @@ def plot_clustering(weekly_clustering: WeeklyClustering, method_name: str = ""):
         lat="Latitude",
         lon="Longitude",
         hover_name="IDStations",
-        hover_data="AQ_pm25",
+        hover_data=["AQ_pm25", "Altitude"],
         size="AQ_pm25",
-        color="cluster",
-        animation_frame="week",
-        animation_group="cluster",
+        color="Cluster",
+        animation_frame="Week",
+        animation_group="Cluster",
         zoom=7.3,
         color_discrete_map=colors,
         title="Weekly-based clustering of PM2.5 data using {} model.".format(
@@ -89,12 +113,21 @@ def plot_clustering(weekly_clustering: WeeklyClustering, method_name: str = ""):
     fig.show()
 
 
+def generate_marker_styles_palette():
+    markers = itertools.cycle(
+        ["o", "s", "*", "v", "^", "D", "h", "x", "+", "8", "p", "<", ">", "d", "H"]
+    )
+    styles = itertools.cycle(["-", "--", "-.", ":"])
+    return markers, styles
+
+
+def _n_colors(n):
+    return list(sns.color_palette("Set1", n_colors=n).as_hex())
+
+
 def generate_color_palette(n):
     # Use the Set1 color palette from ColorBrewer
-    return {
-        str(idx + 1): str(col)
-        for idx, col in enumerate(sns.color_palette("Set1", n_colors=n).as_hex())
-    }
+    return {str(idx + 1): str(col) for idx, col in enumerate(_n_colors(n))}
 
 
 def param_distribution(res: dict, model_name: str):
@@ -137,7 +170,6 @@ def trace_plots(res: dict, model: str):
         to_analyse = ["mu", "sig2", "mu0", "sig20"]
     elif model == "gaussian_ppmx":
         to_analyse = ["mu", "sig2", "mu0", "sig20"]
-        raise NotImplementedError
     elif model == "drpm":
         raise NotImplementedError
     else:
@@ -168,5 +200,26 @@ def trace_plots(res: dict, model: str):
     plt.show()
 
 
+def plot_weekly_clustering_kpi_overview(yearly_result: YearlyPerformance):
+    weeks = np.arange(1, 53, step=1)
+    # markers, styles = generate_marker_styles_palette()
+    # colors = _n_colors(len(cluster_size_weekly_kpi.keys()))
+
+    for idx, kpi_name in enumerate(cluster_size_weekly_kpi.keys()):
+        plt.plot(
+            weeks,
+            yearly_result.list_of_weekly[kpi_name],
+            label=kpi_name,
+            # color=colors[idx],
+            # marker=next(markers),
+            # linestyle=next(styles),
+        )
+    plt.xlabel("Weeks")
+    plt.legend(loc="upper right")
+    plt.title("Weekly Clustering")
+    plt.show()
+
+
 def experiment_to_table(filename: str, path: str = report_path):
+    # TODO
     pass
