@@ -15,37 +15,100 @@ from utils.data_loader import to_r_matrix
 drpm = rpackages.importr("drpm")
 salso = rpackages.importr("salso")
 
+import numpy as np
+
+# Set the seed for reproducibility
+np.random.seed(123)
+
+# Number of observations
+nobs = 10
+nstations = 4
+
+y = (
+    np.array(
+        [
+            2.875775,
+            9.404673,
+            5.514350,
+            6.775706,
+            2.4608773,
+            8.895393,
+            6.557058,
+            2.891597,
+            7.883051,
+            0.455565,
+            4.566147,
+            5.726334,
+            0.4205953,
+            6.928034,
+            7.085305,
+            1.471136,
+            4.089769,
+            5.281055,
+            9.568333,
+            1.029247,
+            3.2792072,
+            6.405068,
+            5.440660,
+            9.630242,
+            8.830174,
+            8.924190,
+            4.533342,
+            8.998250,
+            9.5450365,
+            9.942698,
+            5.941420,
+            9.022990,
+            6.9070528,
+            7.584595,
+            7.9546742,
+            2.164079,
+            0.2461368,
+            #
+            4.7779597,
+            3.181810,
+            2.316258,
+        ]
+    )
+    .reshape((nstations, nobs))
+    .T
+)
+
+s = (
+    np.array(
+        [
+            8.568001,
+            9.146685,
+            24.872780,
+            8.328364,
+            24.823460,
+            13.982046,
+            22.130727,
+            27.957747,
+        ]
+    )
+    .reshape((nstations, 2))
+    .T
+)
+
+# Create a matrix from y_test
+# y_test = np.random.uniform(0, 10, size=(nstations, nobs))
+# print(y_test)
+
+# # Spatial coordinates (s1, s2)
+# s = np.random.uniform(0, 60, size=(nstations, 2))
+# print(s)
+
+
 # Simplify the call to the drpm_fit function
 drpm_fit = drpm.drpm_fit
 
-n_obs = 10
 
-# Response variable (y)
-n_stations = 10
-n_timesteps = 3
+# print("y_test.shape = ", y_test.shape)
+# print(y_test.shape)
 
-# y_test = np.random.uniform(0, 1, size=(n_stations, n_obs))
-
-y_test = np.zeros((n_stations, n_obs))
-
-for i in range(n_stations):
-    y_test[i, :] = np.linspace(i * 10, i * 10 + 10, n_obs)
-
-s = np.random.uniform(low=20, high=60, size=(n_stations, 2))
-print("s = ", s)
-# s = np.array(
-#     [
-#         [46.1678524, 9.87920992],
-#         [16.1678524, 0.87920992],
-#     ]
-# )
-
-# y_test = [1, 1, 1, 2, 2, 2]
-
-print("y_test.shape = ", y_test.shape)
-print(y_test.shape)
-v = ro.FloatVector(y_test.flatten())
-m = ro.r["matrix"](v, nrow=n_stations)
+v = ro.FloatVector(y.flatten())
+m = ro.r["matrix"](v, nrow=nstations)
 print("m = ")
 print(type(m))
 print(m)
@@ -61,7 +124,7 @@ r_data_test = {
     "y": m,
     "s_coords": s_coords,
     "M": 2,
-    "starting_alpha": 1,
+    "starting_alpha": 0.1,
     "unit_specific_alpha": False,
     "time_specific_alpha": False,
     "alpha_0": False,
@@ -93,6 +156,9 @@ salso_partion = np.array(
 print(salso_partion)
 print(py_res.keys())
 print(py_res["Si"])
+print(py_res["fitted"])
+print(np.min(py_res["Si"]))
+print(np.max(py_res["Si"]))
 print("worked")
 # Call the simplified drpm_fit function
 # result = drpm_fit(**r_data_test)

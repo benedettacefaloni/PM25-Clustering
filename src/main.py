@@ -14,7 +14,12 @@ from utils.data_loader import (
 )
 from utils.models import Model
 from utils.results import Analyse, ModelPerformance, YearlyPerformance
-from utils.visualize import WeeklyClustering, plot_clustering, trace_plots
+from utils.visualize import (
+    WeeklyClustering,
+    param_distribution,
+    plot_clustering,
+    trace_plots,
+)
 
 
 def main():
@@ -73,7 +78,7 @@ def main():
     num_weeks = 3
 
     model = Model("sppm", sppm_args, uses_weekly_data=True)
-    model = Model("gaussian_ppmx", gaussian_ppmx_args, uses_weekly_data=True)
+    # model = Model("gaussian_ppmx", gaussian_ppmx_args, uses_weekly_data=True)
     # model = Model("drpm", drpm_args, uses_weekly_data=False),
 
     all_results: list[ModelPerformance] = []
@@ -101,6 +106,7 @@ def main():
                 res_cluster, time_needed = Cluster.cluster(
                     model=model.name, **model_args
                 )
+                param_distribution(res_cluster, model.name)
                 weekly_res = Analyse.analyze_weekly_performance(
                     py_res=res_cluster,
                     target=week_data["log_pm25"],

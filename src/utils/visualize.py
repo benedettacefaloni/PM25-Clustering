@@ -97,6 +97,41 @@ def generate_color_palette(n):
     }
 
 
+def param_distribution(res: dict, model_name: str):
+    if model_name == "sppm":
+        to_analyse = ["mu", "sig2", "mu0", "sig20"]
+    elif model_name == "gaussian_ppmx":
+        to_analyse = ["mu", "sig2", "mu0", "sig20"]
+        raise NotImplementedError
+    elif model_name == "drpm":
+        raise NotImplementedError
+    else:
+        raise NotImplementedError
+    n_trace_plots = len(to_analyse)
+
+    nrows = n_trace_plots
+    ncols = 2
+
+    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(12, 8))
+
+    for i, param_name in enumerate(to_analyse):
+        axes[i, 0].plot(res[param_name])
+        axes[i, 1].hist(res[param_name], density=True)
+
+        # labels and plotting
+        axes[i, 0].set_title("Trace Plot for {}".format(param_name))
+        axes[i, 0].set_xlabel("MCMC samples")
+        # axes[i, 0].set_ylabel("Trace Plot")
+
+        axes[i, 0].set_title("Density for {}".format(param_name))
+        # axes[i, 0].set_ylabel("")
+        # axes[i, 0].set_ylabel("Trace Plot")
+
+    plt.tight_layout()
+    plt.suptitle("Trace plots for {} model".format(model_name))
+    plt.show()
+
+
 def trace_plots(res: dict, model: str):
     if model == "sppm":
         to_analyse = ["mu", "sig2", "mu0", "sig20"]

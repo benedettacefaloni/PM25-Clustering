@@ -29,6 +29,18 @@ library(devtools)
 install_github("https://github.com/gpage2990/drpm")
 ```
 
+or install it directly in python
+```python
+from rpy2.robjects.packages import importr
+
+utils = importr('utils')
+utils.install_packages("devtools") # select appropriate mirror, e.g. 37
+utils.install_packages("ppmSuite")
+
+dev = importr("devtools")
+dev.install_github("https://github.com/gpage2990/drpm")
+```
+
 [Github-site](https://github.com/gpage2990/drpm) of the package
 
 # Use the provided software
