@@ -79,11 +79,11 @@ def main():
         "thin": 10,
     }
 
-    num_weeks = 3
+    num_weeks = 53
 
-    # model = Model("sppm", sppm_args, uses_weekly_data=True)
+    model = Model("sppm", sppm_args, uses_weekly_data=True)
     # model = Model("gaussian_ppmx", gaussian_ppmx_args, uses_weekly_data=True)
-    model = Model("drpm", drpm_args, uses_weekly_data=False)
+    # model = Model("drpm", drpm_args, uses_weekly_data=False)
 
     all_results: list[ModelPerformance] = []
 
@@ -110,7 +110,6 @@ def main():
                 res_cluster, time_needed = Cluster.cluster(
                     model=model.name, **model_args
                 )
-                param_distribution(res_cluster, model.name)
                 weekly_res = Analyse.analyze_weekly_performance(
                     py_res=res_cluster,
                     target=week_data["log_pm25"],
@@ -123,6 +122,8 @@ def main():
                 save_to_visualize_cluster.add_week(
                     week_number=week, weekly_data=week_data, weekly_res=weekly_res
                 )
+                # plot the param distribution: trace plots and histograms
+                # param_distribution(res_cluster, model.name)
 
                 # save the results for performance evaluation
                 weekly_results.append(weekly_res)

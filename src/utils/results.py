@@ -140,6 +140,9 @@ class Analyse:
         analysis["salso_partition"] = salso_partion
 
         unique, counts = np.unique(salso_partion, return_counts=True)
+        # init the results and fill with evaluation function
+        for key in cluster_size_weekly_kpi.keys():
+            analysis[key] = []
 
         for key, lam_eval in cluster_size_weekly_kpi.items():
             analysis[key].append(lam_eval(unique=unique, counts=counts))
