@@ -1,6 +1,3 @@
-# Do not upload data files
-./data/Agrimonia_Dataset_v_2_0_2.csv
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -472,3 +469,4 @@ TSWLatexianTemp*
 # option is specified. Footnotes are the stored in a file with suffix Notes.bib.
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
+data/Agrimonia_Dataset_v_2_0_2.csv
