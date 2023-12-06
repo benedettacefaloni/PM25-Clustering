@@ -30,9 +30,6 @@ def python_to_latex(
         cols_to_min=cols_to_min,
     )
 
-    # df.columns = [col.replace("_", "-") for col in df.columns]
-    # df = df.set_index("direction").transpose()
-    print(df)
     content = df.to_latex(
         index=show_index,
         escape=False,

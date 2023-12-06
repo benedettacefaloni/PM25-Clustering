@@ -18,11 +18,11 @@ all_covariates = [
     "AQ_pm10",
     # "AQ_pm25", # target variable?
     # "log_pm25", # target variable?
-    "AQ_co",
-    "AQ_nh3",
+    # "AQ_co", # dropped
+    # "AQ_nh3", # dropped
     "AQ_nox",
     "AQ_no2",
-    "AQ_so2",
+    # "AQ_so2", #dropped
     "WE_temp_2m",
     "WE_wind_speed_10m_mean",
     "WE_wind_speed_10m_max",
@@ -51,7 +51,7 @@ all_covariates = [
     "LA_hvi",
     "LA_lvi",
     "LA_land_use",
-    "LA_soil_use",
+    # "LA_soil_use",  #dropped
 ]
 
 categorical_covariates = [
@@ -59,13 +59,12 @@ categorical_covariates = [
     "WE_precipitation_t",
     "WE_mode_wind_direction_100m",
     "LA_land_use",
-    "LA_soil_use",
+    # "LA_soil_use",  #dropped
 ]
 
 ordinal_categorical_covariates = [
     "WE_precipitation_t",
     "LA_land_use",
-    "LA_soil_use",
 ]
 
 

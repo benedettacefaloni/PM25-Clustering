@@ -54,7 +54,7 @@ Backlog:
 - Evaluation Criteria:
     - [Done] max. distance between two stations in the same cluster, max difference
         of pm2.5 values inside a cluster
-    - Plot the number of clusters for different models over time in a grid-wise fashion
+    - [Done] Plot the number of clusters for different models over time in a grid-wise fashion
     each value in different plot with all models (e.g. 2x3 grid)
     - [Done] Finish evaluation: table creation
 - Evaluation:

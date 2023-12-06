@@ -207,9 +207,31 @@ def trace_plots(res: dict, model: str):
     plt.show()
 
 
+def compare_clustering_methods(
+    models_yearly: list[YearlyPerformance],
+    model_names: list[str],
+    num_weeks: int = 52,
+) -> None:
+    fig, axes = plt.subplots(nrows=2, ncols=6, figsize=(12, 8))
+    weeks = np.arange(1, num_weeks + 1, step=1)
+
+    for idx, kpi_name in enumerate(cluster_size_weekly_kpi.keys()):
+        ax = axes[int(idx % 3), int(idx % 2)]
+        for method_name, method in zip(model_names, models_yearly):
+            ax.plot(
+                weeks,
+                method.list_of_weekly[kpi_name],
+                label=method_name,
+            )
+        ax.title()
+        ax.set_title("{}".format(kpi_name))
+        ax.set_xlabel("Weeks")
+    plt.show()
+
+
 def plot_weekly_clustering_kpi_overview(
     yearly_result: YearlyPerformance, num_weeks: int = 52
-):
+) -> None:
     weeks = np.arange(1, num_weeks + 1, step=1)
     # markers, styles = generate_marker_styles_palette()
     # colors = _n_colors(len(cluster_size_weekly_kpi.keys()))

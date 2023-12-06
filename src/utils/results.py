@@ -85,7 +85,10 @@ class YearlyPerformance:
         # aggregated values
         for key, agg_func in agg_mapping.items():
             print("key = ", key)
-            res[key] = agg_func([week for week in self.list_of_weekly[key]])
+            if isinstance(self.list_of_weekly[key], float):
+                res[key] = self.list_of_weekly[key]
+            else:
+                res[key] = agg_func([week for week in self.list_of_weekly[key]])
 
         # partition has the shape (n_timesteps, n_stations), i.e. each row is a partition per timestep
         res["partition"] = np.array([week for week in self.list_of_weekly["partition"]])
@@ -100,7 +103,7 @@ class YearlyPerformance:
         )
         return cust_str
 
-    def to_table_row(self, select_params: list[str]):
+    def to_table_row(self, select_params: list[str], index: [int]):
         yearly = self.aggegrate_weekly_to_yearly()
         select = [
             "lpml",
@@ -115,7 +118,7 @@ class YearlyPerformance:
         ]
         yearly_select = {key: yearly[key] for key in select}
         params = {key: self.config[key] for key in select_params}
-        return pd.DataFrame.from_dict(params | yearly_select)
+        return pd.DataFrame(params | yearly_select, index=index)
 
 
 def select_params_based_on_method(method_name: str):
@@ -141,12 +144,26 @@ class ModelPerformance:
             print(yearly_result)
         self.test_cases.append(yearly_result)
 
-    def to_table(self):
-        select_params = select_params_based_on_method(self.name)
-        table = self.test_cases[0].to_table_row(select_params)
+    def to_table(self, select_params: list[str] = None) -> pd.DataFrame:
+        """Create a table for each test case of the model, i.e. a complete overview.
+
+        Parameters
+        ----------
+        select_params : list[str], optional
+            List of parameter names that were varied during the training and should
+            therefore be displayed in the table to uniquely identify a model.
+
+        Returns
+        -------
+        pd.DataFrame
+            Table with all tested models.
+        """
+        if select_params is None:
+            select_params = select_params_based_on_method(self.name)
+        table = self.test_cases[0].to_table_row(select_params, index=[0])
         for idx in range(1, len(self.test_cases)):
             table = pd.concat(
-                [table, self.test_cases[idx].to_table_row(select_params)],
+                [table, self.test_cases[idx].to_table_row(select_params, index=[idx])],
                 ignore_index=True,
             )
         table["Method"] = self.name
