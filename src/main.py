@@ -15,6 +15,7 @@ from utils.data_loader import (
 from utils.magic import set_r_python_seed
 from utils.models import Model
 from utils.results import Analyse, ModelPerformance, YearlyPerformance
+from utils.tables import python_to_latex
 from utils.visualize import (
     WeeklyClustering,
     YearlyClustering,
@@ -160,9 +161,11 @@ def main():
         #     yearly_result=yearly_result, num_weeks=num_weeks
         # )
         model_result.add_testcase(yearly_result=yearly_result, show_to_console=True)
-        # plot_clustering(save_to_visualize_cluster, method_name=model.name)
-        print("Model results as table: ")
-        print(model_result.to_table())
+    # plot_clustering(save_to_visualize_cluster, method_name=model.name)
+    print("Model results as table: ")
+    test = model_result.to_table()
+    print(test)
+    print(python_to_latex(test, cols_to_min=["time"], cols_to_max=["waic"]))
     all_results.append(model_result)
 
 
