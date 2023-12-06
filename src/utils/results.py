@@ -7,9 +7,6 @@ from utils.models import get_fitted_attr_name
 
 salso = rpackages.importr("salso")
 
-# TODO:
-# - find out if lower/higher is better
-# available values to analyze
 kpis = [
     "lpml",
     "waic",
@@ -22,6 +19,7 @@ kpis = [
     "min_cluster_size",
     "mean_cluster_size",
     "mode_cluster_size",
+    "max_pm25_diff",
 ]
 
 # how to evaluate a weekly clustering
@@ -47,6 +45,7 @@ agg_mapping = {
     # TODO: check this
     "mean_cluster_size": np.max,
     "mode_cluster_size": np.max,
+    "max_pm25_diff": np.max,
 }
 
 
@@ -111,6 +110,7 @@ class YearlyPerformance:
             "n_clusters",
             "max_cluster_size",
             "min_cluster_size",
+            "max_pm25_diff",
         ]
         yearly_select = {key: yearly[key] for key in select}
         params = {key: self.config[key] for key in select_params}
@@ -168,23 +168,26 @@ class Analyse:
         analysis = {}
         analysis["lpml"] = py_res["lpml"]
         analysis["waic"] = py_res["WAIC"]
+        target = np.array(target)
         analysis["mse"] = MSE(
-            target=np.array(target),
+            target=target,
             # we use the mean of the MCMC samples to estimate the prediction value
             prediction=py_res[get_fitted_attr_name(model_name=model_name)].mean(axis=0),
             axis=0,
         )
 
         # analyse number of cluster distribution
-        salso_partion = np.array(
+        salso_partition = np.array(
             salso.salso(
                 to_r_matrix(py_res["Si"]),
                 **salso_args,
             )
         )
-        analysis["salso_partition"] = salso_partion
 
-        unique, counts = np.unique(salso_partion, return_counts=True)
+        analysis["salso_partition"] = salso_partition
+        analysis["max_pm25_diff"] = max_pm25_diff_per_cluster(target, salso_partition)
+
+        unique, counts = np.unique(salso_partition, return_counts=True)
         # init the results and fill with evaluation function
         for key in cluster_size_weekly_kpi.keys():
             analysis[key] = []
@@ -230,6 +233,7 @@ class Analyse:
         )
 
         # decompose the yearly clustering into weekly chunks for detailed analysis
+        analysis["max_pm25_diff"] = []
         for kpi in cluster_size_weekly_kpi.keys():
             analysis[kpi] = []
 
@@ -237,6 +241,13 @@ class Analyse:
             unique, counts = np.unique(
                 analysis["partition"][week, :], return_counts=True
             )
+
+            analysis["max_pm25_diff"].append(
+                max_pm25_diff_per_cluster(
+                    target[week, :], analysis["partition"][week, :]
+                )
+            )
+
             for key, lam_eval in cluster_size_weekly_kpi.items():
                 analysis[key].append(lam_eval(unique=unique, counts=counts))
         return analysis
@@ -244,3 +255,16 @@ class Analyse:
 
 def MSE(target: np.ndarray, prediction: np.ndarray, axis: int):
     return ((target - prediction) ** 2).mean(axis=axis)
+
+
+def max_pm25_diff_per_cluster(target: np.ndarray, salso_partition: np.array):
+    return max(
+        [
+            (
+                target[np.where(salso_partition == i)].max()
+                - target[np.where(salso_partition == i)].min()
+            )
+            # cluster labels start at value 1
+            for i in range(1, np.amax(salso_partition) + 1)
+        ]
+    )

@@ -29,7 +29,6 @@ Backlog:
 ### Optional
 - Repeat with another year (maybe a covid year) so we can later on work on a comparison
 
-
 ## Coding
 - Decide on evaluation criteria
     - [Done] MSE on the prediction values (lower is better)
@@ -44,7 +43,6 @@ Backlog:
     - [Done] error in gaussian_ppmx --> covariates
     - [Done] covariate transformation
     - [Done] clean up the main file
-    - extract the param dicts into a separate file?
     - Manual checking
         - [Done] Plot clusters with a map
         - Switching of a single station
@@ -54,11 +52,11 @@ Backlog:
 
 Backlog:
 - Evaluation Criteria:
-    - max. distance between two stations in the same cluster, max difference
+    - [Done] max. distance between two stations in the same cluster, max difference
         of pm2.5 values inside a cluster
     - Plot the number of clusters for different models over time in a grid-wise fashion
     each value in different plot with all models (e.g. 2x3 grid)
-    - Finish evaluation: table creation
+    - [Done] Finish evaluation: table creation
 - Evaluation:
     - test different models
     - plot and analyze results
