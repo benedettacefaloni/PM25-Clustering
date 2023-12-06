@@ -43,7 +43,7 @@ def main():
     }
 
     gaussian_ppmx_args = {
-        "meanModel": 1,
+        "meanModel": 1,  # use additional global regression parameter
         "cohesion": 1,
         "M": 2,
         "PPM": False,  # use covariates if FALSE -> supply X
@@ -81,10 +81,11 @@ def main():
     }
 
     num_weeks = 53
+    num_weeks = 3
 
-    # model = Model("sppm", sppm_args, uses_weekly_data=True)
+    model = Model("sppm", sppm_args, uses_weekly_data=True)
     # model = Model("gaussian_ppmx", gaussian_ppmx_args, uses_weekly_data=True)
-    model = Model("drpm", drpm_args, uses_weekly_data=False)
+    # model = Model("drpm", drpm_args, uses_weekly_data=False)
 
     all_results: list[ModelPerformance] = []
 
@@ -153,12 +154,16 @@ def main():
             save_to_visualize_cluster = YearlyClustering(
                 yearly_decomposed_result=yearly_result, data=data
             )
-            plot_weekly_clustering_kpi_overview(yearly_result=yearly_result)
-            plot_clustering(save_to_visualize_cluster, method_name=model.name)
             print(yearly_result.list_of_weekly["waic"])
             print(yearly_result.list_of_weekly["lpml"])
 
-        model_result.add_testcase(yearly_result=yearly_result)
+        # plot_weekly_clustering_kpi_overview(
+        #     yearly_result=yearly_result, num_weeks=num_weeks
+        # )
+        model_result.add_testcase(yearly_result=yearly_result, show_to_console=True)
+        plot_clustering(save_to_visualize_cluster, method_name=model.name)
+        print("Model results as table: ")
+        print(model_result.to_table())
     all_results.append(model_result)
 
 

@@ -57,6 +57,7 @@ Backlog:
     - max. distance between two stations in the same cluster, max difference
         of pm2.5 values inside a cluster
     - Plot the number of clusters for different models over time in a grid-wise fashion
+    each value in different plot with all models (e.g. 2x3 grid)
     - Finish evaluation: table creation
 - Evaluation:
     - test different models
@@ -78,7 +79,7 @@ Backlog:
             - L0 - scale parm (scalar of identity matrix) IG part of NNIG for cohesion 3 and 4
     - ppmx
         - v is the kappa since we standardized the Covariates
-        - (m0 = 0, k0 = 1.0,v0 = 10.0, n0 = 2)
+        - (m0 = 0, k0 = 1.0, v0 = 10.0, n0 = 2)
         - and the second (m0 = 0, k0 = 1.0,v0 = 1.0, n0 = 2)
     - tRPM:
         - A_sigma = 5 or 0.5*sd(Yvec) (temporally indipendent CRP and temporally static CRP) or 1 (Space-time data generation) or 15 (2 to account for the higher variability present in the data)

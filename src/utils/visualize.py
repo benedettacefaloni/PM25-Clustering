@@ -91,11 +91,11 @@ class WeeklyClustering(VisualizeClustering):
 def plot_clustering(
     visualize_clustering: VisualizeClustering,
     method_name: str = "",
-    scale_bubble_size: float = 1.0,
+    scale_bubble_size: float = 10.0,
 ):
     data = visualize_clustering.get_data()
 
-    data["AQ_pm25_scaled"] = scale_bubble_size * data["AQ_pm25_scaled"]
+    data["AQ_pm25_scaled"] = scale_bubble_size * data["AQ_pm25"]
     n_colors = int(data["Cluster"].max())
     colors = generate_color_palette(n_colors)
 
@@ -207,8 +207,10 @@ def trace_plots(res: dict, model: str):
     plt.show()
 
 
-def plot_weekly_clustering_kpi_overview(yearly_result: YearlyPerformance):
-    weeks = np.arange(1, 53, step=1)
+def plot_weekly_clustering_kpi_overview(
+    yearly_result: YearlyPerformance, num_weeks: int = 52
+):
+    weeks = np.arange(1, num_weeks + 1, step=1)
     # markers, styles = generate_marker_styles_palette()
     # colors = _n_colors(len(cluster_size_weekly_kpi.keys()))
 

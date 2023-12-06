@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import rpy2.robjects.packages as rpackages
 
 from utils.data_loader import to_r_matrix
@@ -66,7 +67,7 @@ class YearlyPerformance:
     def combine_weekly_to_yearly(self, weekly_results: list) -> dict:
         res = {}
         # aggregated values
-        for key in kpis.keys():
+        for key in kpis:
             res[key] = np.array([week[key] for week in weekly_results])
 
         # partition has the shape (n_timesteps, n_stations), i.e. each row is a partition per timestep
@@ -76,7 +77,7 @@ class YearlyPerformance:
 
         return res
 
-    def aggegrate_weekly_to_yearly(self, weekly_results: list) -> dict:
+    def aggegrate_weekly_to_yearly(self) -> dict:
         """
         Aggregate the weekly data (dict each) into yearly values.
         Decide for each attribute how to aggregate.
@@ -84,18 +85,47 @@ class YearlyPerformance:
         res = {}
         # aggregated values
         for key, agg_func in agg_mapping.items():
-            res[key] = agg_func([week[key] for week in weekly_results])
+            res[key] = agg_func([week for week in self.list_of_weekly[key]])
 
         # partition has the shape (n_timesteps, n_stations), i.e. each row is a partition per timestep
-        res["partition"] = np.array(
-            [week["salso_partition"] for week in weekly_results]
-        )
+        res["partition"] = np.array([week for week in self.list_of_weekly["partition"]])
 
         return res
 
-    def to_table_row(self):
-        # TODO
-        pass
+    def __repr__(self) -> str:
+        cust_str = "Performance: \n\t - WAIC: {:4.2f}\n\t - LPML: {:4.2f}\n\t - MSE:  {:4.2f}".format(
+            np.max(self.list_of_weekly["waic"]),
+            np.max(self.list_of_weekly["lpml"]),
+            np.max(self.list_of_weekly["mse"]),
+        )
+        return cust_str
+
+    def to_table_row(self, select_params: list[str]):
+        yearly = self.aggegrate_weekly_to_yearly()
+        select = [
+            "lpml",
+            "waic",
+            "time",
+            "mse",
+            "n_singletons",
+            "n_clusters",
+            "max_cluster_size",
+            "min_cluster_size",
+        ]
+        yearly_select = {key: yearly[key] for key in select}
+        params = {key: self.config[key] for key in select_params}
+        return pd.DataFrame.from_dict(params | yearly_select)
+
+
+def select_params_based_on_method(method_name: str):
+    if method_name == "sppm":
+        return ["cohesion", "M"]
+    elif method_name == "ppmx":
+        return ["meanModel", "cohesion", "M", "PPM", "similarity_function", "consim"]
+    elif method_name == "drpm":
+        return ["M", "SpatialCohesion", "starting_alpha"]
+    else:
+        raise NotImplementedError
 
 
 class ModelPerformance:
@@ -103,8 +133,20 @@ class ModelPerformance:
         self.name = name
         self.test_cases: list[YearlyPerformance] = []
 
-    def add_testcase(self, yearly_result: YearlyPerformance):
+    def add_testcase(
+        self, yearly_result: YearlyPerformance, show_to_console: bool = False
+    ):
+        if show_to_console:
+            print(yearly_result)
         self.test_cases.append(yearly_result)
+
+    def to_table(self):
+        select_params = select_params_based_on_method(self.name)
+        table = self.test_cases[0].to_table_row(select_params)
+        for idx in range(1, len(self.test_cases)):
+            table = pd.concat(table, self.test_cases[idx].to_table_row(select_params))
+        table["Method"] = self.name
+        return table
 
 
 class Analyse:
