@@ -84,6 +84,7 @@ class YearlyPerformance:
         res = {}
         # aggregated values
         for key, agg_func in agg_mapping.items():
+            print("key = ", key)
             res[key] = agg_func([week for week in self.list_of_weekly[key]])
 
         # partition has the shape (n_timesteps, n_stations), i.e. each row is a partition per timestep
@@ -244,7 +245,7 @@ class Analyse:
 
             analysis["max_pm25_diff"].append(
                 max_pm25_diff_per_cluster(
-                    target[week, :], analysis["partition"][week, :]
+                    target[:, week], analysis["partition"][week, :]
                 )
             )
 

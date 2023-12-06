@@ -8,7 +8,7 @@ from rpy2.robjects import pandas2ri
 from rpy2.robjects.conversion import localconverter
 
 data_path = os.path.join(
-    Path(__file__).parent.parent.parent, "data/dataset_{}_cleaned.csv"
+    Path(__file__).parent.parent.parent, "data/dataset_{}_filled.csv"
 )
 
 all_covariates = [
@@ -85,8 +85,7 @@ def load_data(
         data[col_name] = data[col_name].astype("category")
 
     # TODO: impute missing data
-    # data = data.fillna(0.0)
-    data = data.fillna(data.mode().iloc[0])  # not an appropriate solution
+    # data = data.fillna(data.mode().iloc[0])  # not an appropriate solution
 
     # data = data.dropna(axis=0, how="any")
     data["Time"] = pd.to_datetime(data["Time"])

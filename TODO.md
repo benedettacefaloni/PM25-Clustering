@@ -2,12 +2,15 @@
 
 ## Data Preparation
 
-- Decide on year
-- Filter NaN values out
-- Document the loss of data and why the specific year was chosen 
-- Integrate week number into the columns
-- Save filtered and cleaned data as a new table
-
+- [Done] Decide on year
+- [Done] Filter NaN values out
+- [Done] Document the loss of data and why the specific year was chosen 
+- [Done] Integrate week number into the columns
+- [Done] Save filtered and cleaned data as a new table
+- [Done] Standardize data for the covariates
+- [Done] Missing values in the covariates
+    - [Done] numerical values
+    — [Done] categorical values
 - Integrate into data loader to easily filter the data by week
     - write subfunctions to provide data for sppm (weekly) and drpm (full time-series,
     reshape to n_stations, time with increasing values)
@@ -17,10 +20,6 @@
 - Upload the the code which created the aggregation onto Github
 
 Backlog:
-- [Done] Standardize data for the covariates
-- Missing values in the covariates
-    - numerical values
-    — categorical values
 - Fix issue with week numbers in year 2021
 - Give some explorative data analysis:
     - variance, mean, distribution of pm2.5 values
@@ -48,6 +47,7 @@ Backlog:
         - Switching of a single station
 
 - [Done] General framework for automatic evaluation
+- include new data and unify all the folders
 
 
 Backlog:
