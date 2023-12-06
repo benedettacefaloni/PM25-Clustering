@@ -45,14 +45,16 @@ class YearlyClustering(VisualizeClustering):
         yearly_decomposed_result: YearlyPerformance,
     ):
         weekly_partitions = yearly_decomposed_result.list_of_weekly["partition"]
-        self.database = data[data["Week"] == 1][select_from_data].copy()
+        self.database = data[data["Week"] == 1][select_from_data].copy().reset_index()
         self.database["Cluster"] = pd.Series(weekly_partitions[0])
         self.database["Week"] = 1
 
         for week_number in range(1, len(weekly_partitions)):
-            week_data_with_labels = data[data["Week"] == week_number + 1][
-                select_from_data
-            ].copy()
+            week_data_with_labels = (
+                data[data["Week"] == week_number + 1][select_from_data]
+                .copy()
+                .reset_index()
+            )
             week_data_with_labels["Cluster"] = pd.Series(weekly_partitions[week_number])
             week_data_with_labels["Week"] = week_number + 1
             self.database = pd.concat(
@@ -86,9 +88,14 @@ class WeeklyClustering(VisualizeClustering):
         return self.database.iloc[1:]
 
 
-def plot_clustering(visualize_clustering: VisualizeClustering, method_name: str = ""):
+def plot_clustering(
+    visualize_clustering: VisualizeClustering,
+    method_name: str = "",
+    scale_bubble_size: float = 1.0,
+):
     data = visualize_clustering.get_data()
 
+    data["AQ_pm25_scaled"] = scale_bubble_size * data["AQ_pm25_scaled"]
     n_colors = int(data["Cluster"].max())
     colors = generate_color_palette(n_colors)
 
@@ -98,7 +105,7 @@ def plot_clustering(visualize_clustering: VisualizeClustering, method_name: str 
         lon="Longitude",
         hover_name="IDStations",
         hover_data=["AQ_pm25", "Altitude"],
-        size="AQ_pm25",
+        size="AQ_pm25_scaled",
         color="Cluster",
         animation_frame="Week",
         animation_group="Cluster",

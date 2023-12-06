@@ -33,8 +33,8 @@ Backlog:
 ## Coding
 - Decide on evaluation criteria
     - [Done] MSE on the prediction values (lower is better)
-    - WAIC lower/higher better?
-    - LPML lower/higher better?
+    - [Done] WAIC lower/higher better?
+    - [Done] LPML lower/higher better?
     - [DONE] number of cluster overall
     - [DONE] sizes of clusters
         - number of singleton clusters

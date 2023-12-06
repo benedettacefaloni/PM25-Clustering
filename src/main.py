@@ -33,7 +33,7 @@ def main():
 
     sppm_args = {
         "cohesion": 2,
-        "M": 2,
+        "M": 1e-8,
         "modelPriors": ro.FloatVector([0, 100**2, 10, 10]),
         "cParms": ro.FloatVector([1, 1.5, 0, 1, 2, 2]),
         "mh": ro.FloatVector([0.5, 0.5]),
@@ -59,14 +59,15 @@ def main():
         "verbose": False,
     }
     drpm_args = {
-        "M": 2,
+        "M": 100,
         "starting_alpha": 0.5,  # 0.1
         "unit_specific_alpha": False,
         "time_specific_alpha": False,
         "alpha_0": False,
         "eta1_0": False,
         "phi1_0": False,
-        "modelPriors": ro.FloatVector([0, 100**2, 1, 1, 1, 1]),
+        # "modelPriors": ro.FloatVector([0, 100**2, 1, 1, 1, 1]),
+        "modelPriors": ro.FloatVector([0, 100 * 2, 0.1, 1, 1, 1]),
         "alphaPriors": ro.r["matrix"](ro.FloatVector([1, 1]), nrow=1),
         "simpleModel": 0,
         "theta_tau2": ro.FloatVector([0, 2]),
@@ -81,9 +82,9 @@ def main():
 
     num_weeks = 53
 
-    model = Model("sppm", sppm_args, uses_weekly_data=True)
+    # model = Model("sppm", sppm_args, uses_weekly_data=True)
     # model = Model("gaussian_ppmx", gaussian_ppmx_args, uses_weekly_data=True)
-    # model = Model("drpm", drpm_args, uses_weekly_data=False)
+    model = Model("drpm", drpm_args, uses_weekly_data=False)
 
     all_results: list[ModelPerformance] = []
 
@@ -154,6 +155,8 @@ def main():
             )
             plot_weekly_clustering_kpi_overview(yearly_result=yearly_result)
             plot_clustering(save_to_visualize_cluster, method_name=model.name)
+            print(yearly_result.list_of_weekly["waic"])
+            print(yearly_result.list_of_weekly["lpml"])
 
         model_result.add_testcase(yearly_result=yearly_result)
     all_results.append(model_result)

@@ -23,7 +23,7 @@ def main():
         "thin": 10,
     }
     drpm_args = {
-        "M": 2,
+        "M": [1, 2, 5, 10, 20],
         "starting_alpha": 0.5,  # 0.1
         "unit_specific_alpha": False,
         "time_specific_alpha": False,
