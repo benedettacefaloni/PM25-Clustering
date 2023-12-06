@@ -1,5 +1,5 @@
 # Do not upload data files
-/data/Agrimonia_Dataset_v_2_0_2.csv
+./data/Agrimonia_Dataset_v_2_0_2.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
