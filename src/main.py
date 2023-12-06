@@ -32,8 +32,8 @@ def main():
     salso_args = {"loss": "binder", "maxNCluster": 0}
 
     sppm_args = {
-        "cohesion": 2,
-        "M": 1e-8,
+        "cohesion": [1, 2],
+        "M": [1e-8, 3],
         "modelPriors": ro.FloatVector([0, 100**2, 10, 10]),
         "cParms": ro.FloatVector([1, 1.5, 0, 1, 2, 2]),
         "mh": ro.FloatVector([0.5, 0.5]),
@@ -130,7 +130,6 @@ def main():
                 # save the results for performance evaluation
                 weekly_results.append(weekly_res)
 
-            plot_clustering(save_to_visualize_cluster, method_name=model.name)
             # aggregate the performance metrics
             yearly_result = YearlyPerformance(
                 config=model_params, weekly_results=weekly_results
@@ -161,7 +160,7 @@ def main():
         #     yearly_result=yearly_result, num_weeks=num_weeks
         # )
         model_result.add_testcase(yearly_result=yearly_result, show_to_console=True)
-        plot_clustering(save_to_visualize_cluster, method_name=model.name)
+        # plot_clustering(save_to_visualize_cluster, method_name=model.name)
         print("Model results as table: ")
         print(model_result.to_table())
     all_results.append(model_result)

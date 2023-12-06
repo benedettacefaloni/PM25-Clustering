@@ -144,7 +144,10 @@ class ModelPerformance:
         select_params = select_params_based_on_method(self.name)
         table = self.test_cases[0].to_table_row(select_params)
         for idx in range(1, len(self.test_cases)):
-            table = pd.concat(table, self.test_cases[idx].to_table_row(select_params))
+            table = pd.concat(
+                [table, self.test_cases[idx].to_table_row(select_params)],
+                ignore_index=True,
+            )
         table["Method"] = self.name
         return table
 
