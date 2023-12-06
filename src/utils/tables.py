@@ -1,11 +1,16 @@
+# formatting taken from:
+# https://stackoverflow.com/questions/41157879/python-pandas-how-to-format-big-numbers-in-powers-of-ten-in-latex
+import os
+from pathlib import Path
+
 import pandas as pd
 
 # inspired by:
 # - https://blog.martisak.se/2021/04/10/publication_ready_tables/
 # - https://flopska.com/highlighting-pandas-to_latex-output-in-bold-face-for-extreme-values.html
 
-# formatting taken from:
-# https://stackoverflow.com/questions/41157879/python-pandas-how-to-format-big-numbers-in-powers-of-ten-in-latex
+
+path_to_tables = os.path.join(Path(__file__).parent.parent.parent, "report/tables/")
 
 
 def python_to_latex(
@@ -14,7 +19,7 @@ def python_to_latex(
     cols_to_min: list[str],
     cols_to_max: list[str],
     caption: str = "",
-    path_to_tex: str = None,
+    filename: str = None,
     # column_format: str = "lrrllllllllllll",
     show_index: bool = False,
 ):
@@ -35,8 +40,8 @@ def python_to_latex(
         # column_format=column_format,
         # header="",
     )
-    if path_to_tex is not None:
-        _save_table(content, path=path_to_tex)
+    if filename is not None:
+        _save_table(content, path=path_to_tables + filename + ".tex")
     return content
 
 

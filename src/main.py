@@ -165,7 +165,11 @@ def main():
     print("Model results as table: ")
     test = model_result.to_table()
     print(test)
-    print(python_to_latex(test, cols_to_min=["time"], cols_to_max=["waic"]))
+    print(
+        python_to_latex(
+            test, cols_to_min=["time"], cols_to_max=["waic"], filename="Test"
+        )
+    )
     all_results.append(model_result)
 
 
