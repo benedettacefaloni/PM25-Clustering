@@ -1,0 +1,519 @@
+% A LaTeX template for EXECUTIVE SUMMARY of the MSc Thesis submissions to
+% Politecnico di Milano (PoliMi) - School of Industrial and Information Engineering
+%
+% P. F. Antonietti, S. Bonetti, A. Gruttadauria, G. Mescolini, A. Zingaro
+% e-mail: template-tesi-ingind@polimi.it
+%
+% Last Revision: October 2021
+%
+% Copyright 2021 Politecnico di Milano, Italy. Inc. All rights reserved.
+
+\documentclass[12pt,a4paper]{article}
+
+%------------------------------------------------------------------------------
+%	REQUIRED PACKAGES AND  CONFIGURATIONS
+%------------------------------------------------------------------------------
+% PACKAGES FOR TITLES
+\usepackage{titlesec}
+\usepackage{color}
+
+% PACKAGES FOR LANGUAGE AND FONT
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc} % Font encoding
+\usepackage{comment}
+
+% PACKAGES FOR IMAGES
+\usepackage{graphicx}
+\graphicspath{{imgs/}} % Path for images' folder
+\usepackage{eso-pic} % For the background picture on the title page
+\usepackage{subfig} % Numbered and caption subfigures using \subfloat
+\usepackage{subcaption}
+\usepackage[font=small]{caption} % Coloured captions
+\usepackage{transparent}
+
+% STANDARD MATH PACKAGES
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}    % added for project
+\usepackage{bm}
+\usepackage[overload]{empheq}  % For braced-style systems of equations
+
+% PACKAGES FOR TABLES
+\usepackage{tabularx}
+\usepackage{longtable} % tables that can span several pages
+\usepackage{colortbl}
+
+% PACKAGES FOR ALGORITHMS (PSEUDO-CODE)
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% PACKAGES FOR REFERENCES & BIBLIOGRAPHY
+\usepackage[colorlinks=true,linkcolor=black,anchorcolor=black,citecolor=black,filecolor=black,menucolor=black,runcolor=black,urlcolor=black]{hyperref} % Adds clickable links at references
+\usepackage{cleveref}
+% \usepackage[square, numbers, sort&compress]{natbib} % Square brackets, citing references with numbers, citations sorted by appearance in the text and compressed
+\usepackage[
+    backend=biber,
+    style=alphabetic,
+]{biblatex}
+\addbibresource{bibliography.bib} 
+% \bibliographystyle{apalike} % You may use a different style adapted to your field
+
+% PACKAGES FOR THE APPENDIX
+\usepackage{appendix}
+
+% PACKAGES FOR ITEMIZE & ENUMERATES
+\usepackage{enumitem}
+
+% OTHER PACKAGES
+\usepackage{amsthm,thmtools,xcolor} % Coloured "Theorem"
+\usepackage{comment} % Comment part of code
+\usepackage{fancyhdr} % Fancy headers and footers
+\usepackage{lipsum} % Insert dummy text
+\usepackage{tcolorbox} % Create coloured boxes (e.g. the one for the key-words)
+\usepackage{stfloats} % Correct position of the tables
+
+%-------------------------------------------------------------------------
+%	NEW COMMANDS DEFINED
+%-------------------------------------------------------------------------
+% EXAMPLES OF NEW COMMANDS -> here you see how to define new commands
+\newcommand{\bea}{\begin{eqnarray}} % Shortcut for equation arrays
+\newcommand{\eea}{\end{eqnarray}}
+\newcommand{\e}[1]{\times 10^{#1}}  % Powers of 10 notation
+\newcommand{\mathbbm}[1]{\text{\usefont{U}{bbm}{m}{n}#1}} % From mathbbm.sty
+\newcommand{\pdev}[2]{\frac{\partial#1}{\partial#2}}
+
+\newcommand{\ppmSuite}{\texttt{ppmSuite}}
+\newcommand{\drpm}{\texttt{drpm}}
+
+\DeclareMathOperator{\Normal}{\mathcal{N}}
+\DeclareMathOperator{\DD}{\mathcal{D}}
+\DeclareMathOperator{\indicator}{\pmb{1}}
+\DeclareMathOperator{\tRPM}{\mathrm{tRPM}}
+\DeclareMathOperator{\PPMx}{\mathrm{PPMx}}
+\DeclareMathOperator{\sPPM}{\mathrm{sPPM}}
+\DeclareMathOperator{\NormInvWish}{\mathrm{NIW}}
+\DeclareMathOperator{\Uniform}{\mathrm{UN}}
+\DeclareMathOperator{\BetaDist}{\mathrm{Beta}}
+\DeclareMathOperator{\Bernoulli}{\mathrm{Ber}}
+\DeclareMathOperator{\RR}{\mathbb{R}}
+\DeclareMathOperator{\Identity}{\mathrm{Id}}
+\DeclareMathOperator{\PosSemDef}{\mathbb{S}}
+\DeclareMathOperator{\PP}{\mathbb{P}}
+\DeclareMathOperator{\Multinomial}{\mathrm{Multinomial}}
+\DeclareMathOperator{\Dir}{\mathrm{Dirichlet}}
+\newcommand*{\tran}{^{\mkern-1.5mu\mathsf{T}}}
+\newcommand*{\ind}{\overset{\tiny{\textrm{ind}}}{\sim}}
+\newcommand*{\iid}{\overset{\tiny{\textrm{iid}}}{\sim}}
+
+%----------------------------------------------------------------------------
+%	ADD YOUR PACKAGES (be careful of package interaction)
+%----------------------------------------------------------------------------
+
+\usepackage{physics}
+\usepackage{amssymb}
+\usepackage{aligned-overset}
+
+
+%----------------------------------------------------------------------------
+%	ADD YOUR DEFINITIONS AND COMMANDS (be careful of existing commands)
+%----------------------------------------------------------------------------
+
+
+% Do not change Configuration_files/config.tex file unless you really know what you are doing.
+% This file ends the configuration procedures (e.g. customizing commands, definition of new commands)
+\input{Configuration_files/config}
+
+% Insert here the info that will be displayed into your Title page 
+% -> title of your work
+\renewcommand{\title}{CLUSTERING WEEKLY DATA OF ONE YEAR OF PM2.5 DATA}
+% -> author name and surname
+\renewcommand{\author}{Borrini Elisa, Carbonara Filippo, Cefaloni Benedetta, Ettel Dina Sophie, Grignani Alessandro, Wolf Florian}
+% -> MSc course
+\newcommand{\course}{Mathematical Engineering -- Ingegneria Matematica}
+% -> advisor name and surname
+\newcommand{\advisor}{Prof. Alessandra Guglielmi}
+% IF AND ONLY IF you need to modify the co-supervisors you also have to modify the file Configuration_files/title_page.tex (ONLY where it is marked)
+%\newcommand{\firstcoadvisor}{} % insert if any otherwise comment
+%\newcommand{\secondcoadvisor}{Name Surname} % insert if any otherwise comment
+% -> academic year
+\newcommand{\YEAR}{2023-2024}
+
+%-------------------------------------------------------------------------
+%	BEGIN OF YOUR DOCUMENT
+%-------------------------------------------------------------------------
+\begin{document}
+
+%-----------------------------------------------------------------------------
+% TITLE PAGE
+%-----------------------------------------------------------------------------
+% Do not change Configuration_files/TitlePage.tex (Modify it IF AND ONLY IF you need to add or delete the Co-advisors)
+% This file creates the Title Page of the document
+\input{Configuration_files/title_page}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%     THESIS MAIN TEXT     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%-----------------------------------------------------------------------------
+% INTRODUCTION
+%-----------------------------------------------------------------------------
+\section{Introduction}
+\label{sec:introduction}
+\textbf{Air Quality Challenges in Lombardy, Italy:}
+Air pollution, a critical environmental concern, poses significant risks to human health and the ecosystem.
+The Lombardy region in Italy faces significant air pollution challenges, ranking among the most polluted areas in Europe. This issue arises from factors such as limited air circulation and high emission levels. 
+\\
+ Among the various pollutants, particulate matter with a diameter of 2.5 micrometers or smaller (PM2.5) has emerged as a key focus due to its potential for adverse health effects. PM2.5 consists of tiny particles suspended in the air, originating from diverse sources such as vehicle emissions, industrial activities, and natural processes.
+
+ Understanding the temporal patterns of PM2.5 levels is crucial for identifying trends, potential sources, and developing effective pollution control strategies. Clustering techniques will be employed to categorize weeks with similar PM2.5 concentration profiles, providing insights into the underlying patterns and contributing factors.
+ In order to do this, our project analyzes a dataset spanning the years 2016 to 2021 \cite{AgrimoniaDataset}, collecting daily values of air quality, weather conditions, emissions, livestock, and land and soil use. Pollutant data are sourced from the European Environmental Agency and the Lombardy Regional Environment Protection Agency, Weather and emissions data are obtained from the European Copernicus program, livestock data from the Italian zootechnical registry, and land and soil use data from the CORINE Land Cover project.
+  The project focuses on analyzing and clustering weekly data of PM2.5 concentrations over the course of one year (2019),%da confermare!!
+  trying to assess the impact of agriculture on air quality in the selected area through statistical techniques and highlighting the relationship between the lifestock sector and the air pollutant concentrations. 
+
+%begin{tcolorbox}
+    %We will focus on analyzing the 
+    %\textbf{amount} $\left[\frac{\mathrm{g}}{\mathrm{m}^3}\right]$ of solid and liquid \textbf{atmospheric particles} present in the air with a \textbf{diameter less than or equal to} 2.5${\mu}$m.
+%\end{tcolorbox}
+\section{Data and Covariates}
+The Agrimonia dataset integrates satellite data, model output, and in-situ measurements sourced from national and international agencies, each with varying spatial and temporal resolutions. 
+\\
+\textbf{Source Data Overview:}
+The dataset encompasses five key dimensions: air quality (AQ), weather and climate (WE), pollutant emissions (EM), livestock (LI), and land and soil characteristics (LA). Given the applicability of geostatistical methods in leveraging neighboring territory information for enhanced predictive capability near borders, a 0.3° buffer is applied around the Lombardy region, intersecting with several adjacent regions (\Cref{fig:buffered_area}).
+
+\begin{figure}
+    \centering
+    
+    \includegraphics[width=0.8\textwidth]{./imgs/maps/mappa.png}
+    \caption{Buffered Area around Lombardy Region}
+    \label{fig:buffered_area}
+\end{figure}
+\textbf{Causes and sources related to the emissions:}
+Particulate matter with a diameter of 2.5 micrometers or smaller originates from various anthropogenic and natural sources. Among the main causes related to the release of significant amounts of PM2.5 into the atmosphere, we can mention intensive livestock farming, as well as combustion processes, including those from vehicles and industrial activities.
+Moreover, analyzing the provided dataset, it has emerged that one crucial variable influencing PM2.5 concentrations is the Boundary Layer Height (BLH) Max which represents the maximum depth of air next to the Earth's surface that is most affected by the resistance to the transfer of momentum, heat, or moisture across the surface. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./imgs/maps/plot_Bolzano_PM25_BLHmax_years.png}
+    \caption{Correlation between PM2.5 Concentrations and Boundary Layer Height (BLH) Max TODO: make as full sentence and explain BLH in detail}
+    \label{fig:pm_blh_correlation}
+\end{figure} 
+\textbf{Main Problems Associated with PM2.5:}
+In order to understand the relevance of the analysis developed in this project, it is important to focus on the problems and the risks associated with high concentrations of PM2.5
+\begin{itemize}
+    \item \textbf{Long Residence Time in the Atmosphere:} PM2.5 particles have an extended residence time in the atmosphere, leading to widespread dispersion and potential long-range transport. This characteristic contributes to the global distribution of PM2.5 and its diverse environmental impacts.
+
+    \item \textbf{Health Impact:} Due to their small size, PM2.5 particles can penetrate deep into the human respiratory system, reaching the lungs and even entering the bloodstream. Prolonged exposure to elevated levels of PM2.5 is associated with various respiratory and cardiovascular diseases, posing a significant public health concern.
+
+    \item \textbf{World Health Organization Recommendations:} The World Health Organization (WHO) recommends an \textbf{annual average} of $\leq 5\mu \frac{\mathrm{g}}{\mathrm{m}^3}$ for PM2.5 concentrations to safeguard public health. Exceeding these levels may lead to increased health risks, making it imperative to monitor and control PM2.5 pollution.
+\end{itemize}
+
+The outcomes of this analysis will not only enhance our understanding of PM2.5 variability but also assist policymakers and environmental scientists in formulating targeted interventions to mitigate the impact of air pollution on public health and the environment.
+
+
+\section{Models}
+
+Regarding the choice of models, we first focused on three basic modeling approaches: spatial-informed partitioning of the data, covariate-informed partitioning and modeling temporal dependence in partitions. Each of the modeling methods is a hierarchical model with Gaussian likelihood, a Gaussian prior for cluster-specific means and an uniform prior for cluster-specific variances. All of them allow for a number of specifications, e.g. different setting ups of priors. Later, several extensions and combinations were considered. \medskip
+
+In the whole section we denote by $n$ the number of measurement units, by $\rho = \{ S_1, \dots, S_k \}$  a partition of the $n$ measurement units and by $c_i$ the cluster that measurement unit $i$ belongs to, i.e. $c_i = j$ if $i \in S_j$. Furthermore, cluster-specific values are marked with $*$. For example we consider cluster specific means $\pmb{\mu}^* = \{ \mu_1, \dots, \mu_k \}$ and standard deviations $\pmb{\sigma}^{*}$.
+
+\subsection{sPPM Model: Spatial informed Clustering using location-dependent Similarity 
+Functions} \label{sPPM-model}
+
+The following model is taken from \cite{Page2016-Spatial}. It is implemented as part of the R-package \textit{ppmSuite} \cite{ppmSuite}.
+The overall model structure is the following, where $m \in \RR, s^2 \in [0, \infty )$, the bounds $A, B \in [0, \infty)$ as well as the concentration parameter $M \in (0, \infty)$ and $\mathbf{\theta}$ that will be explained in more detail below are user-defined parameters.
+
+\begin{align*}
+    Y_i | \pmb{\mu}^*, \pmb{\sigma}^{2*}, c_i &\overset{\tiny{\mathrm{ind}}}{\sim} \Normal (\mu_{c_i}^*, \sigma_{c_i}^{2*}), i = 1, \dots, n \\
+    (\mu_j^*, \sigma_j^*)  | \mu_0, \sigma_0^2 &\overset{\tiny{\mathrm{iid}}}{\sim} \Normal ( \mu_0, \sigma_0^2) \times \Uniform (0,A)\\
+    (\mu_0, \sigma_0) &\sim \Normal (m, s^2) \times \Uniform (0,B)\\
+    \rho &\sim \sPPM(M, \pmb{\theta})
+\end{align*}
+
+The $sPPM$ is a prior of the following form, where $\mathbf{s}$ denotes the spatial coordinates of the measurement units:
+
+\begin{align*}
+    \PP(\rho | \pmb{s} ) \propto \prod_{j=1}^{k_{\rho}} \left( \underbrace{M \cdot \Gamma(\vert S_j \vert) }_{=:c(S_j)}g(S_j, \pmb{s}^*_j \vert \pmb{\theta}) \right) .
+\end{align*}
+
+The so-called similarity function $g$ is a non-negative function that measures the togetherness of the stations in the set $S_j$.
+Note that $\prod_{j=1}^{k_{\rho}} c(S_j) $ is proportional to the distribution of $\rho$ in a random partition model induced by a sample from a Dirichlet process (Section 8.1.3 in \cite{lecturenotes}). Therefore $M$ takes the role of the concentration parameter in the Dirichlet process and influences the number of clusters.\medskip
+
+For the similarity function $g$ that incorporates the spatial information there are four options available. \medskip
+
+\begin{enumerate}
+    \item $\theta = \alpha \in (0,\infty)$ with the distance measure
+    \begin{align*}
+        g_1(S_j, \pmb{s}_j^* \vert \theta) := \begin{cases}
+            \frac{1}{\Gamma(\alpha \DD_h) \indicator[\DD_h \geq 1] + \DD_h \indicator[\DD_h < 1]}, &\quad \text{ if } \vert S_h \vert > 1\\
+            M, &\quad \text{ if } \vert S_h \vert = 1
+        \end{cases}
+    \end{align*}
+    with a distance function $\DD_h := \sum_{i \in S_h} d(\pmb{s}_i, \bar{\pmb{s}}_h)$ and the cluster centroid
+    $\bar{s}_{hk} = \frac{1}{n_h} \sum_{i\in S_h} s_{ik}$ for coordinates $k=1,2$ and $n_h := \vert S_h \vert$. Larger $\alpha$ favors denser clusters.  \medskip
+    
+    \item $\theta = a \in (0, \infty)$ with distance measure
+    \begin{align*}
+        g_2(S_h, \pmb{s}_h^* \vert \theta) := \prod_{i, j \in S_h} \indicator\left[\lVert s_i - s_j\rVert \leq a \right].
+    \end{align*}
+    Larger $a$ allows for larger neighborhoods. \medskip
+    
+    \item  \textit{(Auxiliary Cohesion)} With dimension $d=2$ and
+    $\pmb{\xi} = (\pmb{m}, \pmb{V}) \in \RR^d \times \PosSemDef_+^d = \RR^d \times \{X \in \RR^{d\times d} \vert X \succeq 0\} =: \Xi$, we have (prior predictive conjugate model)
+    \begin{align*}
+        g_3(S_h, \pmb{s}_h^* \vert \pmb{\theta}) := \int_{\Xi} \prod_{i \in S_h} q(\pmb{s}_i \vert \xi_h) q(\xi_h) \dd \xi_h
+    \end{align*}
+    with $q(\pmb{s}\vert \pmb{\xi}) = \Normal(\pmb{s}\vert \pmb{\xi})$ and $q(\pmb{\xi}) = \NormInvWish(\pmb{m}, \pmb{V} \vert \pmb{\mu_0}, \kappa_0, \nu_0, \Delta_0 \cdot \Identity_d)$
+    for user-defined parameters 
+    $\pmb{\theta} = \left(\pmb{\mu_0}, \kappa_0, \Delta_0, \nu_0\right) \in \RR^d \times (0, \infty)^2 \times (1, 
+    \infty)$ (last part since $\nu_0 > d -1$ has to be fulfilled) \medskip
+    
+    \item \textit{(Double Dipper)} With same structure as $g_3$, but with a posterior predictive conjugate model
+    \begin{align*}
+        g_4(S_h, \pmb{s}_h^* \vert \pmb{\theta}) := \int_{\Xi} \prod_{i \in S_h} q(\pmb{s}_i \vert 
+        \xi_h) q(\xi_h\vert \pmb{s}_h^*) \dd \xi_h
+    \end{align*}
+    and conjugate model $q(\pmb{s}_i \vert 
+        \xi_h) = \Normal(\pmb{s}_i \vert \pmb{m}_h, \pmb{V}_h)$ and $q(\xi_h\vert \pmb{s}_h^*) = 
+        \NormInvWish(\pmb{m}_h, \pmb{V}_h \vert \pmb{s}_h^*)$
+    Compared to $g_3$ this option is more peaked and puts more weights on local partitions.
+\end{enumerate}
+
+
+\subsection{PPMx: Clustering using Covariate-dependent Similarity functions and Prior on Cluster Size}
+
+The covariate-informed partition model is taken from \cite{Page2017-Covariate} and all the introduced variants are implemented in the $R$-package \ppmSuite{} \cite{ppmSuite}. The overall structure is the same as for the spatial-informed clustering with the difference that the similarity function now measures the homogeineity of the covariate values in a given partition set. Again, the values $m \in \mathbb{R}, s^2 \in [0, \infty)$ and bounds $A, B \in [0, \infty )$ as well as concentration parameter $M \in (0, \infty)$ and parameter(s) $\theta$ for the chosen similarity function are user-defined.
+\begin{align*}
+    Y_i \vert \pmb{\mu}^*, \pmb{\sigma}^{2*}, c_i \overset{\tiny{\mathrm{ind}}}&{\sim} \Normal (\mu_{c_i}^*, \sigma_{c_i}^{2*}), i = 1, \dots, n \\
+    % (\mu_j^*, \sigma_j^*)  | \mu_0, \sigma_0^2 \overset{\tiny{\mathrm{iid}}}&{\sim} \Normal ( \mu_0, \sigma_0^2) \times \Uniform (0,A)\\
+    % (\mu_0, \sigma_0) &\sim \Normal (m, s^2)\times \Uniform (0,B)\\
+    % \rho &\sim \PPMx(M, \pmb{\theta})
+\end{align*}
+The prior for the clusters is
+\begin{align*}
+    \PP(\rho | \pmb{x} ) \propto \prod_{j=1}^{k_{\rho}} c(\vert S_j \vert)g(\pmb{x}^*_j \vert \pmb{\theta}).
+\end{align*}
+For the so-called cohesion function $c$ either the same function as in \Cref{sPPM-model} (that is proportional to the partition probabilities in a random partition model derived from a Dirichlet process), or a uniform cohesion $c \equiv 1$ can be chosen. \medskip
+
+In the following discussion $p=1$ is assumed if not stated otherwise. If $p$ covariates are available, in general
+\begin{align*}
+    \Tilde{g}(\pmb{x}_j^* \vert \pmb{\theta} ) = \prod_{l=1}^p g(\pmb{x}_{jl}^* \vert \pmb{\theta})
+\end{align*}
+is adopted.\medskip
+
+As a large number of covariates can lead to either a large number of singleton clusters or one single cluster, there are two optional methods to cap the influence of the covariates on the partitioning.
+
+\begin{align*}
+    (1) \ \Tilde{g} (\pmb{x}_j^*) = \frac{g (\pmb{x}_j^*)}{\sum_{i=1}^{k_j} g(\pmb{x}_i^*)} \ \text{\ \ or \ \ } \ (2) \ \Tilde{g} (\pmb{x}_j^*) = g (\pmb{x}_j^*)^{\frac{1}{p}}
+\end{align*}
+
+For similarity functions $g$ there are four options available.\medskip
+
+\begin{enumerate}
+ \item With $\theta = \alpha \in (0, \infty)$
+    \begin{align*}
+        g_1( \pmb{x}_j^* \vert \theta ) := \exp{- \alpha H (\pmb{x}_j^*) }.
+    \end{align*}
+    For continuous covariates $
+    H(\pmb{x}_j^*)= \frac{1}{n} \sum_{l \in S_j} (x_l - \overline{x}_j)^2$ and for categorical covariates $H(\pmb{x}_j^*)= \sum_{c=1}^C \hat{p}_{cj} \log{\hat{p}_{cj}}$, where $C$ is the number of categories and $\hat{p}_{cj}$ the proportion of observations in category $c$ in cluster $j$.
+    Higher values of $\alpha$ lead to an increased penalty for dissimilar covariate values. Extensions to the multivariate case are possible (determinant of cluster-specific covariate matrices or multivariate entropy respectively). \medskip
+
+    \item For any number of covariates $p$ and penalty $\theta = \alpha \in (0, \infty)$
+
+    \begin{align*}
+        g_2( \pmb{x}_j^* \vert \theta) &:= \exp{- \alpha \sum_{i,k \in S_j, i \neq k} d(\pmb{x}_i, \pmb{x}_k ) }
+    \end{align*}
+    and
+    \begin{align*}
+        g_3( \pmb{x}_j^* \vert \theta) &:= \exp{- \frac{2 \alpha}{n_j (n_j - 1)} \sum_{i,k \in S_j, i \neq k} d(\pmb{x}_i, \pmb{x}_k ) }
+    \end{align*}
+    are based on the Gower Dissimilarity:
+    \begin{align*}
+        d(x_{il}, x_{jl}) := \begin{cases}
+            \frac{\vert x_{il} - x_{jl} \vert}{\max_h x_{hl} - \min_h x_{hl}}, &\quad \text{ if } l \text{-th cov. continuous}\\
+            \delta_{x_{il} x_{jl}}, &\quad \text{ if } l \text{-th cov. categorical}
+        \end{cases}
+    \end{align*}
+    and $d(\pmb{x}_i, \pmb{x}_k )$ is the average of the Gower Dissimilarities in the $p$ components. \medskip
+
+    \item  \textit{(Auxiliary Similarity Function)} With an auxiliary parameter
+    $\pmb{\xi}_j^*$, we have (prior predictive conjugate model)
+    \begin{align*}
+        g_4(\pmb{x}_j^* \vert \pmb{\theta}) := \int \prod_{i \in S_j} q(x_i \vert \pmb{\xi}^*_j) q(\pmb{\xi}^*_j) \dd \pmb{\xi}^*_j
+    \end{align*}
+    
+    For continuous covariates there are two options as a conjugate model. First, the \textit{Auxiliary N-N Model} with $q(. \vert \xi_j^*) = \Normal (. \vert \xi_j^*, \kappa_1 \hat{S})$  and $q(\xi_j^*) = \Normal (\xi_j^* \vert m_0, s_0^2)$ where $\hat{S}$ denotes the empirical variance of the covariate. The user-supplied parameters are $\pmb{\theta} = ( \kappa_1, m_0, s_0).$ Second, the \textit{Auxiliary N-NIG Model} with $q (. \vert \pmb{\xi_j^*}) = \Normal(. \vert m_j^*, v_j^*)$ and $q(\pmb{\xi}_j^*) = \text{N-IG} (m_j^*, v_j^* \vert m_0, k_0, v_0, n_0)$. The user-supplied parameters are $\pmb{\theta} = (m_0, k_0,v_0, n_0)$. \medskip
+    
+    For categorical covariates a Multinomial-Dirichlet Model is applied, that is \newline $q(. \vert \pmb{\xi}_j^*) = \Multinomial ( . \vert \pmb{\xi}_j^* )$ and $q( \pmb{\xi}_j^*) = \Dir_{k_j} ( \pmb{\xi}_j^* \vert \pmb{\alpha} \equiv a )$. The user-supplied parameter is $\theta = a$. \medskip
+
+    \item \textit{(Double Dipper)} With an auxiliary parameter
+    $\pmb{\xi}_j^*$, we have
+    \begin{align*}
+        g_5(\pmb{x}_j^* \vert \pmb{\theta}) := \int \prod_{i \in S_j} q(x_i \vert \pmb{\xi}^*_j) q(\pmb{\xi}^*_j \vert \pmb{x}_j^*) \dd \pmb{\xi}^*_j
+    \end{align*}
+
+    with the same options for the underlying models as for $g_4$. This option gives more weight on the local covariate structure compared to $g_4$. 
+\end{enumerate}
+
+\subsection{DRPM Model: Dependent Modeling of Temporal Sequences of Random Partitions}
+
+In this model that is taken from \cite{Page2021-Temporal} and is implemented in the $R$-package \drpm{} \cite{drpm} finally a temporal evolvement of the partitions is considered. The overall model structure is the following:
+
+\begin{align*}
+    Y_{it} \vert \pmb{\mu}^*_t, \pmb{\sigma}^{2*}_t, \mathbf{c}_t
+    \overset{\tiny{\textrm{ind}}} &{\sim} \Normal({\mu}^*_{c_{it}t}, 
+    {\sigma}^{2*}_{c_{it}t}) \quad \forall i=1,\ldots,n; \, t=1,\ldots, T\\
+    (\mu_{j t}^*, \sigma_{jt}^*) \vert \theta_t, \tau_t^2 
+    \overset{\tiny{\textrm{ind}}} &{\sim} \Normal(\theta_t, \tau_t^2) \times \Uniform(0, A_\sigma) \quad \forall j=1,\ldots, k_t\\
+    (\theta_t, \tau_t) \overset{\tiny{\textrm{iid}}} &{\sim}\Normal(
+    \phi_0, \lambda^2) \times \Uniform\left(0, A_\tau\right) \quad \forall t=1, \ldots, T\\
+    (\phi_0, \lambda) &\sim \Normal(m_0, s_0^2) \times \Uniform(0, A_\lambda) \\
+    \{ \pmb{c}_1, \ldots, \pmb{c}_T\} &\sim \tRPM(\pmb{\alpha}, M) \; \textrm{with} \; \alpha_t \iid{} \BetaDist(a_\alpha, b_\alpha).
+\end{align*}
+
+The temporal random partition model models the temporal sequence of clusters as a first-order Markovian structure. We denote the clusters as $\rho_t = \{S_{1t}, \ldots, S_{k_t, t}\}$, $t=1, \ldots, T$ or use the cluster-labeling notation. 
+
+The first ingredient for the model is an exchangeable probability function (EPPF) on the set of partitions of the measurement units. In our case
+\begin{align*}
+    \text{P} (\rho\vert M) = \frac{M^{k_\rho}}{\prod_{i=1}^n (M+i-1)} \prod_{i=1}^{k_\rho} \left( \vert S_i\vert -1\right)!
+\end{align*}
+is applied. This is the marginal probability function for $\rho$ derived from a Chinese Restaurant process with concentration parameter $M$. Smaller $M$ favors less but larger clusters. This function is the prior for $\rho_1$.
+ 
+Secondly, in order to define transition probabilities an auxiliary parameter $\mathbf{\gamma}_t$ is introduced. We define $\gamma_{it} \sim \Bernoulli(\alpha_t)$, i.e. 
+$\gamma_t \in \{0,1\}^{\#\text{stations}}$ and give the following interpretation:
+
+\begin{align*}
+    \gamma_{it} = \begin{cases}
+        1, \; \text{station } i \text{ is \textbf{not} relocated when moving from time } t-1 \text{ to } t\\
+        0, \; \text{else}
+    \end{cases}.
+\end{align*}
+The values of $\alpha_t \in [0,1]$ regulate the time-dependency, e.g. $\alpha_t = 1$ means $\rho_t = \rho_{t-1}$ with probability 1 and $\alpha_t = 0$ implies $\rho_t$ is independent of $\rho_{t-1}$. \medskip
+
+Given $\gamma_t$ and $\rho_{t-1}$ there is restriction to what partitions are compatible and can be considered for $\rho_{t}$. The transition probabilities are then
+\begin{align*}
+    \PP(\gamma_1, \rho_1, \ldots, \gamma_T, \rho_T) = \PP(\rho_T\vert \gamma_T, \rho_{T-1})  \cdots  \PP(\rho_2\vert \gamma_2, \rho_{1}) \PP(\rho_1)
+\end{align*}
+and for $t \in \{1, \dots, T \}$ the $\PP(\rho_t\vert \gamma_t, \rho_{t-1})$ is given by the chosen EPPF from before truncated to the set of compatible partitions.
+
+\subsection{Extensions}
+ 
+\section{Data Preparation and Evaluation}
+
+
+\subsection{The Agrimonia Database}
+
+\subsection{Data Exploration}
+
+\subsection{Data Aggregation}
+
+\subsection{Evaluation}
+
+\subsubsection{Goodness-of-fit}
+To indicate goodness-of-fit of the used models the following criteria are considered. \medskip
+
+\begin{itemize}
+    \item LPML = log pseudo marginal likelihood (higher is better)\\
+    The LPML is a predictive information criterion based on the idea of leave-on-out cross validation \cite{lecturenotes}. Let $\mathbf{y} = (y_1, \dots , y_n )$ denote our data, $\mathbf{y}_{(-i)} = (y_1, \dots , y_{i-1}, y_{i+1}, \dots, y_n )$ and $m(y_i | \mathbf{y}_{(-i)}) $ the marginal likelihood of $y_i$ given $\mathbf{y}_{(-i)}$ in the considered model. Then the LPML is defined as
+    \begin{align*}
+        \text{LPML} = \sum_{i=1}^n \log m(y_i | \mathbf{y}_{(-i)}).
+    \end{align*}
+    
+    \item WAIC = widely applicable information criterion (lower is better)\\
+    The WAIC is another predictive information criteria that accounts for the over-estimation of log pointwise predictive density $\sum_{i=1}^n \log m(y_i | \mathbf{y})$ by subtracting a penalization term $p_{WAIC}$ \cite{lecturenotes}. In our definition the WAIC is obtained by multiplying this difference with $-2$. In the following $\mathbf{\theta}$ denotes the parameters and $f$ the likelihood of the given model. The WAIC is defined as
+    \begin{align*}
+        \text{WAIC} &= -2 \left( \sum_{i=1}^n \log m(y_i | \mathbf{y} ) - 
+        p_{\text{WAIC}} \right), \\
+        p_{\text{WAIC}} &= \sum_{i=1}^n \text{Var}_{\theta | \mathbf{y}} \log 
+        f(y_i | \mathbf{\theta} ).
+    \end{align*}
+
+    \item MSE = mean squared error (lower is better)\\
+    Denote by $\hat{y}_i = \mathbb{E}(Y_i | \mathbf{y})$ the posterior mean of the $i$-th observation, then
+    \begin{align*}
+        \text{MSE} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2.
+    \end{align*}
+
+    \item MaxDev (lower is better): Given a partition $\rho
+    = \{S_1, \ldots, S_k\}$ we compute the maximum of the cluster-internal 
+    deviation of PM2.5 values over all cluster, namely
+    \begin{align*}
+        \text{MaxDev} = \max_{i=1, \ldots, k} \left(\max_{i\in S_k} y_i - 
+        \min_{i\in S_k} y_i
+         \right)
+    \end{align*}
+    as an indication on how closely related the target variable's
+    values are given the partition $\rho$.
+    
+
+\end{itemize}
+
+\subsubsection{Predictive Performance}
+
+The predictive performance of the models is measured by the mean squared prediction error. \medskip
+
+\begin{itemize}
+    \item MSPE = mean squared prediction error (lower is better)\\
+    Denote by $\Tilde{y}_i$ the testing observation for the $i$-th measurement unit, then
+
+    \begin{align*}
+        \text{MSPE} = \frac{1}{n} \sum_{i=1}^n (\Tilde{y}_i - \hat{y}_i)^2.
+    \end{align*}
+    
+\end{itemize}
+
+\subsubsection{Cluster estimation}
+Once a model is fit to the data the question remains how to summarize the obtained posterior for the clusters in a meaningful way. One number that we report is the posterior mean of the number of clusters. Furthermore, a general idea is to find an estimate $\hat{\rho}^*$ that minimizes a certain partition loss function $L$. Assuming that there is a ``true'' $\rho$ (we take the posterior distribution), this becomes
+\begin{align*}
+    \hat{\rho}^* = \text{argmin}_{\hat{\rho}} \ \mathbb{E} ( L(\rho, \hat{\rho}) | \mathbf{y} ) \approx \frac{1}{M} \sum_{m=1}^M L (\rho^{(m)} , \hat{\rho} ),
+\end{align*}
+where $\left( \rho^{(1)}, \dots , \rho^{(M)} \right)$ are MCMC samples from the posterior. For that approach the $R$-package \textit{salso} \cite{salso} provides a number of possibilities. In \cite{Dahl2022-salso} different loss functions are explained as well as the SALSO algorithm that is implemented in the package. \medskip
+
+\textbf{Binder Loss}
+
+One of the most widely used loss functions is the Binder loss function that considers pairwise misclassifications. Switching to the equivalent cluster notation for partitions the definition is
+
+\begin{align*}
+    \text{L}_{\text{Binder}} (\mathbf{c}, \mathbf{\hat{c}} ) = \sum_{i<j} a \cdot  I (\{ c_i = c_j \}) I (\{ \hat{c_i} \neq \hat{c_j} \} ) +  b \cdot I (\{c_i \neq c_j \}) I (\{ \hat{c_i} = \hat{c_j} \}).
+\end{align*}
+For $a=b=1$ a measure of similarity between partitions, the Rand Index, is obtained by $\text{RI}(\rho, \hat{\rho}) = 1 -  \text{L}_{\text{Binder}}(\rho, \hat{\rho}) / \binom{n}{2}$. Maximizing the the posterior expectation of the Rand Index is equivalent to minimizing the expected loss for a Binder loss function with $a=b=1$. As this index fails to account for chance agreements, there exists a generalization that we will consider. \medskip
+
+\textbf{Adjusted Rand Index}
+
+The Adjusted Rand Index (ARI) is defined as
+\begin{align*}
+    \text{ARI} (\rho, \hat{\rho}) = \frac{ \sum_{s \in \rho} \sum_{E \in \hat{\rho}} \binom{| S \cap E |}{2} - \left( \sum_{S \in \rho} \binom{|S|}{2} \sum_{E \in \hat{\rho}} \binom{|E|}{2} \right) \frac{1}{\binom{n}{2}}} {\frac{1}{2} \left( \sum_{S \in \rho} \binom{|S|}{2} + \sum_{E \in \hat{\rho}} \binom{|E|}{2} \right) - \left(\sum_{S \in \rho} \binom{|S|}{2} \sum_{E \in \hat{\rho}} \binom{|E|}{2} \right) \frac{1}{\binom{n}{2}}}.
+\end{align*}
+Large values mean a larger similarity between the partitions. We obtain another point estimate of the posterior expectation of the partition by maximizing the posterior expectation of the ARI.
+
+\newpage
+
+\section{Results}
+
+
+\newpage
+
+\section{Conclusions}
+
+
+
+\vspace{0.5cm}
+
+\newpage
+
+%-----------------------------------------------------------------------------
+% BIBLIOGRAPHY
+%-----------------------------------------------------------------------------
+\nocite{*}
+\newpage
+\printbibliography
+
+\newpage
+
+\section{Acknowledgements}
+
+
+
+
+
+\end{document}
