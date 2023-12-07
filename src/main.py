@@ -61,14 +61,15 @@ def main():
     }
     drpm_args = {
         "M": 100,
-        "starting_alpha": 0.5,  # 0.1
+        "starting_alpha": 0.75,  # 0.5
         "unit_specific_alpha": False,
         "time_specific_alpha": False,
         "alpha_0": False,
         "eta1_0": False,
         "phi1_0": False,
         # "modelPriors": ro.FloatVector([0, 100**2, 1, 1, 1, 1]),
-        "modelPriors": ro.FloatVector([0, 100 * 2, 0.1, 1, 1, 1]),
+        "modelPriors": ro.FloatVector([0, 100**2, 10, 5, 5, 1]),
+        # "modelPriors": ro.FloatVector([0, 100 * 2, 0.1, 1, 1, 1]),
         "alphaPriors": ro.r["matrix"](ro.FloatVector([1, 1]), nrow=1),
         "simpleModel": 0,
         "theta_tau2": ro.FloatVector([0, 2]),
@@ -77,7 +78,7 @@ def main():
         "mh": ro.FloatVector([0.5, 1, 0.1, 0.1, 0.1]),
         "verbose": False,
         "draws": 10000,
-        "burn": 100,
+        "burn": 1000,
         "thin": 10,
     }
 
@@ -161,15 +162,15 @@ def main():
         #     yearly_result=yearly_result, num_weeks=num_weeks
         # )
         model_result.add_testcase(yearly_result=yearly_result, show_to_console=True)
-    # plot_clustering(save_to_visualize_cluster, method_name=model.name)
+    plot_clustering(save_to_visualize_cluster, method_name=model.name)
     print("Model results as table: ")
     test = model_result.to_table()
     print(test)
-    print(
-        python_to_latex(
-            test, cols_to_min=["time"], cols_to_max=["waic"], filename="Test"
-        )
-    )
+    # print(
+    #     python_to_latex(
+    #         test, cols_to_min=["time"], cols_to_max=["waic"], filename="Test"
+    #     )
+    # )
     all_results.append(model_result)
 
 

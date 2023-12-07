@@ -12,7 +12,7 @@ from utils.data_loader import (
     to_r_dataframe,
     yearly_data_as_timeseries,
 )
-from utils.magic import set_r_python_seed
+from utils.magic import log_time, set_r_python_seed
 from utils.models import Model
 from utils.results import Analyse, ModelPerformance, YearlyPerformance
 from utils.tables import python_to_latex
@@ -26,6 +26,7 @@ from utils.visualize import (
 )
 
 
+@log_time()
 def main():
     set_r_python_seed()
     data = load_data()
@@ -33,21 +34,28 @@ def main():
     salso_args = {"loss": "binder", "maxNCluster": 0}
 
     drpm_args = {
-        # "M": [0.1, 1, 10, 100, 1000],
-        "M": 0.1,
-        # "starting_alpha": [0, 0.1, 0.25, 0.5, 0.75, 0.9, 0.999],
-        "starting_alpha": 0,
+        # TODO
+        "M": [0.1, 1, 10, 100],
+        # "M": 100,
+        # TODO
+        "starting_alpha": [0, 0.1, 0.25, 0.5, 0.75, 0.9],
+        # "starting_alpha": 0.75,
         "unit_specific_alpha": False,
         "time_specific_alpha": False,
+        # TODO
         # "alpha_0": [True, False],  # True to NOT update alpha
         "alpha_0": False,  # True to NOT update alpha
+        # TODO
         # "eta1_0": [True, False],  # True for conditionally independence
         "eta1_0": False,  # True for conditionally independence
+        # TODO
         # "phi1_0": [True, False],  # True for iid model for atoms
         "phi1_0": False,  # True for iid model for atoms
         # modelPriors: m0, s20, A_sigma, A_tau, A_lambda, b_e (xi)
+        # TODO:
         # ro.FloatVector([0, 100**2, 10, 5, 5, 1]), # -> paper values pm10
-        "modelPriors": ro.FloatVector([0, 100**2, 10, 5, 5, 1]),
+        # "modelPriors": ro.FloatVector([0, 100**2, 10, 5, 5, 1]), # fine-tuning and large experiment
+        "modelPriors": ro.FloatVector([0, 100 * 2, 0.1, 1, 1, 1]),  # own-params-large
         # "modelPriors": ro.FloatVector([0, 100 * 2, 0.1, 1, 1, 1]),
         "alphaPriors": ro.r["matrix"](ro.FloatVector([2.0, 2.0]), nrow=1),
         "simpleModel": 0,
@@ -104,8 +112,8 @@ def main():
     table = model_result.to_table()
     python_to_latex(
         table,
-        caption="DRPM-Model Large Experiment",
-        filename="drpm_model",
+        caption="DRPM Model for different hyperparameter configurations -- Fine-Tuning.",
+        filename="drpm_own_params-large-experiment",
         save_as_csv=True,
         cols_to_max=["lpml"],
         cols_to_min=["waic", "time", "mse", "max_pm25_diff"],
