@@ -207,8 +207,7 @@ def _create_matrix_from_dict(dict_stations):
     # Obtain number of stations and max length of time series
     num_stations = len(dict_stations)
     max_length = max(len(series) for series in dict_stations.values())
-
-    matrix = np.full((num_stations, max_length), 0)
+    matrix = np.zeros((num_stations, max_length))
 
     # Put log_pm25 values into matrix
     for idx, series in enumerate(dict_stations.values()):

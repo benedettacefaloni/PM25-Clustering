@@ -127,7 +127,14 @@ def select_params_based_on_method(method_name: str):
     elif method_name == "ppmx":
         return ["meanModel", "cohesion", "M", "PPM", "similarity_function", "consim"]
     elif method_name == "drpm":
-        return ["M", "SpatialCohesion", "starting_alpha"]
+        return [
+            "M",
+            "starting_alpha",
+            "alpha0",
+            "eta1_0",
+            "phi1_0",
+            "SpatialCohesion",
+        ]
     else:
         raise NotImplementedError
 

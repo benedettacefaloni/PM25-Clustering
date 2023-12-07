@@ -178,6 +178,17 @@ def trace_plots(res: dict, model: str):
     elif model == "gaussian_ppmx":
         to_analyse = ["mu", "sig2", "mu0", "sig20"]
     elif model == "drpm":
+        to_analyse = [
+            "gamma",
+            "mu",
+            "sig2",
+            "alpha",
+            "theta",
+            "tau2",
+            "eta1",
+            "phi0",
+            "phi1",
+        ]
         raise NotImplementedError
     else:
         raise NotImplementedError

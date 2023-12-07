@@ -80,8 +80,8 @@ Backlog:
         - (m0 = 0, k0 = 1.0, v0 = 10.0, n0 = 2)
         - and the second (m0 = 0, k0 = 1.0,v0 = 1.0, n0 = 2)
     - tRPM:
-        - A_sigma = 5 or 0.5*sd(Yvec) (temporally indipendent CRP and temporally static CRP) or 1 (Space-time data generation) or 15 (2 to account for the higher variability present in the data)
-        - A_tau = 10 or 100  (temporally indipendent CRP and temporally static CRP) or 2 (Space-time data generation)
+        - A_sigma = 5 or 0.5*sd(Yvec) (temporally independent CRP and temporally static CRP) or 1 (Space-time data generation) or 15 (2 to account for the higher variability present in the data)
+        - A_tau = 10 or 100  (temporally independent CRP and temporally static CRP) or 2 (Space-time data generation)
         - A_lambda = 10
         - m0 = 0
         - S0 = 100

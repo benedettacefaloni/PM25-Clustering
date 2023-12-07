@@ -20,9 +20,11 @@ def python_to_latex(
     cols_to_max: list[str],
     caption: str = "",
     filename: str = None,
-    # column_format: str = "lrrllllllllllll",
     show_index: bool = False,
+    save_as_csv: bool = False,
 ):
+    if save_as_csv:
+        df.to_csv(path_to_tables + filename + ".csv")
     # 2 times transpose as we want row based coloring: cols -> rows -> cols
     df = _format_cols_bold(
         df,
