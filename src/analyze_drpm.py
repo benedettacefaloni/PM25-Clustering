@@ -25,6 +25,38 @@ from utils.visualize import (
     trace_plots,
 )
 
+priors = {
+    # params as stated in the original drpm paper of page et al.
+    "paper_params": {
+        # modelPriors: m0, s20, A_sigma, A_tau, A_lambda, b_e (xi)
+        "modelPriors": ro.FloatVector([0, 100**2, 10, 5, 5, 1]),
+        # modelPriors: a_alpha, b_alpha
+        "alphaPriors": ro.r["matrix"](ro.FloatVector([2.0, 2.0]), nrow=1),
+    },
+    # tuned params
+    "own_params": {
+        "modelPriors": ro.FloatVector([0, 100 * 2, 0.1, 1, 1, 1]),
+        "alphaPriors": ro.r["matrix"](ro.FloatVector([1.0, 1.0]), nrow=1),
+    },
+}
+
+experiments = {
+    "large_experiment": {
+        "M": [0.1, 1, 10, 100],
+        "starting_alpha": [0, 0.1, 0.25, 0.5, 0.75, 0.9],
+        "alpha_0": False,
+        "eta1_0": False,
+        "phi1_0": False,
+    },
+    "fine_tuning": {
+        "M": 100,
+        "starting_alpha": 0.75,
+        "alpha_0": [True, False],
+        "eta1_0": [True, False],
+        "phi1_0": [True, False],
+    },
+}
+
 
 @log_time()
 def main():
@@ -33,31 +65,22 @@ def main():
     pm25_timeseries = yearly_data_as_timeseries(data)
     salso_args = {"loss": "binder", "maxNCluster": 0}
 
+    prior_case = "own_param"
+    experiment_case = "large_experiment"
+
     drpm_args = {
-        # TODO
-        "M": [0.1, 1, 10, 100],
-        # "M": 100,
-        # TODO
-        "starting_alpha": [0, 0.1, 0.25, 0.5, 0.75, 0.9],
-        # "starting_alpha": 0.75,
+        "M": experiments[experiment_case]["M"],
+        "starting_alpha": experiments[experiment_case]["starting_alpha"],
         "unit_specific_alpha": False,
         "time_specific_alpha": False,
-        # TODO
-        # "alpha_0": [True, False],  # True to NOT update alpha
-        "alpha_0": False,  # True to NOT update alpha
-        # TODO
-        # "eta1_0": [True, False],  # True for conditionally independence
-        "eta1_0": False,  # True for conditionally independence
-        # TODO
-        # "phi1_0": [True, False],  # True for iid model for atoms
-        "phi1_0": False,  # True for iid model for atoms
-        # modelPriors: m0, s20, A_sigma, A_tau, A_lambda, b_e (xi)
-        # TODO:
-        # ro.FloatVector([0, 100**2, 10, 5, 5, 1]), # -> paper values pm10
-        # "modelPriors": ro.FloatVector([0, 100**2, 10, 5, 5, 1]), # fine-tuning and large experiment
-        "modelPriors": ro.FloatVector([0, 100 * 2, 0.1, 1, 1, 1]),  # own-params-large
-        # "modelPriors": ro.FloatVector([0, 100 * 2, 0.1, 1, 1, 1]),
-        "alphaPriors": ro.r["matrix"](ro.FloatVector([2.0, 2.0]), nrow=1),
+        "alpha_0": experiments[experiment_case]["alpha_0"],  # True to NOT update alpha
+        # True for conditionally independence
+        "eta1_0": experiments[experiment_case]["eta1_0"],
+        "phi1_0": experiments[experiment_case][
+            "phi1_0"
+        ],  # True for iid model for atoms
+        "modelPriors": priors[prior_case]["modelPriors"],
+        "alphaPriors": priors[prior_case]["alphaPriors"],
         "simpleModel": 0,
         "theta_tau2": ro.FloatVector([0, 2]),  # only use with simpleModel=True
         "SpatialCohesion": [3, 4],
@@ -112,8 +135,8 @@ def main():
     table = model_result.to_table()
     python_to_latex(
         table,
-        caption="DRPM Model for different hyperparameter configurations -- Fine-Tuning.",
-        filename="drpm_own_params-large-experiment",
+        caption="DRPM Model for different hyperparameter configurations.",
+        filename="drpm_{}_{}".format(experiment_case, prior_case),
         save_as_csv=True,
         cols_to_max=["lpml"],
         cols_to_min=["waic", "time", "mse", "max_pm25_diff"],
