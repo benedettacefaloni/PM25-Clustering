@@ -17,6 +17,7 @@ class Model:
 
     def yield_test_cases(self):
         test_cases = self._combine_dict_lists(self.func_args)
+        self.num_experiments = len(test_cases)
         for test_case in test_cases:
             yield test_case
 

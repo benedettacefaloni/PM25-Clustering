@@ -39,9 +39,12 @@ def main():
         "starting_alpha": 0,
         "unit_specific_alpha": False,
         "time_specific_alpha": False,
-        "alpha_0": [True, False],  # True to NOT update alpha
-        "eta1_0": [True, False],  # True for conditionally independence
-        "phi1_0": [True, False],  # True for iid model for atoms
+        # "alpha_0": [True, False],  # True to NOT update alpha
+        "alpha_0": False,  # True to NOT update alpha
+        # "eta1_0": [True, False],  # True for conditionally independence
+        "eta1_0": False,  # True for conditionally independence
+        # "phi1_0": [True, False],  # True for iid model for atoms
+        "phi1_0": False,  # True for iid model for atoms
         # modelPriors: m0, s20, A_sigma, A_tau, A_lambda, b_e (xi)
         # ro.FloatVector([0, 100**2, 10, 5, 5, 1]), # -> paper values pm10
         "modelPriors": ro.FloatVector([0, 100**2, 10, 5, 5, 1]),
@@ -66,7 +69,11 @@ def main():
 
     model_result = ModelPerformance(name=model.name)
 
+    it = 1
     for model_params in model.yield_test_cases():
+        print("==========================")
+        print("\nCASE {}/{}\n".format(it, model.num_experiments))
+        print("==========================")
         # use yearly data
         model_args = model_params | model.load_model_specific_data(
             data=data, yearly_time_series=pm25_timeseries, model_params=model_params
@@ -92,6 +99,7 @@ def main():
         print(yearly_result.list_of_weekly["max_pm25_diff"])
         # trace_plots(res_cluster, model=model.name)
         model_result.add_testcase(yearly_result=yearly_result)
+        it += 1
 
     table = model_result.to_table()
     python_to_latex(
@@ -99,6 +107,8 @@ def main():
         caption="DRPM-Model Large Experiment",
         filename="drpm_model",
         save_as_csv=True,
+        cols_to_max=["lpml"],
+        cols_to_min=["waic", "time", "mse", "max_pm25_diff"],
     )
     all_results.append(model_result)
 

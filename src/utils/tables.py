@@ -23,8 +23,11 @@ def python_to_latex(
     show_index: bool = False,
     save_as_csv: bool = False,
 ):
+    method = df.pop("Method")
+    df.insert(0, "Method", method)
     if save_as_csv:
         df.to_csv(path_to_tables + filename + ".csv")
+
     # 2 times transpose as we want row based coloring: cols -> rows -> cols
     df = _format_cols_bold(
         df,
@@ -32,11 +35,13 @@ def python_to_latex(
         cols_to_min=cols_to_min,
     )
 
+    df.columns = [col.replace("_", "-") for col in df.columns]
+    column_format = len(df.columns) * "c"
     content = df.to_latex(
         index=show_index,
         escape=False,
         caption=caption,
-        # column_format=column_format,
+        column_format=column_format,
         # header="",
     )
     if filename is not None:

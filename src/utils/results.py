@@ -39,6 +39,7 @@ agg_mapping = {
     # maybe yearly
     "mse": max,
     "n_singletons": np.max,
+    # maybe maximum?
     "n_clusters": np.average,
     "max_cluster_size": np.max,
     "min_cluster_size": np.min,
@@ -130,7 +131,7 @@ def select_params_based_on_method(method_name: str):
         return [
             "M",
             "starting_alpha",
-            "alpha0",
+            "alpha_0",
             "eta1_0",
             "phi1_0",
             "SpatialCohesion",
