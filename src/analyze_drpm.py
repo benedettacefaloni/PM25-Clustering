@@ -35,6 +35,7 @@ priors = {
     },
     # tuned params
     "own_params": {
+        # A_sigma is way smaller => smaller clusters in general
         "modelPriors": ro.FloatVector([0, 100 * 2, 0.1, 1, 1, 1]),
         "alphaPriors": ro.r["matrix"](ro.FloatVector([1.0, 1.0]), nrow=1),
     },
@@ -50,6 +51,7 @@ experiments = {
     },
     "fine_tuning": {
         "M": 100,
+        # 0.75 for paper_params
         "starting_alpha": 0.75,
         "alpha_0": [True, False],
         "eta1_0": [True, False],
