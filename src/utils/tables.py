@@ -24,8 +24,8 @@ def python_to_latex(
     show_index: bool = False,
     save_as_csv: bool = False,
 ):
-    method = df.pop("Method")
-    df.insert(0, "Method", method)
+    model = df.pop("Model")
+    df.insert(0, "Model", model)
     if save_as_csv:
         df.to_csv(path_to_tables + filename + ".csv")
 
@@ -114,3 +114,12 @@ def _prior_values_for_caption(model_name: str, priors: dict):
 def _save_table(content: str, path: str):
     with open(path, "w") as file:
         file.write(content)
+
+    with open(path, "r") as f:
+        contents = f.readlines()
+
+    contents.insert(2, "\\centering")
+
+    with open(path, "w") as f:
+        contents = "".join(contents)
+        f.write(contents)

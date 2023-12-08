@@ -173,7 +173,7 @@ class ModelPerformance:
                 [table, self.test_cases[idx].to_table_row(select_params, index=[idx])],
                 ignore_index=True,
             )
-        table["Method"] = self.name
+        table["Model"] = self.name
         return table
 
 
