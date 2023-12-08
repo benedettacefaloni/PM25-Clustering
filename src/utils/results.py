@@ -85,7 +85,6 @@ class YearlyPerformance:
         res = {}
         # aggregated values
         for key, agg_func in agg_mapping.items():
-            print("key = ", key)
             if isinstance(self.list_of_weekly[key], float):
                 res[key] = self.list_of_weekly[key]
             else:
@@ -131,9 +130,9 @@ def select_params_based_on_method(method_name: str):
         return [
             "M",
             "starting_alpha",
-            "alpha_0",
-            "eta1_0",
-            "phi1_0",
+            # "alpha_0",
+            # "eta1_0",
+            # "phi1_0",
             "SpatialCohesion",
         ]
     else:

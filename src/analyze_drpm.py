@@ -40,13 +40,22 @@ priors = {
     "paper_params": {
         # modelPriors: m0, s20, A_sigma, A_tau, A_lambda, b_e (xi)
         "modelPriors": ro.FloatVector([0, 100**2, 10, 5, 5, 1]),
-        # modelPriors: a_alpha, b_alpha
+        # modelPriors: a_alpha, b_alpha -> most mass on the value of 0.5
         "alphaPriors": ro.r["matrix"](ro.FloatVector([2.0, 2.0]), nrow=1),
     },
     # tuned params
-    "own_params": {
+    "smaller_std": {
         # A_sigma is way smaller => smaller clusters in general
+        # A_tau, A_lambda also smaller to set incentives for smaller clusters
         "modelPriors": ro.FloatVector([0, 100 * 2, 0.1, 1, 1, 1]),
+        "alphaPriors": ro.r["matrix"](ro.FloatVector([1.0, 1.0]), nrow=1),
+    },
+    "mean_prev_year": {
+        # A_sigma is way smaller => smaller clusters in general
+        # A_tau, A_lambda also smaller to set incentives for smaller clusters
+        # use the mean of log(val_2018 + 1): 2.909599862036403 as a mean prior
+        "modelPriors": ro.FloatVector([2.91, 100 * 2, 0.1, 1, 1, 1]),
+        # uniform prior
         "alphaPriors": ro.r["matrix"](ro.FloatVector([1.0, 1.0]), nrow=1),
     },
 }
@@ -55,17 +64,17 @@ experiments = {
     "large_experiment": {
         "M": [0.1, 1, 10, 100],
         "starting_alpha": [0, 0.1, 0.25, 0.5, 0.75, 0.9],
-        "alpha_0": False,
-        "eta1_0": False,
-        "phi1_0": False,
+        # "alpha_0": False,
+        # "eta1_0": False,
+        # "phi1_0": False,
     },
     "fine_tuning": {
         "M": 100,
         # 0.75 for paper_params
         "starting_alpha": 0.75,
-        "alpha_0": [True, False],
-        "eta1_0": [True, False],
-        "phi1_0": [True, False],
+        # "alpha_0": [True, False],
+        # "eta1_0": [True, False],
+        # "phi1_0": [True, False],
     },
 }
 
@@ -77,20 +86,18 @@ def main():
     pm25_timeseries = yearly_data_as_timeseries(data)
     salso_args = {"loss": "binder", "maxNCluster": 0}
 
-    prior_case = "own_param"
+    prior_case = "smaller_std"
     experiment_case = "large_experiment"
 
     drpm_args = {
         "M": experiments[experiment_case]["M"],
         "starting_alpha": experiments[experiment_case]["starting_alpha"],
-        "unit_specific_alpha": False,
-        "time_specific_alpha": False,
-        "alpha_0": experiments[experiment_case]["alpha_0"],  # True to NOT update alpha
+        "unit_specific_alpha": False,  # diff alpha for each station --> prior needs to be adjusted
+        "time_specific_alpha": True,  # diff alpha is drawn for each time-step
+        "alpha_0": False,
         # True for conditionally independence
-        "eta1_0": experiments[experiment_case]["eta1_0"],
-        "phi1_0": experiments[experiment_case][
-            "phi1_0"
-        ],  # True for iid model for atoms
+        "eta1_0": True,
+        "phi1_0": True,
         "modelPriors": priors[prior_case]["modelPriors"],
         "alphaPriors": priors[prior_case]["alphaPriors"],
         "simpleModel": 0,
