@@ -15,7 +15,7 @@ from utils.data_loader import (
 from utils.magic import log_time, set_r_python_seed
 from utils.models import Model
 from utils.results import Analyse, ModelPerformance, YearlyPerformance
-from utils.tables import python_to_latex
+from utils.tables import python_to_latex, _prior_values_for_caption
 from utils.visualize import (
     WeeklyClustering,
     YearlyClustering,
@@ -154,7 +154,9 @@ def main():
     table = model_result.to_table()
     python_to_latex(
         table,
-        caption="DRPM Model for different hyperparameter configurations.",
+        caption="DRPM Model for different hyperparameter configurations with the following prior values: {}.".format(
+            _prior_values_for_caption(model_name="drpm", priors=priors[prior_case])
+        ),
         filename="drpm_{}_{}".format(experiment_case, prior_case),
         save_as_csv=True,
         cols_to_max=["lpml"],

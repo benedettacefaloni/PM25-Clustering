@@ -57,6 +57,7 @@
     style=alphabetic,
 ]{biblatex}
 \addbibresource{bibliography.bib} 
+\usepackage{csquotes}
 % \bibliographystyle{apalike} % You may use a different style adapted to your field
 
 % PACKAGES FOR THE APPENDIX
@@ -397,13 +398,24 @@ Given $\gamma_t$ and $\rho_{t-1}$ there is restriction to what partitions are co
 and for $t \in \{1, \dots, T \}$ the $\PP(\rho_t\vert \gamma_t, \rho_{t-1})$ is given by the chosen EPPF from before truncated to the set of compatible partitions.
 
 \subsection{Extensions}
- 
+
+DPRM-Modell:
+\begin{itemize}
+    \item AR(1)-method using eta not equal to zero (otherwise iid)
+    \item unit, i.e. station, specific alpha values -- adjust the prior size accordingly
+    \item fixed $\alpha$ for each time step
+    \item phi value, 0 value corresponds to independet atoms
+\end{itemize}
 \section{Data Preparation and Evaluation}
 
 
 \subsection{The Agrimonia Database}
 
 \subsection{Data Exploration}
+TODO: show the correlation plot, show time series over different years
+list data loss, number of stations
+
+\subsection{Imputation of Missing Data}
 
 \subsection{Data Aggregation}
 
@@ -490,6 +502,11 @@ Large values mean a larger similarity between the partitions. We obtain another 
 
 \section{Results}
 
+\subsection{sPPM}
+\subsection{PPMx}
+\subsection{DRPM}
+\subsection{Extensions}
+
 
 \newpage
 
@@ -511,8 +528,6 @@ Large values mean a larger similarity between the partitions. We obtain another 
 \newpage
 
 \section{Acknowledgements}
-
-
 
 
 

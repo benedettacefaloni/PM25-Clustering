@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 import pandas as pd
+import numpy as np
 
 # inspired by:
 # - https://blog.martisak.se/2021/04/10/publication_ready_tables/
@@ -28,7 +29,6 @@ def python_to_latex(
     if save_as_csv:
         df.to_csv(path_to_tables + filename + ".csv")
 
-    # 2 times transpose as we want row based coloring: cols -> rows -> cols
     df = _format_cols_bold(
         df,
         cols_to_max=cols_to_max,
@@ -90,6 +90,25 @@ def _bold_extreme_values(
 
     cell = "${}$".format(cell)
     return cell
+
+
+def _prior_values_for_caption(model_name: str, priors: dict):
+    if model_name == "drpm":
+        value_str = ""
+        model_prior = np.array(priors["modelPriors"])
+        model_prior_names = ["m_0", "s_0^2", "A_\\sigma", "A_\\tau", "A_\\lambda", "b"]
+
+        alpha_prior = np.array(priors["alphaPriors"])
+        alpha_prior_names = ["a_\\alpha", "b_\\alpha"]
+
+        for name, val in zip(
+            model_prior_names + alpha_prior_names, model_prior + alpha_prior
+        ):
+            value_str += "${} = {}$, ".format(name, val)
+
+    else:
+        raise NotImplementedError
+    return value_str[:-2]
 
 
 def _save_table(content: str, path: str):
