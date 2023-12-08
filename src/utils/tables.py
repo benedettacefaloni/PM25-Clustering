@@ -98,11 +98,12 @@ def _prior_values_for_caption(model_name: str, priors: dict):
         model_prior = np.array(priors["modelPriors"])
         model_prior_names = ["m_0", "s_0^2", "A_\\sigma", "A_\\tau", "A_\\lambda", "b"]
 
-        alpha_prior = np.array(priors["alphaPriors"])
+        alpha_prior = np.array(priors["alphaPriors"]).flatten()
         alpha_prior_names = ["a_\\alpha", "b_\\alpha"]
 
         for name, val in zip(
-            model_prior_names + alpha_prior_names, model_prior + alpha_prior
+            model_prior_names + alpha_prior_names,
+            np.concatenate((model_prior, alpha_prior)),
         ):
             value_str += "${} = {}$, ".format(name, val)
 
