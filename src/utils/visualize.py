@@ -179,17 +179,16 @@ def trace_plots(res: dict, model: str):
         to_analyse = ["mu", "sig2", "mu0", "sig20"]
     elif model == "drpm":
         to_analyse = [
-            "gamma",
+            # "gamma",
             "mu",
             "sig2",
-            "alpha",
+            # "alpha",
             "theta",
             "tau2",
-            "eta1",
-            "phi0",
-            "phi1",
+            # "eta1",
+            # "phi0",
+            # "phi1",
         ]
-        raise NotImplementedError
     else:
         raise NotImplementedError
     n_trace_plots = len(to_analyse)
@@ -208,9 +207,17 @@ def trace_plots(res: dict, model: str):
         else:
             ax = axes[col]
 
-        ax.plot(res[param_name])
+        if model == "drpm":
+            print(param_name)
+            print("shape: ", res[param_name].shape)
+            try:
+                ax.plot(res[param_name][0, :3, :].T, "--")
+            except:
+                ax.plot(res[param_name].T[:3, :].T, "--")
+        else:
+            ax.plot(res[param_name])
         ax.set_title("Plot {}".format(param_name))
-        ax.set_ylabel("MCMC samples")
+        ax.set_xlabel("MCMC samples")
         # ax.set_ylabel("Y-axis")
 
     plt.tight_layout()

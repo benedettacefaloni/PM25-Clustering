@@ -11,11 +11,13 @@ from matplotlib.lines import Line2D
 import matplotlib.patches as mpatches
 import numpy as np
 
-from utils.visualize import _n_colors
+from utils.visualize import _n_colors, trace_plots
 
 # PLOTTING -> LaTeX
-plt.rc("text", usetex=True)
-plt.rc("font", family="serif", size="16")
+use_tex = False
+if use_tex:
+    plt.rc("text", usetex=True)
+    plt.rc("font", family="serif", size="16")
 
 
 def plot_overview(
@@ -28,7 +30,7 @@ def plot_overview(
     weeks = np.arange(1, 53, step=1)
     colors = ["darkorange", "green", "royalblue"]
     markers = ["v", "^", "o"]
-    labels = ["min_size", "max_size", "n_singletons"]
+    labels = ["min", "max", "n_singletons"]
 
     for idx, model in enumerate(all_results):
         # plot the MSE for all three models per week
@@ -59,7 +61,7 @@ def plot_overview(
                 weeks,
                 model.test_cases[0].list_of_weekly[cluster_kpi],
                 color=colors[idx],
-                linestyle="--",
+                # linestyle="--",
                 marker=markers[marker_idx],
                 # label=names[idx] + cluster_kpi,
             )
@@ -85,7 +87,7 @@ def plot_overview(
     ax[1].set_ylabel("Number of Cluster")
     ax[2].set_ylabel("Cluster Sizes")
 
-    ax[2].set_xlabel("Weeks")
+    ax[2].set_xlabel("Week")
 
     lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
     lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
@@ -133,7 +135,8 @@ def main():
     salso_args = {"loss": "binder", "maxNCluster": 0}
     all_results: list[ModelPerformance] = []
 
-    for prior in priors.keys():
+    # for prior in priors.keys():
+    for prior in ["paper_params"]:
         print(prior)
         drpm_args = {
             "M": 0.001,  # TODO: always the best?
@@ -185,12 +188,16 @@ def main():
             # save_to_visualize_cluster = YearlyClustering(
             #     yearly_decomposed_result=yearly_result, data=data
             # )
+            trace_plots(res_cluster, model=model.name)
             model_result.add_testcase(yearly_result=yearly_result)
             it += 1
         all_results.append(model_result)
-    plot_overview(
-        all_results=all_results, names=["Paper", "Smaller-STD", "Non-Zero-Mean"]
-    )
+
+    # PLOT the MSE and cluster KPIs
+    # plot_overview(
+    #     all_results=all_results,
+    #     names=["DRPM (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
+    # )
 
 
 if __name__ == "__main__":
