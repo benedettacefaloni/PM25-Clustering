@@ -77,14 +77,29 @@ experiments = {
         # "eta1_0": False,
         # "phi1_0": False,
     },
-    "fine_tuning": {
-        "M": 100,
-        # 0.75 for paper_params
-        "starting_alpha": 0.75,
-        # "alpha_0": [True, False],
-        # "eta1_0": [True, False],
-        # "phi1_0": [True, False],
+    "extensions": {
+        "M": 0.1,
+        "starting_alpha": 0.5,
+        "time_specific_alpha": [True, False],
+        "eta1_0": [False, True],
+        "phi1_0": [False, True],
     },
+}
+
+select_params = {
+    "large_experiment": [
+        "M",
+        "starting_alpha",
+        "SpatialCohesion",
+    ],
+    "extensions": [
+        "M",
+        "starting_alpha",
+        "eta1_0",
+        "phi1_0",
+        "time_specific_alpha",
+        "SpatialCohesion",
+    ],
 }
 
 
@@ -95,7 +110,7 @@ def main():
     pm25_timeseries = yearly_data_as_timeseries(data)
     salso_args = {"loss": "binder", "maxNCluster": 0}
 
-    prior_case = "smaller_std"
+    prior_case = "mean_prev_year"
     experiment_case = "large_experiment"
 
     drpm_args = {
@@ -160,7 +175,7 @@ def main():
         model_result.add_testcase(yearly_result=yearly_result)
         it += 1
 
-    table = model_result.to_table()
+    table = model_result.to_table(select_params=select_params[experiment_case])
     python_to_latex(
         table,
         caption="DRPM Model for different hyperparameter configurations with the following prior values: {}.".format(

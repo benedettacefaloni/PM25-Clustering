@@ -260,8 +260,3 @@ def plot_weekly_clustering_kpi_overview(
     plt.legend(loc="upper right")
     plt.title("Weekly Clustering")
     plt.show()
-
-
-def experiment_to_table(filename: str, path: str = report_path):
-    # TODO
-    pass

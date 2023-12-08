@@ -60,9 +60,9 @@ class YearlyPerformance:
         self.config = config
 
         if weekly_results is not None:
-            self.list_of_weekly = self.combine_weekly_to_yearly(weekly_results)
+            self.list_of_weekly: dict = self.combine_weekly_to_yearly(weekly_results)
         else:
-            self.list_of_weekly = yearly_result_decomposed
+            self.list_of_weekly: dict = yearly_result_decomposed
 
     def combine_weekly_to_yearly(self, weekly_results: list) -> dict:
         res = {}
