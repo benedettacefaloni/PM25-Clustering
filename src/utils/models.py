@@ -3,8 +3,8 @@ from itertools import product
 import numpy as np
 import pandas as pd
 
-from utils.data_loader import to_r_matrix, to_r_vector
-
+#from utils.data_loader import to_r_matrix, to_r_vector
+from utils.data_loader import to_r_matrix, to_r_vector, r_NULL
 
 class Model:
     def __init__(
@@ -70,7 +70,8 @@ class Model:
         elif self.name == "drpm":
             return {
                 "y": to_r_matrix(yearly_time_series),
-                "s_coords": to_r_matrix(data[["Latitude", "Longitude"]].to_numpy()),
+                #"s_coords": to_r_matrix(data[["Latitude", "Longitude"]].to_numpy()),
+                "s_coords": r_NULL()
             }
         else:
             raise NotImplementedError
