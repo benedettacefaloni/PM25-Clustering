@@ -32,8 +32,8 @@ def trace_plots(res: dict, model: str, filename: str = "drpm_lower_std_trace_plo
         "lam2",
     ]
     names = [
-        "$\\mu^*_{c_0 t}$",
-        "$\\sigma^{2*}_{c_0 t}$",
+        "$\\mu^*_{c_1 t}$",
+        "$\\sigma^{2*}_{c_1 t}$",
         "$\\theta_t$",
         "$\\tau^2_t$",
         "$\\phi_0$",
@@ -67,7 +67,7 @@ def trace_plots(res: dict, model: str, filename: str = "drpm_lower_std_trace_plo
                 )
             ax.legend(loc="upper right")
         elif param_name in ["phi0", "lam2"]:
-            ax.plot(res[param_name], "--", color="gray")
+            ax.plot(res[param_name], "--", color="firebrick")
         else:
             # res[param_name].ndim == 2:
             for week in range(3):
@@ -83,7 +83,7 @@ def trace_plots(res: dict, model: str, filename: str = "drpm_lower_std_trace_plo
             ax.set_xlabel("MCMC samples")
         # ax.set_ylabel("Y-axis")
 
-    plt.suptitle("Trace Plots for the DRPM-Model with Lower Std Prior Values")
+    plt.suptitle("Trace Plots for the DRPM Model with Lower Std Prior Values")
     plt.tight_layout()
     plt.savefig("../report/imgs/{}.pdf".format(filename))
     plt.savefig("../report/imgs/{}.png".format(filename))
@@ -96,7 +96,7 @@ def plot_overview(
     filename: str = "drpm_base_models_comparison",
     title: str = "",
 ):
-    fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(14, 10), sharex=True)
+    fig, ax = plt.subplots(nrows=4, ncols=1, figsize=(14, 10), sharex=True)
 
     weeks = np.arange(1, 53, step=1)
     markers = ["v", "^", "o"]
@@ -123,11 +123,20 @@ def plot_overview(
             marker=".",
         )
 
+        ax[2].plot(
+            weeks,
+            model.test_cases[0].list_of_weekly["alpha"],
+            # label=names[idx],
+            color=colors[idx],
+            linestyle="--",
+            marker=".",
+        )
+
         # cluster sizes in the third plot
         for marker_idx, cluster_kpi in enumerate(
             ["min_cluster_size", "max_cluster_size", "n_singletons"]
         ):
-            ax[2].plot(
+            ax[3].plot(
                 weeks,
                 model.test_cases[0].list_of_weekly[cluster_kpi],
                 color=colors[idx],
@@ -149,15 +158,17 @@ def plot_overview(
         )
         for marker, label in zip(markers, labels)
     ]
-    # Add the custom legend to the axis
-    ax[2].legend(handles=legend_handles, loc="upper right", ncol=3)
 
     # individual titles
     ax[0].set_ylabel("Mean Squared Error")
     ax[1].set_ylabel("Number of Cluster")
-    ax[2].set_ylabel("Cluster Sizes")
+    ax[2].set_ylabel("$\\bar{\\alpha}_t$")
+    ax[3].set_ylabel("Cluster Sizes")
 
-    ax[2].set_xlabel("Week")
+    # Add the custom legend to the axis
+    ax[3].legend(handles=legend_handles, loc="upper right", ncol=3)
+
+    ax[3].set_xlabel("Week")
 
     lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
     lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
@@ -206,8 +217,8 @@ def main():
     salso_args = {"loss": "binder", "maxNCluster": 0}
     all_results: list[ModelPerformance] = []
 
-    # for prior in priors.keys():
-    for prior in ["lower_std"]:
+    for prior in priors.keys():
+        # for prior in ["lower_std"]:
         print(prior)
         drpm_args = {
             "M": 0.1,
@@ -246,8 +257,9 @@ def main():
                 data=data, yearly_time_series=pm25_timeseries, model_params=model_params
             )
             res_cluster, time_needed = Cluster.cluster(model=model.name, **model_args)
-            # print(res_cluster.keys())
-            # print(res_cluster["mse"])
+            print(res_cluster.keys())
+            print(res_cluster["alpha"])
+            print(res_cluster["alpha"].shape)
             yearly_result = YearlyPerformance(
                 config=model_params,
                 yearly_result_decomposed=Analyse.analyze_yearly_performance(
@@ -260,17 +272,17 @@ def main():
             # save_to_visualize_cluster = YearlyClustering(
             #     yearly_decomposed_result=yearly_result, data=data
             # )
-            trace_plots(res_cluster, model=model.name)
+            # trace_plots(res_cluster, model=model.name)
             model_result.add_testcase(yearly_result=yearly_result)
             it += 1
         all_results.append(model_result)
 
     # PLOT the MSE and cluster KPIs
-    # plot_overview(
-    #     all_results=all_results,
-    #     names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
-    #     title="Comparison of different Prior Values for the non-spatial DRPM Model",
-    # )
+    plot_overview(
+        all_results=all_results,
+        names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
+        title="Comparison of different Prior Values for the non-spatial DRPM Model",
+    )
 
 
 if __name__ == "__main__":
