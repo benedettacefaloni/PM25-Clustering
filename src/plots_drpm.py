@@ -11,7 +11,7 @@ from matplotlib.lines import Line2D
 import matplotlib.patches as mpatches
 import numpy as np
 
-from utils.visualize import _n_colors, trace_plots
+from utils.visualize import YearlyClustering, _n_colors, plot_clustering, trace_plots
 
 # PLOTTING -> LaTeX
 use_tex = True
@@ -161,7 +161,7 @@ def plot_overview(
 
     # individual titles
     ax[0].set_ylabel("Mean Squared Error")
-    ax[1].set_ylabel("Number of Cluster")
+    ax[1].set_ylabel("Number of Clusters")
     ax[2].set_ylabel("$\\bar{\\alpha}_t$")
     ax[3].set_ylabel("Cluster Sizes")
 
@@ -217,8 +217,8 @@ def main():
     salso_args = {"loss": "binder", "maxNCluster": 0}
     all_results: list[ModelPerformance] = []
 
-    for prior in priors.keys():
-        # for prior in ["lower_std"]:
+    # for prior in priors.keys():
+    for prior in ["paper_params"]:
         print(prior)
         drpm_args = {
             "M": 0.1,
@@ -257,9 +257,6 @@ def main():
                 data=data, yearly_time_series=pm25_timeseries, model_params=model_params
             )
             res_cluster, time_needed = Cluster.cluster(model=model.name, **model_args)
-            print(res_cluster.keys())
-            print(res_cluster["alpha"])
-            print(res_cluster["alpha"].shape)
             yearly_result = YearlyPerformance(
                 config=model_params,
                 yearly_result_decomposed=Analyse.analyze_yearly_performance(
@@ -269,20 +266,23 @@ def main():
                     salso_args=salso_args,
                 ),
             )
-            # save_to_visualize_cluster = YearlyClustering(
-            #     yearly_decomposed_result=yearly_result, data=data
-            # )
+            save_to_visualize_cluster = YearlyClustering(
+                yearly_decomposed_result=yearly_result, data=data
+            )
             # trace_plots(res_cluster, model=model.name)
             model_result.add_testcase(yearly_result=yearly_result)
             it += 1
         all_results.append(model_result)
 
+    # VISUALIZE the clustering using plotly
+    plot_clustering(save_to_visualize_cluster, method_name=model.name)
+
     # PLOT the MSE and cluster KPIs
-    plot_overview(
-        all_results=all_results,
-        names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
-        title="Comparison of different Prior Values for the non-spatial DRPM Model",
-    )
+    # plot_overview(
+    #     all_results=all_results,
+    #     names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
+    #     title="Comparison of different Prior Values for the non-spatial DRPM Model",
+    # )
 
 
 if __name__ == "__main__":

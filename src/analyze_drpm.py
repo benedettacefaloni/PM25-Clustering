@@ -79,7 +79,7 @@ experiments = {
     },
     "extensions": {
         "M": 0.1,
-        "starting_alpha": 0.5,
+        "starting_alpha": 0.25,
         "time_specific_alpha": [True, False],
         "eta1_0": [False, True],
         "phi1_0": [False, True],
@@ -110,7 +110,7 @@ def main():
     salso_args = {"loss": "binder", "maxNCluster": 0}
 
     prior_case = "smaller_std"
-    experiment_case = "large_experiment"
+    experiment_case = "extension"
 
     drpm_args = {
         "M": experiments[experiment_case]["M"],
