@@ -608,7 +608,7 @@ TODO(Florian)
 % \include{./tables/drpm_extensions_paper_params_REPORT.tex}
 
 \begin{table}
-\caption{\textbf{Spatial-informed} DRPM Model for different hyperparameter configurations with the following prior values: $m_0 = 0.0$, $s_0^2 = 10000.0$, $A_\sigma = 10.0$, $A_\tau = 5.0$, $A_\lambda = 5.0$, $b = 1.0$, $a_\alpha = 2.0$, $b_\alpha = 2.0$ (DRPM-Paper).}
+\caption{\textbf{Spatial-informed} DRPM Model for different hyperparameter configurations with the following prior values: $m_0 = 0.0$, $s_0^2 = 10000.0$, $A_\sigma = 10.0$, $A_\tau = 5.0$, $A_\lambda = 5.0$, $b = 1.0$, $a_\alpha = 2.0$, $b_\alpha = 2.0$ (\textbf{DRPM-Paper}).}
 \centering\begin{tabular}{cccccccc}
 \toprule
 $\eta_{10}$ & $\phi_1$ & $\alpha_t$ & $g_i$ & LMPL & WAIC & Time [s] & MSE \\
@@ -632,6 +632,66 @@ True & True & False & 4 & $-1.937 \cdot 10^{+03}$ & $3.837 \cdot 10^{+03}$ & $4.
 \bottomrule
 \end{tabular}
 \end{table}
+
+\begin{table}
+\caption{DRPM Model (without spatial cohesion) for different hyperparameter configurations with the following prior values: $m_0 = 0.0$, $s_0^2 
+= 200.0$, $A_\sigma = 0.1$, $A_\tau = 1.0$, $A_\lambda = 1.0$, $b = 1.0$, $a_\alpha = 1.0$, $b_\alpha = 1.0$ (\textbf{Lower Std})
+A dash indicates that the package was not able to calculate the corresponding value.}
+\centering\begin{tabular}{cccccccc}
+\toprule
+$\eta_{10}$ & $\phi_1$ & $\alpha_t$ & $g_i$ & LMPL & WAIC & Time & MSE \\
+\midrule
+False & False & True & 3 & $-\infty$ & $-3.154 \cdot 10^{+02}$ & $1.289 \cdot 10^{+02}$ & $1.690 \cdot 10^{+00}$ \\
+False & False & True & 4 & $-$ & $-1.931 \cdot 10^{+02}$ & $2.315 \cdot 10^{+02}$ & $1.698 \cdot 10^{+00}$ \\
+False & True & True & 3 & $-$ & $-3.572 \cdot 10^{+02}$ & $1.455 \cdot 10^{+02}$ & $1.695 \cdot 10^{+00}$ \\
+False & True & True & 4 & $-$ & $3.747 \cdot 10^{+03}$ & $2.449 \cdot 10^{+02}$ & $1.705 \cdot 10^{+00}$ \\
+True & False & True & 3 & $-$ & $4.923 \cdot 10^{+02}$ & $1.789 \cdot 10^{+02}$ & $1.708 \cdot 10^{+00}$ \\
+True & False & True & 4 & $-$ & $-4.251 \cdot 10^{+02}$ & $2.020 \cdot 10^{+02}$ & $1.697 \cdot 10^{+00}$ \\
+True & True & True & 3 & $\mathbf{-1.627 \cdot 10^{+03}}$ & $-3.593 \cdot 10^{+02}$ & $\mathbf{1.086 \cdot 10^{+02}}$ & $\mathbf{1.682 \cdot 10^{+00}}$ \\
+True & True & True & 4 & $-$ & $3.429 \cdot 10^{+03}$ & $3.682 \cdot 10^{+02}$ & $1.702 \cdot 10^{+00}$ \\
+False & False & False & 3 & $-$ & $-3.490 \cdot 10^{+02}$ & $1.345 \cdot 10^{+02}$ & $1.682 \cdot 10^{+00}$ \\
+False & False & False & 4 & $-$ & $9.056 \cdot 10^{+00}$ & $2.713 \cdot 10^{+02}$ & $1.710 \cdot 10^{+00}$ \\
+False & True & False & 3 & $-$ & $-4.750 \cdot 10^{+02}$ & $2.016 \cdot 10^{+02}$ & $1.695 \cdot 10^{+00}$ \\
+False & True & False & 4 & $-$ & $\mathbf{-6.328 \cdot 10^{+02}}$ & $2.183 \cdot 10^{+02}$ & $1.697 \cdot 10^{+00}$ \\
+True & False & False & 3 & $-$ & $2.319 \cdot 10^{+02}$ & $1.721 \cdot 10^{+02}$ & $1.697 \cdot 10^{+00}$ \\
+True & False & False & 4 & $-$ & $-3.644 \cdot 10^{+02}$ & $2.026 \cdot 10^{+02}$ & $1.695 \cdot 10^{+00}$ \\
+True & True & False & 3 & $-$ & $1.314 \cdot 10^{+02}$ & $1.452 \cdot 10^{+02}$ & $1.693 \cdot 10^{+00}$ \\
+True & True & False & 4 & $-$ & $-1.356 \cdot 10^{+02}$ & $2.083 \cdot 10^{+02}$ & $1.695 \cdot 10^{+00}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{table}
+\caption{\textbf{Spatial-informed} DRPM Model for different hyperparameter configurations with the following prior values: $m_0 = 2.91$, $s_0^2 
+= 200.0$, $A_\sigma = 0.1$, $A_\tau = 1.0$, $A_\lambda = 1.0$, $b = 1.0$, $a_\alpha = 1.0$, $b_\alpha = 1.0$ (\textbf{Mean 2018}).
+A dash indicates that the package was not able to calculate the corresponding value.
+}
+\centering\begin{tabular}{cccccccc}
+\toprule
+$\eta_{10}$ & $\phi_1$ & $\alpha_t$ & $g_i$ & LMPL & WAIC & Time & MSE \\
+\midrule
+False & False & True & 3 & $-$ & $-6.109 \cdot 10^{+02}$ & $1.245 \cdot 10^{+02}$ & $1.690 \cdot 10^{+00}$ \\
+False & False & True & 4 & $-$ & $-3.894 \cdot 10^{+02}$ & $2.151 \cdot 10^{+02}$ & $1.700 \cdot 10^{+00}$ \\
+False & True & True & 3 & $-5.115 \cdot 10^{+03}$ & $-4.875 \cdot 10^{+02}$ & $1.412 \cdot 10^{+02}$ & $1.685 \cdot 10^{+00}$ \\
+False & True & True & 4 & $-$ & $-2.315 \cdot 10^{+02}$ & $2.505 \cdot 10^{+02}$ & $1.702 \cdot 10^{+00}$ \\
+True & False & True & 3 & $-$ & $4.319 \cdot 10^{+02}$ & $\mathbf{1.073 \cdot 10^{+02}}$ & $\mathbf{1.674 \cdot 10^{+00}}$ \\
+True & False & True & 4 & $-$ & $-1.461 \cdot 10^{+02}$ & $2.288 \cdot 10^{+02}$ & $1.702 \cdot 10^{+00}$ \\
+True & True & True & 3 & $-$ & $5.938 \cdot 10^{+01}$ & $1.098 \cdot 10^{+02}$ & $1.684 \cdot 10^{+00}$ \\
+True & True & True & 4 & $-$ & $-3.021 \cdot 10^{+02}$ & $2.043 \cdot 10^{+02}$ & $1.699 \cdot 10^{+00}$ \\
+False & False & False & 3 & $-$ & $\mathbf{-6.850 \cdot 10^{+02}}$ & $1.817 \cdot 10^{+02}$ & $1.690 \cdot 10^{+00}$ \\
+False & False & False & 4 & $-$ & $-4.635 \cdot 10^{+02}$ & $2.898 \cdot 10^{+02}$ & $1.701 \cdot 10^{+00}$ \\
+False & True & False & 3 & $-$ & $-5.577 \cdot 10^{+02}$ & $1.536 \cdot 10^{+02}$ & $1.688 \cdot 10^{+00}$ \\
+False & True & False & 4 & $-$ & $-2.545 \cdot 10^{+02}$ & $2.438 \cdot 10^{+02}$ & $1.708 \cdot 10^{+00}$ \\
+True & False & False & 3 & $\mathbf{-2.353 \cdot 10^{+03}}$ & $-2.660 \cdot 10^{+02}$ & $1.189 \cdot 10^{+02}$ \\
+True & False & False & 4 & $-$ & $-5.078 \cdot 10^{+02}$ & $2.501 \cdot 10^{+02}$ & $1.701 \cdot 10^{+00}$ \\
+True & True & False & 3 & $-$ & $1.608 \cdot 10^{+04}$ & $4.449 \cdot 10^{+02}$ & $1.715 \cdot 10^{+00}$ \\
+True & True & False & 4 & $-$ & $3.923 \cdot 10^{+03}$ & $2.871 \cdot 10^{+02}$ & $1.716 \cdot 10^{+00}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
 
 \newpage
 

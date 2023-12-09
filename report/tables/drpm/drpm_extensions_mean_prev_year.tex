@@ -1,0 +1,25 @@
+\begin{table}
+\caption{DRPM Model (without spatial cohesion) for different hyperparameter configurations with the following prior values: $m_0 = 2.91$, $s_0^2 = 200.0$, $A_\sigma = 0.1$, $A_\tau = 1.0$, $A_\lambda = 1.0$, $b = 1.0$, $a_\alpha = 1.0$, $b_\alpha = 1.0$.}
+\centering\begin{tabular}{cccccccccccccccc}
+\toprule
+Model & M & starting-alpha & eta1-0 & phi1-0 & time-specific-alpha & SpatialCohesion & lpml & waic & time & mse & n-singletons & n-clusters & max-cluster-size & min-cluster-size & max-pm25-diff \\
+\midrule
+drpm & 0.100000 & 0.500000 & False & False & True & 3 & $nan$ & $-6.109 \cdot 10^{+02}$ & $1.245 \cdot 10^{+02}$ & $1.690 \cdot 10^{+00}$ & 2 & 5.307692 & 28 & 1 & $1.753 \cdot 10^{+00}$ \\
+drpm & 0.100000 & 0.500000 & False & False & True & 4 & $nan$ & $-3.894 \cdot 10^{+02}$ & $2.151 \cdot 10^{+02}$ & $1.700 \cdot 10^{+00}$ & 1 & 8.692308 & 8 & 1 & $1.621 \cdot 10^{+00}$ \\
+drpm & 0.100000 & 0.500000 & False & True & True & 3 & $-5.115 \cdot 10^{+03}$ & $-4.875 \cdot 10^{+02}$ & $1.412 \cdot 10^{+02}$ & $1.685 \cdot 10^{+00}$ & 0 & 6.057692 & 16 & 2 & $1.607 \cdot 10^{+00}$ \\
+drpm & 0.100000 & 0.500000 & False & True & True & 4 & $nan$ & $-2.315 \cdot 10^{+02}$ & $2.505 \cdot 10^{+02}$ & $1.702 \cdot 10^{+00}$ & 0 & 10.192308 & 6 & 2 & $1.679 \cdot 10^{+00}$ \\
+drpm & 0.100000 & 0.500000 & True & False & True & 3 & $nan$ & $4.319 \cdot 10^{+02}$ & $\mathbf{1.073 \cdot 10^{+02}}$ & $\mathbf{1.674 \cdot 10^{+00}}$ & 0 & 4.846154 & 34 & 2 & $1.651 \cdot 10^{+00}$ \\
+drpm & 0.100000 & 0.500000 & True & False & True & 4 & $nan$ & $-1.461 \cdot 10^{+02}$ & $2.288 \cdot 10^{+02}$ & $1.702 \cdot 10^{+00}$ & 0 & 9.442308 & 6 & 2 & $\mathbf{1.478 \cdot 10^{+00}}$ \\
+drpm & 0.100000 & 0.500000 & True & True & True & 3 & $nan$ & $5.938 \cdot 10^{+01}$ & $1.098 \cdot 10^{+02}$ & $1.684 \cdot 10^{+00}$ & 0 & 4.769231 & 13 & 3 & $1.679 \cdot 10^{+00}$ \\
+drpm & 0.100000 & 0.500000 & True & True & True & 4 & $nan$ & $-3.021 \cdot 10^{+02}$ & $2.043 \cdot 10^{+02}$ & $1.699 \cdot 10^{+00}$ & 0 & 8.384615 & 11 & 2 & $1.679 \cdot 10^{+00}$ \\
+drpm & 0.100000 & 0.500000 & False & False & False & 3 & $nan$ & $\mathbf{-6.850 \cdot 10^{+02}}$ & $1.817 \cdot 10^{+02}$ & $1.690 \cdot 10^{+00}$ & 0 & 7.096154 & 8 & 4 & $1.679 \cdot 10^{+00}$ \\
+drpm & 0.100000 & 0.500000 & False & False & False & 4 & $nan$ & $-4.635 \cdot 10^{+02}$ & $2.898 \cdot 10^{+02}$ & $1.701 \cdot 10^{+00}$ & 0 & 10.980769 & 5 & 2 & $1.679 \cdot 10^{+00}$ \\
+drpm & 0.100000 & 0.500000 & False & True & False & 3 & $nan$ & $-5.577 \cdot 10^{+02}$ & $1.536 \cdot 10^{+02}$ & $1.688 \cdot 10^{+00}$ & 0 & 6.134615 & 14 & 2 & $1.679 \cdot 10^{+00}$ \\
+drpm & 0.100000 & 0.500000 & False & True & False & 4 & $nan$ & $-2.545 \cdot 10^{+02}$ & $2.438 \cdot 10^{+02}$ & $1.708 \cdot 10^{+00}$ & 0 & 9.673077 & 7 & 2 & $1.679 \cdot 10^{+00}$ \\
+drpm & 0.100000 & 0.500000 & True & False & False & 3 & $\mathbf{-2.353 \cdot 10^{+03}}$ & $-2.660 \cdot 10^{+02}$ & $1.189 \cdot 10^{+02}$ & $1.691 \cdot 10^{+00}$ & 1 & 5.076923 & 14 & 1 & $1.679 \cdot 10^{+00}$ \\
+drpm & 0.100000 & 0.500000 & True & False & False & 4 & $nan$ & $-5.078 \cdot 10^{+02}$ & $2.501 \cdot 10^{+02}$ & $1.701 \cdot 10^{+00}$ & 0 & 9.980769 & 6 & 2 & $1.621 \cdot 10^{+00}$ \\
+drpm & 0.100000 & 0.500000 & True & True & False & 3 & $nan$ & $1.608 \cdot 10^{+04}$ & $4.449 \cdot 10^{+02}$ & $1.715 \cdot 10^{+00}$ & 0 & 13.692308 & 13 & 2 & $1.624 \cdot 10^{+00}$ \\
+drpm & 0.100000 & 0.500000 & True & True & False & 4 & $nan$ & $3.923 \cdot 10^{+03}$ & $2.871 \cdot 10^{+02}$ & $1.716 \cdot 10^{+00}$ & 0 & 11.250000 & 6 & 2 & $1.499 \cdot 10^{+00}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
