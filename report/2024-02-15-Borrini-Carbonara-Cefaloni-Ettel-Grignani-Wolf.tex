@@ -27,7 +27,7 @@
 \usepackage{graphicx}
 \graphicspath{{imgs/}} % Path for images' folder
 \usepackage{eso-pic} % For the background picture on the title page
-\usepackage{subfig} % Numbered and caption subfigures using \subfloat
+%\usepackage{subfig} % Numbered and caption subfigures using \subfloat
 \usepackage{subcaption}
 \usepackage[font=small]{caption} % Coloured captions
 \usepackage{transparent}
@@ -114,6 +114,13 @@
 \usepackage{physics}
 \usepackage{amssymb}
 \usepackage{aligned-overset}
+% for correct scientific tables
+\usepackage{tabularx}
+\usepackage{booktabs}
+% for subfigures
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{caption}
 
 
 %----------------------------------------------------------------------------
@@ -196,7 +203,9 @@ Moreover, analyzing the provided dataset, it has emerged that one crucial variab
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{./imgs/maps/plot_Bolzano_PM25_BLHmax_years.png}
-    \caption{Correlation between PM2.5 Concentrations and Boundary Layer Height (BLH) Max TODO: make as full sentence and explain BLH in detail}
+    \caption{Correlation between PM2.5 Concentrations and Boundary Layer Height (BLH) max
+     which represents the maximum depth of air next to the Earth’s surface that is most affected by the
+    resistance to the transfer of momentum, heat, or moisture across the surface.}
     \label{fig:pm_blh_correlation}
 \end{figure} 
 \textbf{Main Problems Associated with PM2.5:}
@@ -399,8 +408,9 @@ and for $t \in \{1, \dots, T \}$ the $\PP(\rho_t\vert \gamma_t, \rho_{t-1})$ is 
 
 \subsection{Extensions}
 
-DPRM-Modell:
+DPRM Model:
 \begin{itemize}
+    \item Spatial data
     \item AR(1)-method using eta not equal to zero (otherwise iid)
     \item unit, i.e. station, specific alpha values -- adjust the prior size accordingly
     \item fixed $\alpha$ for each time step
@@ -479,7 +489,7 @@ Once a model is fit to the data the question remains how to summarize the obtain
 \begin{align*}
     \hat{\rho}^* = \text{argmin}_{\hat{\rho}} \ \mathbb{E} ( L(\rho, \hat{\rho}) | \mathbf{y} ) \approx \frac{1}{M} \sum_{m=1}^M L (\rho^{(m)} , \hat{\rho} ),
 \end{align*}
-where $\left( \rho^{(1)}, \dots , \rho^{(M)} \right)$ are MCMC samples from the posterior. For that approach the $R$-package \textit{salso} \cite{salso} provides a number of possibilities. In \cite{Dahl2022-salso} different loss functions are explained as well as the SALSO algorithm that is implemented in the package. \medskip
+where $\left( \rho^{(1)}, \dots , \rho^{(M)} \right)$ are MCMC samples from the posterior. For that approach the $R$-package \texttt{salso} \cite{salso} provides a number of possibilities. In \cite{Dahl2022-salso} different loss functions are explained as well as the \texttt{SALSO} algorithm that is implemented in the package. \medskip
 
 \textbf{Binder Loss}
 
@@ -501,10 +511,84 @@ Large values mean a larger similarity between the partitions. We obtain another 
 \newpage
 
 \section{Results}
-
+We used the same seed for every experiments to make the results
+reproducible and comparable
 \subsection{sPPM}
 \subsection{PPMx}
 \subsection{DRPM}
+TODO
+\begin{itemize}
+    \item Analyse large experiment
+    \item Analyse Extension of large Experiment
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcccccccc}
+\toprule
+Name $\textbackslash$ Prior Parameters & $m_0$ & $s_0^2$ & $A_\sigma$ & $A_r$ & $A_\lambda$ & $b$ & $a_\alpha$ & $b_\alpha$ \\
+\midrule
+DRPM-Paper \cite{Page2021-Temporal} & 0.0   & $100^2$ & 10.0         & 5.0     & 5.0           & 1.0   & 2.0        & 2.0        \\
+Lower Std (ours)                                & 0.0   & $200$   & 0.1        & 1.0     & 1.0           & 1.0   & 1.0          & 1.0          \\
+Mean 2018 (ours)                                & 2.91  & $200$  & 0.1        & 1.0     & 1.0           & 1.0   & 1.0          & 1.0         \\
+\bottomrule
+\end{tabular}
+\caption{Different Prior Parameters for the three models we used for our initial large test.}
+\label{tab:DRPMPriorParam}
+\end{table}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.95\linewidth]{./imgs/drpm_base_models_comparison.pdf}
+    \caption{Comparison of the best model for each prior for DRPM without spatial cohesion.
+    The used prior values are listed in \cref{tab:DRPMPriorParam}. For the DRPM model itself we use
+    $M=0.1$ as the concentration parameter. The MCMC uses 10000 draws with a burn of 1000 and a
+    thinning of 10, resulting in 900 total MCMC samples. The DRPM-Paper model reached a WAIC (lower is better) of
+    $3.103 \cdot 10^{+03}$ while our models achieved a WAIC score of $-1.285 \cdot 10^{+03}$ and
+    $-9.548 \cdot 10^{+02}$ for the Lower Std and Mean 2018 models respectively.}
+    \label{fig:drpm_base_models_comparison}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.99\linewidth]{./imgs/drpm_lower_std_trace_plots.pdf}
+    \caption{Trace Plots for the DRPM Model parameters with the Lower Std Prior values. Week specific
+    parameters are shown for the first three weeks of the year and cluster specific parameters are
+    presented for the first cluster.}
+    \label{fig:drpm_lower_std_trace_plots}
+\end{figure}
+
+
+\begin{figure}
+     \centering
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{./imgs/drpm_base_clustering_paper_params.png}
+         \caption{DRPM-Paper \cite{Page2021-Temporal}}
+         \label{fig:DRPMclusteringPaper}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{./imgs/drpm_base_clustering_lower_std.png}
+         \caption{Lower Std (ours)}
+         \label{fig:DRPMClusteringLowerStd}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{./imgs/drpm_base_clustering_mean_prev_year.png}
+         \caption{Mean 2018 (ours)}
+         \label{fig:DRPMMeanPreviousYear}
+     \end{subfigure}
+        \caption{Exemplary clustering for week three of the year 2019 using all three of
+        our base models without spatial information. All use the concentration parameter
+        $M=0.1$ and the prior parameters listed in \cref{tab:DRPMPriorParam}. The color of
+        the bubble indicates the cluster and the size of the bubble the average PM2.5 value
+        within week three of 2018.}
+        \label{fig:DRPMClusteringBaseModels}
+\end{figure}
+
 \subsection{Extensions}
 
 
@@ -528,6 +612,8 @@ Large values mean a larger similarity between the partitions. We obtain another 
 \newpage
 
 \section{Acknowledgements}
+
+
 
 
 
