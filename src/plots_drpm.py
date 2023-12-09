@@ -19,6 +19,76 @@ if use_tex:
     plt.rc("text", usetex=True)
     plt.rc("font", family="serif", size="16")
 
+colors = ["darkorange", "green", "royalblue"]
+
+
+def trace_plots(res: dict, model: str, filename: str = "drpm_lower_std_trace_plots"):
+    to_analyse = [
+        "mu",
+        "sig2",
+        "theta",
+        "tau2",
+        "phi0",
+        "lam2",
+    ]
+    names = [
+        "$\\mu^*_{c_0 t}$",
+        "$\\sigma^{2*}_{c_0 t}$",
+        "$\\theta_t$",
+        "$\\tau^2_t$",
+        "$\\phi_0$",
+        "$\\lambda^2$",
+    ]
+    n_trace_plots = len(to_analyse)
+
+    nrows = int(np.ceil(np.sqrt(n_trace_plots)))
+    ncols = int(np.ceil(n_trace_plots / nrows))
+
+    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, sharex="col", figsize=(14, 9))
+
+    for i, param_name in enumerate(to_analyse):
+        row = i // ncols
+        col = i % ncols
+
+        if nrows > 1:
+            ax = axes[row, col]
+        else:
+            ax = axes[col]
+
+        print(param_name)
+        print(res[param_name].shape)
+        if res[param_name].ndim == 3:
+            for week in range(3):
+                ax.plot(
+                    res[param_name][week, 0, :].T,
+                    "--",
+                    label="Week {}".format(week + 1),
+                    color=colors[week],
+                )
+            ax.legend(loc="upper right")
+        elif param_name in ["phi0", "lam2"]:
+            ax.plot(res[param_name], "--", color="gray")
+        else:
+            # res[param_name].ndim == 2:
+            for week in range(3):
+                ax.plot(
+                    res[param_name].T[week, :].T,
+                    "--",
+                    label="Week {}".format(week + 1),
+                    color=colors[week],
+                )
+            ax.legend(loc="upper right")
+        ax.set_ylabel("{}".format(names[i]))
+        if row == 2:
+            ax.set_xlabel("MCMC samples")
+        # ax.set_ylabel("Y-axis")
+
+    plt.suptitle("Trace Plots for the DRPM-Model with Lower Std Prior Values")
+    plt.tight_layout()
+    plt.savefig("../report/imgs/{}.pdf".format(filename))
+    plt.savefig("../report/imgs/{}.png".format(filename))
+    plt.show()
+
 
 def plot_overview(
     all_results: list[ModelPerformance],
@@ -26,10 +96,9 @@ def plot_overview(
     filename: str = "drpm_base_models_comparison",
     title: str = "",
 ):
-    fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(10, 12), sharex=True)
+    fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(14, 10), sharex=True)
 
     weeks = np.arange(1, 53, step=1)
-    colors = ["darkorange", "green", "royalblue"]
     markers = ["v", "^", "o"]
     labels = ["min", "max", "n_singletons"]
 
@@ -112,7 +181,7 @@ priors = {
         "alphaPriors": ro.r["matrix"](ro.FloatVector([2.0, 2.0]), nrow=1),
     },
     # tuned params
-    "smaller_std": {
+    "lower_std": {
         # A_sigma is way smaller => smaller clusters in general
         # A_tau, A_lambda also smaller to set incentives for smaller clusters
         "modelPriors": ro.FloatVector([0, 100 * 2, 0.1, 1, 1, 1]),
@@ -137,12 +206,12 @@ def main():
     salso_args = {"loss": "binder", "maxNCluster": 0}
     all_results: list[ModelPerformance] = []
 
-    for prior in priors.keys():
-        # for prior in ["paper_params"]:
+    # for prior in priors.keys():
+    for prior in ["lower_std"]:
         print(prior)
         drpm_args = {
-            "M": 0.1,  # TODO: always the best?
-            "starting_alpha": 0.25,  # TODO: always the best?
+            "M": 0.1,
+            "starting_alpha": 0.25,
             "unit_specific_alpha": False,  # diff alpha for each station --> prior needs to be adjusted
             "time_specific_alpha": True,  # diff alpha is drawn for each time-step
             "alpha_0": False,
@@ -177,7 +246,8 @@ def main():
                 data=data, yearly_time_series=pm25_timeseries, model_params=model_params
             )
             res_cluster, time_needed = Cluster.cluster(model=model.name, **model_args)
-            print(res_cluster.keys())
+            # print(res_cluster.keys())
+            # print(res_cluster["mse"])
             yearly_result = YearlyPerformance(
                 config=model_params,
                 yearly_result_decomposed=Analyse.analyze_yearly_performance(
@@ -190,17 +260,17 @@ def main():
             # save_to_visualize_cluster = YearlyClustering(
             #     yearly_decomposed_result=yearly_result, data=data
             # )
-            # trace_plots(res_cluster, model=model.name)
+            trace_plots(res_cluster, model=model.name)
             model_result.add_testcase(yearly_result=yearly_result)
             it += 1
         all_results.append(model_result)
 
     # PLOT the MSE and cluster KPIs
-    plot_overview(
-        all_results=all_results,
-        names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
-        title="Comparison of different Prior Values for the non-spatial DRPM Model",
-    )
+    # plot_overview(
+    #     all_results=all_results,
+    #     names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
+    #     title="Comparison of different Prior Values for the non-spatial DRPM Model",
+    # )
 
 
 if __name__ == "__main__":

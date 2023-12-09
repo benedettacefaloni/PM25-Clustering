@@ -186,7 +186,8 @@ def trace_plots(res: dict, model: str):
             "theta",
             "tau2",
             # "eta1",
-            # "phi0",
+            "phi0",
+            "lam2",
             # "phi1",
         ]
     else:
@@ -211,7 +212,7 @@ def trace_plots(res: dict, model: str):
             print(param_name)
             print("shape: ", res[param_name].shape)
             try:
-                ax.plot(res[param_name][0, :3, :].T, "--")
+                ax.plot(res[param_name][:3, 0, :].T, "--")
             except:
                 ax.plot(res[param_name].T[:3, :].T, "--")
         else:
@@ -220,8 +221,8 @@ def trace_plots(res: dict, model: str):
         ax.set_xlabel("MCMC samples")
         # ax.set_ylabel("Y-axis")
 
-    plt.tight_layout()
     plt.suptitle("Trace plots for {} model".format(model))
+    plt.tight_layout()
     plt.show()
 
 
