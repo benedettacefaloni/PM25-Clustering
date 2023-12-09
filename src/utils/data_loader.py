@@ -136,6 +136,8 @@ def to_r_matrix(data: np.ndarray):
     data = data.flatten()
     return ro.r["matrix"](ro.FloatVector(data), nrow=nrow, ncol=ncol)
 
+def r_NULL():
+    return ro.NULL
 
 def to_r_dataframe(
     data: pd.DataFrame,

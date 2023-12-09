@@ -90,7 +90,6 @@ select_params = {
     "large_experiment": [
         "M",
         "starting_alpha",
-        "SpatialCohesion",
     ],
     "extensions": [
         "M",
@@ -98,7 +97,7 @@ select_params = {
         "eta1_0",
         "phi1_0",
         "time_specific_alpha",
-        "SpatialCohesion",
+        "SpatialCohesion",  # --> TODO: add spatial data
     ],
 }
 
@@ -110,7 +109,7 @@ def main():
     pm25_timeseries = yearly_data_as_timeseries(data)
     salso_args = {"loss": "binder", "maxNCluster": 0}
 
-    prior_case = "mean_prev_year"
+    prior_case = "paper_params"
     experiment_case = "large_experiment"
 
     drpm_args = {
@@ -126,7 +125,7 @@ def main():
         "alphaPriors": priors[prior_case]["alphaPriors"],
         "simpleModel": 0,
         "theta_tau2": ro.FloatVector([0, 2]),  # only use with simpleModel=True
-        "SpatialCohesion": [3, 4],
+        "SpatialCohesion": 3,
         # cohesionPrior: mu0, k0, v0, L0
         "cParms": ro.FloatVector([0, 1, 2, 1]),
         # params for metropolis updates: sigma2, tau, lambda, eta1, phi1
@@ -178,10 +177,10 @@ def main():
     table = model_result.to_table(select_params=select_params[experiment_case])
     python_to_latex(
         table,
-        caption="DRPM Model for different hyperparameter configurations with the following prior values: {}.".format(
+        caption="DRPM Model (without spatial cohesion) for different hyperparameter configurations with the following prior values: {}.".format(
             _prior_values_for_caption(model_name="drpm", priors=priors[prior_case])
         ),
-        filename="drpm_{}_{}".format(experiment_case, prior_case),
+        filename="drpm_nospatial_{}_{}".format(experiment_case, prior_case),
         save_as_csv=True,
         cols_to_max=["lpml"],
         cols_to_min=["waic", "time", "mse", "max_pm25_diff"],
