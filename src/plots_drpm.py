@@ -85,8 +85,8 @@ def trace_plots(res: dict, model: str, filename: str = "drpm_lower_std_trace_plo
 
     plt.suptitle("Trace Plots for the DRPM Model with Lower Std Prior Values")
     plt.tight_layout()
-    plt.savefig("../report/imgs/{}.pdf".format(filename))
-    plt.savefig("../report/imgs/{}.png".format(filename))
+    plt.savefig("../report/imgs/drpm/{}.pdf".format(filename))
+    plt.savefig("../report/imgs/drpm/{}.png".format(filename))
     plt.show()
 
 
@@ -178,8 +178,8 @@ def plot_overview(
     plt.suptitle(title)
 
     plt.tight_layout()
-    plt.savefig("../report/imgs/{}.pdf".format(filename))
-    plt.savefig("../report/imgs/{}.png".format(filename))
+    plt.savefig("../report/imgs/drpm/{}.pdf".format(filename))
+    plt.savefig("../report/imgs/drpm/{}.png".format(filename))
     plt.show()
 
 

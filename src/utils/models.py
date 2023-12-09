@@ -3,8 +3,9 @@ from itertools import product
 import numpy as np
 import pandas as pd
 
-#from utils.data_loader import to_r_matrix, to_r_vector
+# from utils.data_loader import to_r_matrix, to_r_vector
 from utils.data_loader import to_r_matrix, to_r_vector, r_NULL
+
 
 class Model:
     def __init__(
@@ -50,6 +51,7 @@ class Model:
         model_params: dict,
         yearly_time_series: np.ndarray = None,
         covariates: pd.DataFrame = None,
+        spatial: bool = True,
     ):
         # model to select which parts of the data are used as additional
         # parameters for the model
@@ -70,8 +72,8 @@ class Model:
         elif self.name == "drpm":
             return {
                 "y": to_r_matrix(yearly_time_series),
-                #"s_coords": to_r_matrix(data[["Latitude", "Longitude"]].to_numpy()),
-                "s_coords": r_NULL()
+                "s_coords": to_r_matrix(data[["Latitude", "Longitude"]].to_numpy()),
+                # "s_coords": r_NULL()
             }
         else:
             raise NotImplementedError

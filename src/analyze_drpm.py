@@ -79,7 +79,7 @@ experiments = {
     },
     "extensions": {
         "M": 0.1,
-        "starting_alpha": 0.25,
+        "starting_alpha": 0.5,
         "time_specific_alpha": [True, False],
         "eta1_0": [False, True],
         "phi1_0": [False, True],
@@ -109,23 +109,25 @@ def main():
     pm25_timeseries = yearly_data_as_timeseries(data)
     salso_args = {"loss": "binder", "maxNCluster": 0}
 
-    prior_case = "smaller_std"
-    experiment_case = "extension"
+    prior_case = "paper_params"
+    experiment_case = "extensions"
 
     drpm_args = {
         "M": experiments[experiment_case]["M"],
         "starting_alpha": experiments[experiment_case]["starting_alpha"],
         "unit_specific_alpha": False,  # diff alpha for each station --> prior needs to be adjusted
-        "time_specific_alpha": True,  # diff alpha is drawn for each time-step
+        "time_specific_alpha": experiments[experiment_case][
+            "time_specific_alpha"
+        ],  # diff alpha is drawn for each time-step
         "alpha_0": False,
         # True for conditionally independence
-        "eta1_0": True,
-        "phi1_0": True,
+        "eta1_0": experiments[experiment_case]["eta1_0"],
+        "phi1_0": experiments[experiment_case]["phi1_0"],
         "modelPriors": priors[prior_case]["modelPriors"],
         "alphaPriors": priors[prior_case]["alphaPriors"],
         "simpleModel": 0,
         "theta_tau2": ro.FloatVector([0, 2]),  # only use with simpleModel=True
-        "SpatialCohesion": 3,
+        "SpatialCohesion": [3, 4],
         # cohesionPrior: mu0, k0, v0, L0
         "cParms": ro.FloatVector([0, 1, 2, 1]),
         # params for metropolis updates: sigma2, tau, lambda, eta1, phi1
@@ -180,7 +182,7 @@ def main():
         caption="DRPM Model (without spatial cohesion) for different hyperparameter configurations with the following prior values: {}.".format(
             _prior_values_for_caption(model_name="drpm", priors=priors[prior_case])
         ),
-        filename="drpm_nospatial_{}_{}".format(experiment_case, prior_case),
+        filename="./drpm/drpm_{}_{}".format(experiment_case, prior_case),
         save_as_csv=True,
         cols_to_max=["lpml"],
         cols_to_min=["waic", "time", "mse", "max_pm25_diff"],
