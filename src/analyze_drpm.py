@@ -97,7 +97,7 @@ select_params = {
         "eta1_0",
         "phi1_0",
         "time_specific_alpha",
-        "SpatialCohesion",
+        "SpatialCohesion",  # --> TODO: add spatial data
     ],
 }
 
@@ -109,7 +109,7 @@ def main():
     pm25_timeseries = yearly_data_as_timeseries(data)
     salso_args = {"loss": "binder", "maxNCluster": 0}
 
-    prior_case = "mean_prev_year"
+    prior_case = "paper_params"
     experiment_case = "large_experiment"
 
     drpm_args = {
