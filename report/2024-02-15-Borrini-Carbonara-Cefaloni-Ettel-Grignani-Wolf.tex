@@ -410,9 +410,9 @@ and for $t \in \{1, \dots, T \}$ the $\PP(\rho_t\vert \gamma_t, \rho_{t-1})$ is 
 \subsection{Extensions}
 \label{subsec:DRPMExtensions}
 
-DPRM Model:
+For the DPRM Model we considered the extensions listed below.
 \begin{itemize}
-    \item Spatial data
+    \item Extension to a Spatial-Temporal Model by 
     \item AR(1)-method using eta not equal to zero (otherwise iid)
     \item unit, i.e. station, specific alpha values -- adjust the prior size accordingly
     \item fixed $\alpha$ for each time step
@@ -522,13 +522,14 @@ TODO
 \begin{itemize}
     \item Analyse large experiment
     \item Analyse Extension of large Experiment
+    \item Small table with the three best performing models
 \end{itemize}
 
 \begin{table}[h]
 \centering
 \begin{tabular}{lcccccccc}
 \toprule
-Name $\textbackslash$ Prior Parameters & $m_0$ & $s_0^2$ & $A_\sigma$ & $A_r$ & $A_\lambda$ & $b$ & $a_\alpha$ & $b_\alpha$ \\
+Name $\setminus$ Prior Parameters & $m_0$ & $s_0^2$ & $A_\sigma$ & $A_r$ & $A_\lambda$ & $b$ & $a_\alpha$ & $b_\alpha$ \\
 \midrule
 DRPM-Paper \cite{Page2021-Temporal} & 0.0   & $100^2$ & 10.0         & 5.0     & 5.0           & 1.0   & 2.0        & 2.0        \\
 Lower Std (ours)                                & 0.0   & $200$   & 0.1        & 1.0     & 1.0           & 1.0   & 1.0          & 1.0          \\
@@ -603,9 +604,10 @@ $\phi_1 =$ True a temporal-dependency within the stations and $\alpha_t = $ True
 the partitions, i.e. $\alpha_t = $ False implies a constant value of $\alpha_t = \alpha_1$ over the entire time horizon
 $t = 1, \ldots, T$. Finally, $g_i$ is the type of cohesion function used by the algorithm.
 
-The results for our baseline version using the DRPM-Paper prior values is shown in \cref{tab:DRPMPriorParam}
-TODO(Florian)
-% \include{./tables/drpm_extensions_paper_params_REPORT.tex}
+The results for our baseline version using the DRPM-Paper prior values is shown in \cref{tab:DRPMExtensionDRPMPaper} and
+for the Lower Std and Mean 2018 version in \cref{tab:DRPMExtensionLowerStd} and \cref{tab:DRPMExtensionMean2018} respectively.
+
+TODO: Evalation of the experiments and maybe another plot?
 
 \begin{table}
 \caption{\textbf{Spatial-informed} DRPM Model for different hyperparameter configurations with the following prior values: $m_0 = 0.0$, $s_0^2 = 10000.0$, $A_\sigma = 10.0$, $A_\tau = 5.0$, $A_\lambda = 5.0$, $b = 1.0$, $a_\alpha = 2.0$, $b_\alpha = 2.0$ (\textbf{DRPM-Paper}).}
@@ -631,6 +633,7 @@ True & True & False & 3 & $-1.601 \cdot 10^{+03}$ & $3.189 \cdot 10^{+03}$ & $2.
 True & True & False & 4 & $-1.937 \cdot 10^{+03}$ & $3.837 \cdot 10^{+03}$ & $4.398 \cdot 10^{+01}$ & $1.430 \cdot 10^{+00}$ \\
 \bottomrule
 \end{tabular}
+\label{tab:DRPMExtensionDRPMPaper}
 \end{table}
 
 \begin{table}
@@ -659,6 +662,7 @@ True & True & False & 3 & $-$ & $1.314 \cdot 10^{+02}$ & $1.452 \cdot 10^{+02}$ 
 True & True & False & 4 & $-$ & $-1.356 \cdot 10^{+02}$ & $2.083 \cdot 10^{+02}$ & $1.695 \cdot 10^{+00}$ \\
 \bottomrule
 \end{tabular}
+\label{tab:DRPMExtensionLowerStd}
 \end{table}
 
 
@@ -689,6 +693,7 @@ True & True & False & 3 & $-$ & $1.608 \cdot 10^{+04}$ & $4.449 \cdot 10^{+02}$ 
 True & True & False & 4 & $-$ & $3.923 \cdot 10^{+03}$ & $2.871 \cdot 10^{+02}$ & $1.716 \cdot 10^{+00}$ \\
 \bottomrule
 \end{tabular}
+\label{tab:DRPMExtensionMean2018}
 \end{table}
 
 
