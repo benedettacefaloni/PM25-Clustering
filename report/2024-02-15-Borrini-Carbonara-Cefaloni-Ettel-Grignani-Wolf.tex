@@ -187,7 +187,7 @@ The Lombardy region in Italy faces significant air pollution challenges, ranking
 The Agrimonia dataset integrates satellite data, model output, and in-situ measurements sourced from national and international agencies, each with varying spatial and temporal resolutions. 
 \\
 \textbf{Source Data Overview:}
-The dataset encompasses five key dimensions: air quality (AQ), weather and climate (WE), pollutant emissions (EM), livestock (LI), and land and soil characteristics (LA). Given the applicability of geostatistical methods in leveraging neighboring territory information for enhanced predictive capability near borders, a 0.3° buffer is applied around the Lombardy region, intersecting with several adjacent regions (\Cref{fig:buffered_area}).
+The dataset encompasses five key dimensions: air quality (AQ), weather and climate (WE), pollutant emissions (EM), livestock (LI), and land and soil characteristics (LA). Given the applicability of geostatistical methods in leveraging neighboring territory information for enhanced predictive capability near borders, a 0.3° buffer is applied around the Lombardy region, intersecting with several adjacent regions (\cref{fig:buffered_area}).
 
 \begin{figure}
     \centering
@@ -406,7 +406,9 @@ Given $\gamma_t$ and $\rho_{t-1}$ there is restriction to what partitions are co
 \end{align*}
 and for $t \in \{1, \dots, T \}$ the $\PP(\rho_t\vert \gamma_t, \rho_{t-1})$ is given by the chosen EPPF from before truncated to the set of compatible partitions.
 
+% IMPORTANT: do not remove this chapter, as references depend on it
 \subsection{Extensions}
+\label{subsec:DRPMExtensions}
 
 DPRM Model:
 \begin{itemize}
@@ -539,7 +541,7 @@ Mean 2018 (ours)                                & 2.91  & $200$  & 0.1        & 
 
 \begin{figure}
     \centering
-    \includegraphics[width=.95\linewidth]{./imgs/drpm_base_models_comparison.pdf}
+    \includegraphics[width=.95\linewidth]{./imgs/drpm/drpm_base_models_comparison.pdf}
     \caption{Comparison of the best model for each prior for DRPM without spatial cohesion.
     The used prior values are listed in \cref{tab:DRPMPriorParam}. For the DRPM model itself we use
     $M=0.1$ as the concentration parameter. The MCMC uses 10000 draws with a burn of 1000 and a
@@ -551,8 +553,9 @@ Mean 2018 (ours)                                & 2.91  & $200$  & 0.1        & 
 
 \begin{figure}
     \centering
-    \includegraphics[width=.99\linewidth]{./imgs/drpm_lower_std_trace_plots.pdf}
-    \caption{Trace Plots for the DRPM Model parameters with the Lower Std Prior values. Week specific
+    \includegraphics[width=.99\linewidth]{./imgs/drpm/drpm_lower_std_trace_plots.pdf}
+    \caption{Trace Plots for the DRPM Model without spatial information parameters with the Lower Std Prior values. 
+    Week-specific
     parameters are shown for the first three weeks of the year and cluster specific parameters are
     presented for the first cluster.}
     \label{fig:drpm_lower_std_trace_plots}
@@ -563,34 +566,72 @@ Mean 2018 (ours)                                & 2.91  & $200$  & 0.1        & 
      \centering
      \begin{subfigure}[b]{0.49\textwidth}
          \centering
-         \includegraphics[width=\textwidth]{./imgs/drpm_base_clustering_paper_params.png}
-         \caption{DRPM-Paper \cite{Page2021-Temporal}}
+         \includegraphics[width=\textwidth]{./imgs/drpm/drpm_base_clustering_paper_params.png}
+         \caption{DRPM-Paper \cite{Page2021-Temporal}: 1 cluster in total.}
          \label{fig:DRPMclusteringPaper}
      \end{subfigure}
      \hfill
      \begin{subfigure}[b]{0.49\textwidth}
          \centering
-         \includegraphics[width=\textwidth]{./imgs/drpm_base_clustering_lower_std.png}
-         \caption{Lower Std (ours)}
+         \includegraphics[width=\textwidth]{./imgs/drpm/drpm_base_clustering_lower_std.png}
+         \caption{Lower Std (ours): 9 clusters in total.}
          \label{fig:DRPMClusteringLowerStd}
      \end{subfigure}
      \hfill
      \begin{subfigure}[b]{0.49\textwidth}
          \centering
-         \includegraphics[width=\textwidth]{./imgs/drpm_base_clustering_mean_prev_year.png}
-         \caption{Mean 2018 (ours)}
+         \includegraphics[width=\textwidth]{./imgs/drpm/drpm_base_clustering_mean_prev_year.png}
+         \caption{Mean 2018 (ours): 13 clusters in total.}
          \label{fig:DRPMMeanPreviousYear}
      \end{subfigure}
         \caption{Exemplary clustering for week three of the year 2019 using all three of
         our base models without spatial information. All use the concentration parameter
         $M=0.1$ and the prior parameters listed in \cref{tab:DRPMPriorParam}. The color of
-        the bubble indicates the cluster and the size of the bubble the average PM2.5 value
-        within week three of 2018.}
+        the bubble indicates the cluster and the size of the bubble the weekly-average PM2.5 value.}
         \label{fig:DRPMClusteringBaseModels}
 \end{figure}
 
-\subsection{Extensions}
+\subsubsection{DRPM Extensions}
+We fix a value of $M= 0.1$ and $\alpha_0 = 0.5$ for all of the experiments in this section, since our previous results emphasized
+these two values as a good trade-off for all methods. Furthermore, the MSE is computed for all values in the log-space and is the
+yearly-maximum MSE computed over all weekly MSEs. Given our
+extension described in \cref{subsec:DRPMExtensions}, we compare our three base models by using a spatial-informed version of
+DRPM and contrasting all possible combinations of temporal-dependency extensions.
 
+In our notation $\eta_{10} =$ True indicates an AR(1)-type temporal-dependency in the likelihood,
+$\phi_1 =$ True a temporal-dependency within the stations and $\alpha_t = $ True a temporal-dependency within
+the partitions, i.e. $\alpha_t = $ False implies a constant value of $\alpha_t = \alpha_1$ over the entire time horizon
+$t = 1, \ldots, T$. Finally, $g_i$ is the type of cohesion function used by the algorithm.
+
+The results for our baseline version using the DRPM-Paper prior values is shown in \cref{tab:DRPMPriorParam}
+TODO(Florian)
+% \include{./tables/drpm_extensions_paper_params_REPORT.tex}
+
+\begin{table}
+\caption{\textbf{Spatial-informed} DRPM Model for different hyperparameter configurations with the following prior values: $m_0 = 0.0$, $s_0^2 = 10000.0$, $A_\sigma = 10.0$, $A_\tau = 5.0$, $A_\lambda = 5.0$, $b = 1.0$, $a_\alpha = 2.0$, $b_\alpha = 2.0$ (DRPM-Paper).}
+\centering\begin{tabular}{cccccccc}
+\toprule
+$\eta_{10}$ & $\phi_1$ & $\alpha_t$ & $g_i$ & LMPL & WAIC & Time [s] & MSE \\
+\midrule
+False & False & True & 3 & $-1.202 \cdot 10^{+03}$ & $2.382 \cdot 10^{+03}$ & $2.719 \cdot 10^{+01}$ & $1.248 \cdot 10^{+00}$ \\
+False & False & True & 4 & $-1.217 \cdot 10^{+03}$ & $2.407 \cdot 10^{+03}$ & $2.854 \cdot 10^{+01}$ & $1.238 \cdot 10^{+00}$  \\
+False & True & True & 3 & $-1.199 \cdot 10^{+03}$ & $2.378 \cdot 10^{+03}$ & $2.698 \cdot 10^{+01}$ & $1.256 \cdot 10^{+00}$  \\
+False & True & True & 4 & $-1.226 \cdot 10^{+03}$ & $2.421 \cdot 10^{+03}$ & $3.068 \cdot 10^{+01}$ & $\mathbf{1.197 \cdot 10^{+00}}$  \\
+True & False & True & 3 & $-1.329 \cdot 10^{+03}$ & $2.644 \cdot 10^{+03}$ & $2.726 \cdot 10^{+01}$ & $1.279 \cdot 10^{+00}$  \\
+True & False & True & 4 & $-1.256 \cdot 10^{+03}$ & $2.486 \cdot 10^{+03}$ & $3.311 \cdot 10^{+01}$ & $1.235 \cdot 10^{+00}$  \\
+True & True & True & 3 & $-1.710 \cdot 10^{+03}$ & $3.407 \cdot 10^{+03}$ & $2.721 \cdot 10^{+01}$ & $1.376 \cdot 10^{+00}$ \\
+True & True & True & 4 & $-1.766 \cdot 10^{+03}$ & $3.500 \cdot 10^{+03}$ & $3.397 \cdot 10^{+01}$ & $1.391 \cdot 10^{+00}$ \\
+False & False & False & 3 & $\mathbf{-1.198 \cdot 10^{+03}}$ & $\mathbf{2.375 \cdot 10^{+03}}$ & $\mathbf{2.647 \cdot 10^{+01}}$ & $1.221 \cdot 10^{+00}$  \\
+False & False & False & 4 & $-1.275 \cdot 10^{+03}$ & $2.491 \cdot 10^{+03}$ & $4.507 \cdot 10^{+01}$ & $1.200 \cdot 10^{+00}$  \\
+False & True & False & 3 & $-1.199 \cdot 10^{+03}$ & $2.376 \cdot 10^{+03}$ & $2.757 \cdot 10^{+01}$ & $1.237 \cdot 10^{+00}$ \\
+False & True & False & 4 & $-1.264 \cdot 10^{+03}$ & $2.473 \cdot 10^{+03}$ & $4.155 \cdot 10^{+01}$ & $1.215 \cdot 10^{+00}$ \\
+True & False & False & 3 & $-1.279 \cdot 10^{+03}$ & $2.545 \cdot 10^{+03}$ & $2.700 \cdot 10^{+01}$ & $1.262 \cdot 10^{+00}$ \\
+True & False & False & 4 & $-1.958 \cdot 10^{+03}$ & $3.878 \cdot 10^{+03}$ & $4.503 \cdot 10^{+01}$ & $1.488 \cdot 10^{+00}$ \\
+True & True & False & 3 & $-1.601 \cdot 10^{+03}$ & $3.189 \cdot 10^{+03}$ & $2.686 \cdot 10^{+01}$ & $1.343 \cdot 10^{+00}$ \\
+True & True & False & 4 & $-1.937 \cdot 10^{+03}$ & $3.837 \cdot 10^{+03}$ & $4.398 \cdot 10^{+01}$ & $1.430 \cdot 10^{+00}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \newpage
 
@@ -612,9 +653,7 @@ Mean 2018 (ours)                                & 2.91  & $200$  & 0.1        & 
 \newpage
 
 \section{Acknowledgements}
-
-
-
-
-
+% \newpage
+% \appendix
+% \section{DRPM Model Results}
 \end{document}
