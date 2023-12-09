@@ -26,7 +26,7 @@ def plot_overview(
     filename: str = "drpm_base_models_comparison",
     title: str = "",
 ):
-    fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(12, 10), sharex=True)
+    fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(10, 12), sharex=True)
 
     weeks = np.arange(1, 53, step=1)
     colors = ["darkorange", "green", "royalblue"]
@@ -141,8 +141,8 @@ def main():
         # for prior in ["paper_params"]:
         print(prior)
         drpm_args = {
-            "M": 0.001,  # TODO: always the best?
-            "starting_alpha": 0.5,  # TODO: always the best?
+            "M": 0.1,  # TODO: always the best?
+            "starting_alpha": 0.25,  # TODO: always the best?
             "unit_specific_alpha": False,  # diff alpha for each station --> prior needs to be adjusted
             "time_specific_alpha": True,  # diff alpha is drawn for each time-step
             "alpha_0": False,
