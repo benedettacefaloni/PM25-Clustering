@@ -14,7 +14,7 @@ import numpy as np
 from utils.visualize import _n_colors, trace_plots
 
 # PLOTTING -> LaTeX
-use_tex = False
+use_tex = True
 if use_tex:
     plt.rc("text", usetex=True)
     plt.rc("font", family="serif", size="16")
@@ -24,6 +24,7 @@ def plot_overview(
     all_results: list[ModelPerformance],
     names: list[str],
     filename: str = "drpm_base_models_comparison",
+    title: str = "",
 ):
     fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(12, 10), sharex=True)
 
@@ -39,8 +40,8 @@ def plot_overview(
             model.test_cases[0].list_of_weekly["mse"],
             label=names[idx],
             color=colors[idx],
-            # linestyle="--",
-            # marker=".",
+            linestyle="--",
+            marker=".",
         )
 
         # plot the number of clusters per week
@@ -49,8 +50,8 @@ def plot_overview(
             model.test_cases[0].list_of_weekly["n_clusters"],
             # label=names[idx],
             color=colors[idx],
-            # linestyle="--",
-            # marker="x",
+            linestyle="--",
+            marker=".",
         )
 
         # cluster sizes in the third plot
@@ -61,7 +62,7 @@ def plot_overview(
                 weeks,
                 model.test_cases[0].list_of_weekly[cluster_kpi],
                 color=colors[idx],
-                # linestyle="--",
+                linestyle="--",
                 marker=markers[marker_idx],
                 # label=names[idx] + cluster_kpi,
             )
@@ -94,6 +95,7 @@ def plot_overview(
     ax[0].legend(lines, labels, loc="upper right", ncol=3)
 
     fig.align_labels()
+    plt.suptitle(title)
 
     plt.tight_layout()
     plt.savefig("../report/imgs/{}.pdf".format(filename))
@@ -135,8 +137,8 @@ def main():
     salso_args = {"loss": "binder", "maxNCluster": 0}
     all_results: list[ModelPerformance] = []
 
-    # for prior in priors.keys():
-    for prior in ["paper_params"]:
+    for prior in priors.keys():
+        # for prior in ["paper_params"]:
         print(prior)
         drpm_args = {
             "M": 0.001,  # TODO: always the best?
@@ -151,7 +153,7 @@ def main():
             "alphaPriors": priors[prior]["alphaPriors"],
             "simpleModel": 0,
             "theta_tau2": ro.FloatVector([0, 2]),  # only use with simpleModel=True
-            "SpatialCohesion": 3,  # TODO: always the best?
+            "SpatialCohesion": 3,
             # cohesionPrior: mu0, k0, v0, L0
             "cParms": ro.FloatVector([0, 1, 2, 1]),
             # params for metropolis updates: sigma2, tau, lambda, eta1, phi1
@@ -188,16 +190,17 @@ def main():
             # save_to_visualize_cluster = YearlyClustering(
             #     yearly_decomposed_result=yearly_result, data=data
             # )
-            trace_plots(res_cluster, model=model.name)
+            # trace_plots(res_cluster, model=model.name)
             model_result.add_testcase(yearly_result=yearly_result)
             it += 1
         all_results.append(model_result)
 
     # PLOT the MSE and cluster KPIs
-    # plot_overview(
-    #     all_results=all_results,
-    #     names=["DRPM (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
-    # )
+    plot_overview(
+        all_results=all_results,
+        names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
+        title="Comparison of different Prior Values for the non-spatial DRPM Model",
+    )
 
 
 if __name__ == "__main__":
