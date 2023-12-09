@@ -109,7 +109,7 @@ def main():
     pm25_timeseries = yearly_data_as_timeseries(data)
     salso_args = {"loss": "binder", "maxNCluster": 0}
 
-    prior_case = "paper_params"
+    prior_case = "smaller_std"
     experiment_case = "large_experiment"
 
     drpm_args = {
