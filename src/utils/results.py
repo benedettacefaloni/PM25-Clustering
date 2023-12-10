@@ -37,7 +37,7 @@ agg_mapping = {
     "waic": max,
     "time": np.sum,
     # maybe yearly
-    "mse": max,
+    "mse": np.average,
     "n_singletons": np.max,
     # maybe maximum?
     "n_clusters": np.average,
