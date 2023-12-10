@@ -102,6 +102,7 @@
 \DeclareMathOperator{\PosSemDef}{\mathbb{S}}
 \DeclareMathOperator{\PP}{\mathbb{P}}
 \DeclareMathOperator{\Multinomial}{\mathrm{Multinomial}}
+\DeclareMathOperator{\Laplace}{\mathrm{Laplace}}
 \DeclareMathOperator{\Dir}{\mathrm{Dirichlet}}
 \newcommand*{\tran}{^{\mkern-1.5mu\mathsf{T}}}
 \newcommand*{\ind}{\overset{\tiny{\textrm{ind}}}{\sim}}
@@ -228,7 +229,7 @@ Regarding the choice of models, we first focused on three basic modeling approac
 In the whole section we denote by $n$ the number of measurement units, by $\rho = \{ S_1, \dots, S_k \}$  a partition of the $n$ measurement units and by $c_i$ the cluster that measurement unit $i$ belongs to, i.e. $c_i = j$ if $i \in S_j$. Furthermore, cluster-specific values are marked with $*$. For example we consider cluster specific means $\pmb{\mu}^* = \{ \mu_1, \dots, \mu_k \}$ and standard deviations $\pmb{\sigma}^{*}$.
 
 \subsection{sPPM Model: Spatial informed Clustering using location-dependent Similarity 
-Functions} \label{sPPM-model}
+Functions} \label{subsec:sPPM-model}
 
 The following model is taken from \cite{Page2016-Spatial}. It is implemented as part of the R-package \textit{ppmSuite} \cite{ppmSuite}.
 The overall model structure is the following, where $m \in \RR, s^2 \in [0, \infty )$, the bounds $A, B \in [0, \infty)$ as well as the concentration parameter $M \in (0, \infty)$ and $\mathbf{\theta}$ that will be explained in more detail below are user-defined parameters.
@@ -240,11 +241,11 @@ The overall model structure is the following, where $m \in \RR, s^2 \in [0, \inf
     \rho &\sim \sPPM(M, \pmb{\theta})
 \end{align*}
 
-The $sPPM$ is a prior of the following form, where $\mathbf{s}$ denotes the spatial coordinates of the measurement units:
+The $\sPPM$ is a prior of the following form, where $\mathbf{s}$ denotes the spatial coordinates of the measurement units:
 
-\begin{align*}
+\begin{align} \label{sPPM-prior}
     \PP(\rho | \pmb{s} ) \propto \prod_{j=1}^{k_{\rho}} \left( \underbrace{M \cdot \Gamma(\vert S_j \vert) }_{=:c(S_j)}g(S_j, \pmb{s}^*_j \vert \pmb{\theta}) \right) .
-\end{align*}
+\end{align}
 
 The so-called similarity function $g$ is a non-negative function that measures the togetherness of the stations in the set $S_j$.
 Note that $\prod_{j=1}^{k_{\rho}} c(S_j) $ is proportional to the distribution of $\rho$ in a random partition model induced by a sample from a Dirichlet process (Section 8.1.3 in \cite{lecturenotes}). Therefore $M$ takes the role of the concentration parameter in the Dirichlet process and influences the number of clusters.\medskip
@@ -354,7 +355,7 @@ For similarity functions $g$ there are four options available.\medskip
     
     For continuous covariates there are two options as a conjugate model. First, the \textit{Auxiliary N-N Model} with $q(. \vert \xi_j^*) = \Normal (. \vert \xi_j^*, \kappa_1 \hat{S})$  and $q(\xi_j^*) = \Normal (\xi_j^* \vert m_0, s_0^2)$ where $\hat{S}$ denotes the empirical variance of the covariate. The user-supplied parameters are $\pmb{\theta} = ( \kappa_1, m_0, s_0).$ Second, the \textit{Auxiliary N-NIG Model} with $q (. \vert \pmb{\xi_j^*}) = \Normal(. \vert m_j^*, v_j^*)$ and $q(\pmb{\xi}_j^*) = \text{N-IG} (m_j^*, v_j^* \vert m_0, k_0, v_0, n_0)$. The user-supplied parameters are $\pmb{\theta} = (m_0, k_0,v_0, n_0)$. \medskip
     
-    For categorical covariates a Multinomial-Dirichlet Model is applied, that is \newline $q(. \vert \pmb{\xi}_j^*) = \Multinomial ( . \vert \pmb{\xi}_j^* )$ and $q( \pmb{\xi}_j^*) = \Dir_{k_j} ( \pmb{\xi}_j^* \vert \pmb{\alpha} \equiv a )$. The user-supplied parameter is $\theta = a$. \medskip
+    For categorical covariates a Multinomial-Dirichlet Model is applied, that is \newline $q(. \vert \pmb{\xi}_j^*) = \Multinomial ( . \vert \pmb{\xi}_j^* )$ and $q( \pmb{\xi}_j^*) = \Dir ( \pmb{\xi}_j^* \vert \pmb{\alpha}_j \equiv a )$ where $C$ is the number of cateogories. The user-supplied parameter is $\theta = a$. \medskip
 
     \item \textit{(Double Dipper)} With an auxiliary parameter
     $\pmb{\xi}_j^*$, we have
@@ -410,14 +411,47 @@ and for $t \in \{1, \dots, T \}$ the $\PP(\rho_t\vert \gamma_t, \rho_{t-1})$ is 
 \subsection{Extensions}
 \label{subsec:DRPMExtensions}
 
-For the DPRM Model we considered the extensions listed below.
-\begin{itemize}
-    \item Extension to a Spatial-Temporal Model by 
-    \item AR(1)-method using eta not equal to zero (otherwise iid)
-    \item unit, i.e. station, specific alpha values -- adjust the prior size accordingly
-    \item fixed $\alpha$ for each time step
-    \item phi value, 0 value corresponds to independet atoms
-\end{itemize}
+For the DPRM Model we considered the extensions listed below. All of them were available in the \textit{drpm} package \cite{drpm}. The full extended model is taken from section 4 in \cite{Page2021-Temporal}. \medskip
+
+?? Does not really match with drpm package: in the package $\eta_1, \phi_1$ are updated??; we can provide a scale prior for xi?; we cannot set $\phi_1$? :(
+
+\textbf{Fixed $\alpha$ for each time step}\\
+Instead of drawing an $\alpha_t$ in each time step, we considered using a constant, user-supplied $\alpha_0$ (?) for the probability of non-relocation for each measurement unit. To be precise this is not an extension, but was considered as we wanted to see if the resulting models are worse and if they run significantly faster. \medskip
+
+\textbf{Unit, i.e. station, specific $\alpha$ values}\\ -- adjust the prior size accordingly \medskip
+
+
+\textbf{Spatially informed DRPM}\\
+This extension combines the DRPM and the sPPM model. The EPPF in the temporal random partition model is changed to the function that was used as a prior in the sPPM-model, i.e. \ref{sPPM-prior}. For similarity functions \textit{Auxiliary Cohesion} and \textit{Double Dipper} ($g_3$ and $g_4$ in section \ref{subsec:sPPM-model}) were considered. (In section 4.1 of \cite{Page2021-Temporal} it is stated [...] that when standardizing the spatial coordinates and setting $\mathbf{\mu_0} = \mathbf{0}, \kappa_0 = 1$ and $\Delta_0 = 1$ for the NIW-parameters in $g_3$, we get a EPPF that preserves sample size consistency. In this case larger $\nu_0$ implies larger influence of spatial data on the clustering) \medskip
+
+\textbf{AR(1) structure in the Likelihood}\\
+As it is reasonable to assume that there is a temporal dependence for the time series at each measurement unit, a temporal structure in the likelihood is considered. For that purpose a measurement-unit specific time dependence parameter $\eta_i$ with $|\eta_i| \leq 1$ is introduced. The resulting model is obtained when setting $\phi_1 = 0$ in the model presented below.
+%AR(1)-method using eta not equal to zero (otherwise iid)
+\medskip
+
+\textbf{AR(1) structure for $\theta_t$}\\
+In addition a time-dependency in the time specific means $\theta_t$ can be added by bringing in another parameter $\phi_1$. Together with the AR(1) structure in the likelihood the extended model the following.
+\begin{align*}
+    Y_{it} \vert \pmb{\mu}^*_t, \pmb{\sigma}^{2*}_t, \mathbf{c}_t
+    \overset{\tiny{\textrm{ind}}} &{\sim} \Normal({\mu}^*_{c_{it}t} + \eta_i Y_{i t-1}, 
+    {\sigma}^{2*}_{c_{it}t}(q-\eta_i^2)) \quad \forall i=1,\ldots,n; \, t=1,\ldots, T\\
+    Y_{i1} \overset{\tiny{\textrm{ind}}} &{\sim} \Normal ({\mu}^*_{c_{i1}1}, {\sigma}^{2*}_{c_{i1}1}) \quad \forall i=1,\ldots,n\\
+    \xi_i = \text{Logit}(0.5(\eta_i + 1)) \overset{\tiny{\textrm{iid}}} &{\sim} \Laplace (a,b) \quad \forall i=1,\ldots,n\\
+    (\mu_{j t}^*, \sigma_{jt}^*) \vert \theta_t, \tau_t^2 
+    \overset{\tiny{\textrm{ind}}} &{\sim} \Normal(\theta_t, \tau_t^2) \times \Uniform(0, A_\sigma) \quad \forall j=1,\ldots, k_t;  t=1,\ldots, T\\
+    \theta_t | \theta_{t-1} \overset{\tiny{\textrm{ind}}} &{\sim} \Normal ((1- \phi_1) \phi_0 + \phi_1 \theta_{t-1}, \lambda^2 (1- \phi_1^2))\\
+    (\theta_1, \tau_t) &\sim  \Normal(
+    \phi_0, \lambda^2) \times \Uniform\left(0, A_\tau\right) \quad \forall t=1, \ldots, T\\
+    (\phi_0, \phi_1, \lambda) &\sim \Normal(m_0, s_0^2) \times \Uniform (-1,1) \times \Uniform(0, A_\lambda)\\
+    \{ \pmb{c}_1, \ldots, \pmb{c}_T\} &\sim \tRPM(\pmb{\alpha}, M) \; \textrm{with} \; \alpha_t \iid{} \BetaDist(a_\alpha, b_\alpha).
+\end{align*}
+
+
+
+Note that setting $\eta_i = 0$ and $\phi_1 = 0$ this model is exactly the DRPM model from before.
+%phi value 0 value corresponds to independent atom
+
+
 \section{Data Preparation and Evaluation}
 
 
@@ -434,77 +468,65 @@ list data loss, number of stations
 \subsection{Evaluation}
 
 \subsubsection{Goodness-of-fit}
-To indicate goodness-of-fit of the used models the following criteria are considered. \medskip
+To indicate goodness-of-fit of the used models the following criteria are considered.
 
-\begin{itemize}
-    \item LPML = log pseudo marginal likelihood (higher is better)\\
-    The LPML is a predictive information criterion based on the idea of leave-on-out cross validation \cite{lecturenotes}. Let $\mathbf{y} = (y_1, \dots , y_n )$ denote our data, $\mathbf{y}_{(-i)} = (y_1, \dots , y_{i-1}, y_{i+1}, \dots, y_n )$ and $m(y_i | \mathbf{y}_{(-i)}) $ the marginal likelihood of $y_i$ given $\mathbf{y}_{(-i)}$ in the considered model. Then the LPML is defined as
-    \begin{align*}
-        \text{LPML} = \sum_{i=1}^n \log m(y_i | \mathbf{y}_{(-i)}).
-    \end{align*}
+\textbf{LPML = log pseudo marginal likelihood} (higher is better)
+The LPML is a predictive information criterion based on the idea of leave-on-out cross validation \cite{lecturenotes}. Let $\mathbf{y} = (y_1, \dots , y_n )$ denote our data, $\mathbf{y}_{(-i)} = (y_1, \dots , y_{i-1}, y_{i+1}, \dots, y_n )$ and $m(y_i | \mathbf{y}_{(-i)}) $ the marginal likelihood of $y_i$ given $\mathbf{y}_{(-i)}$ in the considered model. Then the LPML is defined as
+\begin{align*}
+    \text{LPML} = \sum_{i=1}^n \log m(y_i | \mathbf{y}_{(-i)}).
+\end{align*}
     
-    \item WAIC = widely applicable information criterion (lower is better)\\
-    The WAIC is another predictive information criteria that accounts for the over-estimation of log pointwise predictive density $\sum_{i=1}^n \log m(y_i | \mathbf{y})$ by subtracting a penalization term $p_{WAIC}$ \cite{lecturenotes}. In our definition the WAIC is obtained by multiplying this difference with $-2$. In the following $\mathbf{\theta}$ denotes the parameters and $f$ the likelihood of the given model. The WAIC is defined as
-    \begin{align*}
-        \text{WAIC} &= -2 \left( \sum_{i=1}^n \log m(y_i | \mathbf{y} ) - 
-        p_{\text{WAIC}} \right), \\
-        p_{\text{WAIC}} &= \sum_{i=1}^n \text{Var}_{\theta | \mathbf{y}} \log 
-        f(y_i | \mathbf{\theta} ).
-    \end{align*}
+\textbf{WAIC = widely applicable information criterion} (lower is better)
+The WAIC is another predictive information criteria that accounts for the over-estimation of log pointwise predictive density $\sum_{i=1}^n \log m(y_i | \mathbf{y})$ by subtracting a penalization term $p_{WAIC}$ \cite{lecturenotes}. In our definition the WAIC is obtained by multiplying this difference with $-2$. In the following $\mathbf{\theta}$ denotes the parameters and $f$ the likelihood of the given model. The WAIC is defined as
+\begin{align*}
+    \text{WAIC} &= -2 \left( \sum_{i=1}^n \log m(y_i | \mathbf{y} ) - 
+    p_{\text{WAIC}} \right), \\
+    p_{\text{WAIC}} &= \sum_{i=1}^n \text{Var}_{\theta | \mathbf{y}} \log 
+    f(y_i | \mathbf{\theta} ).
+\end{align*}
 
-    \item MSE = mean squared error (lower is better)\\
-    Denote by $\hat{y}_i = \mathbb{E}(Y_i | \mathbf{y})$ the posterior mean of the $i$-th observation, then
-    \begin{align*}
-        \text{MSE} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2.
-    \end{align*}
+\textbf{MSE = mean squared error} (lower is better)
+Denote by $\hat{y}_i = \mathbb{E}(Y_i | \mathbf{y})$ the posterior mean of the $i$-th observation, then
+\begin{align*}
+    \text{MSE} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2.
+\end{align*}
 
-    \item MaxDev (lower is better): Given a partition $\rho
-    = \{S_1, \ldots, S_k\}$ we compute the maximum of the cluster-internal 
-    deviation of PM2.5 values over all cluster, namely
-    \begin{align*}
-        \text{MaxDev} = \max_{i=1, \ldots, k} \left(\max_{i\in S_k} y_i - 
-        \min_{i\in S_k} y_i
-         \right)
-    \end{align*}
-    as an indication on how closely related the target variable's
-    values are given the partition $\rho$.
-    
+\textbf{MaxDev = Maximal Deviation} (lower is better)
+Given a partition $\rho
+= \{S_1, \ldots, S_k\}$ we compute the maximum of the cluster-internal 
+deviation of PM2.5 values over all cluster, namely
+\begin{align*}
+    \text{MaxDev} = \max_{i=1, \ldots, k} \left(\max_{i\in S_k} y_i - 
+    \min_{i\in S_k} y_i
+     \right)
+\end{align*}
+as an indication on how closely related the target variable's
+values are given the partition $\rho$.
 
-\end{itemize}
 
 \subsubsection{Predictive Performance}
+The predictive performance of the models is measured by the mean squared prediction error.
 
-The predictive performance of the models is measured by the mean squared prediction error. \medskip
-
-\begin{itemize}
-    \item MSPE = mean squared prediction error (lower is better)\\
-    Denote by $\Tilde{y}_i$ the testing observation for the $i$-th measurement unit, then
-
-    \begin{align*}
-        \text{MSPE} = \frac{1}{n} \sum_{i=1}^n (\Tilde{y}_i - \hat{y}_i)^2.
-    \end{align*}
-    
-\end{itemize}
+\textbf{MSPE = mean squared prediction error} (lower is better)\\
+Denote by $\Tilde{y}_i$ the testing observation for the $i$-th measurement unit, then
+\begin{align*}
+    \text{MSPE} = \frac{1}{n} \sum_{i=1}^n (\Tilde{y}_i - \hat{y}_i)^2.
+\end{align*}
 
 \subsubsection{Cluster estimation}
 Once a model is fit to the data the question remains how to summarize the obtained posterior for the clusters in a meaningful way. One number that we report is the posterior mean of the number of clusters. Furthermore, a general idea is to find an estimate $\hat{\rho}^*$ that minimizes a certain partition loss function $L$. Assuming that there is a ``true'' $\rho$ (we take the posterior distribution), this becomes
 \begin{align*}
     \hat{\rho}^* = \text{argmin}_{\hat{\rho}} \ \mathbb{E} ( L(\rho, \hat{\rho}) | \mathbf{y} ) \approx \frac{1}{M} \sum_{m=1}^M L (\rho^{(m)} , \hat{\rho} ),
 \end{align*}
-where $\left( \rho^{(1)}, \dots , \rho^{(M)} \right)$ are MCMC samples from the posterior. For that approach the $R$-package \texttt{salso} \cite{salso} provides a number of possibilities. In \cite{Dahl2022-salso} different loss functions are explained as well as the \texttt{SALSO} algorithm that is implemented in the package. \medskip
+where $\left( \rho^{(1)}, \dots , \rho^{(M)} \right)$ are MCMC samples from the posterior. For that approach the $R$-package \texttt{salso} \cite{salso} provides a number of possibilities. In \cite{Dahl2022-salso} different loss functions are explained as well as the \texttt{SALSO} algorithm that is implemented in the package.
 
-\textbf{Binder Loss}
-
-One of the most widely used loss functions is the Binder loss function that considers pairwise misclassifications. Switching to the equivalent cluster notation for partitions the definition is
-
+\textbf{Binder Loss} One of the most widely used loss functions is the Binder loss function that considers pairwise misclassifications. Switching to the equivalent cluster notation for partitions the definition is
 \begin{align*}
     \text{L}_{\text{Binder}} (\mathbf{c}, \mathbf{\hat{c}} ) = \sum_{i<j} a \cdot  I (\{ c_i = c_j \}) I (\{ \hat{c_i} \neq \hat{c_j} \} ) +  b \cdot I (\{c_i \neq c_j \}) I (\{ \hat{c_i} = \hat{c_j} \}).
 \end{align*}
-For $a=b=1$ a measure of similarity between partitions, the Rand Index, is obtained by $\text{RI}(\rho, \hat{\rho}) = 1 -  \text{L}_{\text{Binder}}(\rho, \hat{\rho}) / \binom{n}{2}$. Maximizing the the posterior expectation of the Rand Index is equivalent to minimizing the expected loss for a Binder loss function with $a=b=1$. As this index fails to account for chance agreements, there exists a generalization that we will consider. \medskip
+For $a=b=1$ a measure of similarity between partitions, the Rand Index, is obtained by $\text{RI}(\rho, \hat{\rho}) = 1 -  \text{L}_{\text{Binder}}(\rho, \hat{\rho}) / \binom{n}{2}$. Maximizing the the posterior expectation of the Rand Index is equivalent to minimizing the expected loss for a Binder loss function with $a=b=1$. As this index fails to account for chance agreements, there exists a generalization that we will consider.
 
-\textbf{Adjusted Rand Index}
-
-The Adjusted Rand Index (ARI) is defined as
+\textbf{Adjusted Rand Index} The Adjusted Rand Index (ARI) is defined as
 \begin{align*}
     \text{ARI} (\rho, \hat{\rho}) = \frac{ \sum_{s \in \rho} \sum_{E \in \hat{\rho}} \binom{| S \cap E |}{2} - \left( \sum_{S \in \rho} \binom{|S|}{2} \sum_{E \in \hat{\rho}} \binom{|E|}{2} \right) \frac{1}{\binom{n}{2}}} {\frac{1}{2} \left( \sum_{S \in \rho} \binom{|S|}{2} + \sum_{E \in \hat{\rho}} \binom{|E|}{2} \right) - \left(\sum_{S \in \rho} \binom{|S|}{2} \sum_{E \in \hat{\rho}} \binom{|E|}{2} \right) \frac{1}{\binom{n}{2}}}.
 \end{align*}
@@ -518,12 +540,39 @@ reproducible and comparable
 \subsection{sPPM}
 \subsection{PPMx}
 \subsection{DRPM}
-TODO
-\begin{itemize}
-    \item Analyse large experiment
-    \item Analyse Extension of large Experiment
-    \item Small table with the three best performing models
-\end{itemize}
+\subsubsection{Non-spatially informed: Hyperparameter Gridsearch}
+In order to test the model's sensitivity and response with respect to different values of the hyperparameters $M$ and the starting value
+$\alpha_0$ we provide a large grid-search-like experiment. To investigate the model's dependency on different values of the prior parameters,
+we conduct each of the grid-search-like experiment for three different prior believes presented in \cref{tab:DRPMPriorParam}. The first
+prior values, namely DRPM-Paper, are directly taken from \cite[Section 4.1]{Page2021-Temporal} in the context of monthly PM10 data
+and we consider this model as a baseline. Since our early explorations showed that these prior parameters lead to quite large clusters
+(most of the times the model only returned one or two clusters), we modified the prior values to incorporate a lower standard deviation
+for the likelihood, nameley Lower Std, and we provide a third set of prior values which additionally integrate the mean PM2.5 value
+of the year 2018 as a prior value for the predictive mean. To make the experiments comparable and reproducable, we use the same
+random see for each of the experiments.
+
+The results are comprehensively available in the folder \texttt{/report/tables/results} of the Github
+repository.\footnote{See \url{https://github.com/Flo-Wo/PM25-Clustering/tree/main/report/tables/results}}
+For the sake of simplicity and limited space available, we only present the best hyperparameters for each of the model
+in the summary \cref{tab:DRPMNoSpatialSummary}. Interestingly, as already mentioned, the baseline model using the 
+DRPM-Paper prior values performs poorly and, as shown in \cref{fig:drpm_base_models_comparison}, all stations are in
+the same cluster for each time step. In contrast, the models using our two tuned prior values perform reasonably well,
+despite requiring longer computational times of factor 5 and 7 respectively, most probably due to a less informative
+prior on the $\alpha_t$ values. Additionally, we were surprised that the WAIC and MSE performance metrics do not correlate.
+Notwithstanding looking promising on paper with the lowest MSE of $1.271$, the DRPM-Paper informed model performs poorly in practice,
+as it is obvious that a clustering of all stations in one cluster is absolutely not desirable. Consequently, despite having
+an higher MSE, our prior values are favorable. An exemplary clustering of the three models is visualized in 
+\cref{fig:DRPMClusteringBaseModels}. In \cref{fig:drpm_base_models_comparison} we analyzed the three different models
+with respect to their number and sizes of clusters. Although the time-evolvement of $\alpha_t$ is somehow similar for all
+three models, the number of clusters significantly differ and the mean-informed Mean 2018 version favors slighly more
+clusters than the zero-centered mean version Lower Std. The MSE of the model using our two priors is nearly equal.
+
+In order to analyze the convergence behaviour of the MCMC, we exemplarily visualize trace plots for the parameters of
+our Lower Std prior model, as it was the best performing one in our initial test. The plots in
+\cref{fig:drpm_lower_std_trace_plots} clearly exhibit the desirable \enquote{fat caterpillar} structure for the
+parameters $\mu^*_{c_1t}$, $\tau_t^2$ and $\phi_0$, nonetheless for the rest of the shown parameters the convergence
+behaviour could be improved. Given the results presented in \cite[Section 4.1]{Page2021-Temporal} with 50.000 MCMC samples,
+we expect this behaviour to vanish when increasing the number of samples as well as the burn-in and the thinning.
 
 \begin{table}[h]
 \centering
@@ -540,15 +589,33 @@ Mean 2018 (ours)                                & 2.91  & $200$  & 0.1        & 
 \label{tab:DRPMPriorParam}
 \end{table}
 
+\begin{table}
+\caption{Non-spatially informed DRPM model performances for different prior values. A dash value indicates that the \texttt{drpm$\_$fit} function
+was not able to compute the corresponding values due to unknown reasons. Bold values indicate the column-wise best result.}
+\centering\begin{tabular}{cccccccccccc}
+\toprule
+Prior & M & $\alpha_0$ & LPML & WAIC & Time [s] & MSE & MaxDev \\
+\midrule
+DRPM-Paper & 100.0& 0.25& $-1.234 \cdot 10^{+03}$ & $2.445 \cdot 10^{+03}$ & $\mathbf{12.70} $ & $\textbf{1.271}$ & $1.753$ \\
+Lower Std & 0.1& 0.25& $-$ & $\mathbf{-1.285 \cdot 10^{+03}}$ & $68.71 $ & $1.696 $ & $\textbf{1.495}$ \\
+Mean 2018 & 0.1& 0.25& $-$ & $-9.548 \cdot 10^{+02}$ & $90.26 $ & $1.699 $ & $1.679$ \\
+\bottomrule
+\end{tabular}
+\label{tab:DRPMNoSpatialSummary}
+\end{table}
+
+
 \begin{figure}
     \centering
     \includegraphics[width=.95\linewidth]{./imgs/drpm/drpm_base_models_comparison.pdf}
     \caption{Comparison of the best model for each prior for DRPM without spatial cohesion.
     The used prior values are listed in \cref{tab:DRPMPriorParam}. For the DRPM model itself we use
-    $M=0.1$ as the concentration parameter. The MCMC uses 10000 draws with a burn of 1000 and a
+    $M=0.1$ as the concentration parameter. The MCMC uses 10000 draws with a burn-in of 1000 and a
     thinning of 10, resulting in 900 total MCMC samples. The DRPM-Paper model reached a WAIC (lower is better) of
     $3.103 \cdot 10^{+03}$ while our models achieved a WAIC score of $-1.285 \cdot 10^{+03}$ and
-    $-9.548 \cdot 10^{+02}$ for the Lower Std and Mean 2018 models respectively.}
+    $-9.548 \cdot 10^{+02}$ for the Lower Std and Mean 2018 models respectively. For the cluster sizes,
+    the minimum (min) and maximum (max) number of stations for each timestep is shown, as well as the number of
+    singletons, i.e. clusters consisting of only one station.}
     \label{fig:drpm_base_models_comparison}
 \end{figure}
 
@@ -592,8 +659,9 @@ Mean 2018 (ours)                                & 2.91  & $200$  & 0.1        & 
         \label{fig:DRPMClusteringBaseModels}
 \end{figure}
 
-\subsubsection{DRPM Extensions}
-We fix a value of $M= 0.1$ and $\alpha_0 = 0.5$ for all of the experiments in this section, since our previous results emphasized
+\subsubsection{Spatially informed: Hyperparameter Gridsearch}
+\subsubsection{Spatially informed: Extensions}
+We fix a value of $M= 0.1$ and $\alpha_0 = 0.25$ for all of the experiments in this section, since our previous results emphasized
 these two values as a good trade-off for all methods. Furthermore, the MSE is computed for all values in the log-space and is the
 yearly-maximum MSE computed over all weekly MSEs. Given our
 extension described in \cref{subsec:DRPMExtensions}, we compare our three base models by using a spatial-informed version of
@@ -610,7 +678,7 @@ for the Lower Std and Mean 2018 version in \cref{tab:DRPMExtensionLowerStd} and 
 TODO: Evalation of the experiments and maybe another plot?
 
 \begin{table}
-\caption{\textbf{Spatial-informed} DRPM Model for different hyperparameter configurations with the following prior values: $m_0 = 0.0$, $s_0^2 = 10000.0$, $A_\sigma = 10.0$, $A_\tau = 5.0$, $A_\lambda = 5.0$, $b = 1.0$, $a_\alpha = 2.0$, $b_\alpha = 2.0$ (\textbf{DRPM-Paper}).}
+\caption{\textbf{Spatially informed} DRPM Model for different hyperparameter configurations with the following prior values: $m_0 = 0.0$, $s_0^2 = 10000.0$, $A_\sigma = 10.0$, $A_\tau = 5.0$, $A_\lambda = 5.0$, $b = 1.0$, $a_\alpha = 2.0$, $b_\alpha = 2.0$ (\textbf{DRPM-Paper}).}
 \centering\begin{tabular}{cccccccc}
 \toprule
 $\eta_{10}$ & $\phi_1$ & $\alpha_t$ & $g_i$ & LMPL & WAIC & Time [s] & MSE \\
@@ -637,7 +705,7 @@ True & True & False & 4 & $-1.937 \cdot 10^{+03}$ & $3.837 \cdot 10^{+03}$ & $4.
 \end{table}
 
 \begin{table}
-\caption{\textbf{Spatial-informed} DRPM Model for different hyperparameter configurations with the following prior values: $m_0 = 0.0$, $s_0^2 
+\caption{\textbf{Spatially informed} DRPM Model for different hyperparameter configurations with the following prior values: $m_0 = 0.0$, $s_0^2 
 = 200.0$, $A_\sigma = 0.1$, $A_\tau = 1.0$, $A_\lambda = 1.0$, $b = 1.0$, $a_\alpha = 1.0$, $b_\alpha = 1.0$ (\textbf{Lower Std})
 A dash indicates that the package was not able to calculate the corresponding value.}
 \centering\begin{tabular}{cccccccc}
@@ -667,7 +735,7 @@ True & True & False & 4 & $-$ & $-1.356 \cdot 10^{+02}$ & $2.083 \cdot 10^{+02}$
 
 
 \begin{table}
-\caption{\textbf{Spatial-informed} DRPM Model for different hyperparameter configurations with the following prior values: $m_0 = 2.91$, $s_0^2 
+\caption{\textbf{Spatially informed} DRPM Model for different hyperparameter configurations with the following prior values: $m_0 = 2.91$, $s_0^2 
 = 200.0$, $A_\sigma = 0.1$, $A_\tau = 1.0$, $A_\lambda = 1.0$, $b = 1.0$, $a_\alpha = 1.0$, $b_\alpha = 1.0$ (\textbf{Mean 2018}).
 A dash indicates that the package was not able to calculate the corresponding value.
 }
