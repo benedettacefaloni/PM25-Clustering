@@ -1,0 +1,18 @@
+\begin{table}
+    \caption{Spatially informed DRPM model performances for different prior values. A dash
+    value indicates that the \texttt{drpm$\_$fit} function was not able to compute the corresponding values due
+    to unknown reasons. Bold values indicate the column-wise best result.}
+    \centering\begin{tabular}{ccccccccccccc}
+    \toprule
+    Prior & M & $\alpha_0$ & $g_i$ & LPML & WAIC & Time [s] & MSE & max-pm25-diff \\
+    \midrule
+    DRPM-Paper & 0.1 & 0.5 & 3 & $\mathbf{-1.217 \cdot 10^{+03}}$ & $2.422 \cdot 10^{+03}$ & $\textbf{2.672 \cdot 10^{+01}}$ & $\textbf{1.257} $ & $1.753$ \\
+    DRPM-Paper & 0.1 & 0.5 & 4 & $-1.509 \cdot 10^{+03}$ & $2.988 \cdot 10^{+03}$ & $3.235 \cdot 10^{+01}$ & $1.348 $ & $1.753$ \\
+    Lower Std &  0.1 & 0.5 & 3 & $-$ & $1.705 \cdot 10^{+01}$ & $1.200 \cdot 10^{+02}$ & $1.688 $ & $1.621 $ \\
+    Lower Std &  0.1 & 0.5 & 4 & $-$ & $-4.022 \cdot 10^{+02}$ & $2.208 \cdot 10^{+02}$ & $1.700 $ & $\textbf{1.495} $ \\
+    Mean 2018 &  0.1 & 0.0 & 3 & $-$ & $2.042 \cdot 10^{+02}$ & $1.200 \cdot 10^{+02}$ & $1.697 $ & $1.679 $ \\
+    Mean 2018 &  0.1 & 0.0 & 4 & $-$ & $\mathbf{-5.403 \cdot 10^{+02}}$ & $2.536 \cdot 10^{+02}$ & $1.708 $ & $1.541 $ \\
+    \bottomrule
+    \end{tabular}
+\label{tab:DRPMSpatialBaselineSummary}
+\end{table}
