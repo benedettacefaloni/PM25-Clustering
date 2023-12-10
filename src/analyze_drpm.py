@@ -79,7 +79,7 @@ experiments = {
     },
     "extensions": {
         "M": 0.1,
-        "starting_alpha": 0.5,
+        "starting_alpha": 0.25,
         "time_specific_alpha": [True, False],
         "eta1_0": [False, True],
         "phi1_0": [False, True],
