@@ -167,6 +167,8 @@
 %-----------------------------------------------------------------------------
 % INTRODUCTION
 %-----------------------------------------------------------------------------
+\tableofcontents
+
 \section{Introduction}
 \label{sec:introduction}
 \textbf{Air Quality Challenges in Lombardy, Italy:}
@@ -248,7 +250,7 @@ The $\sPPM$ is a prior of the following form, where $\mathbf{s}$ denotes the spa
 \end{align}
 
 The so-called similarity function $g$ is a non-negative function that measures the togetherness of the stations in the set $S_j$.
-Note that $\prod_{j=1}^{k_{\rho}} c(S_j) $ is proportional to the distribution of $\rho$ in a random partition model induced by a sample from a Dirichlet process (Section 8.1.3 in \cite{lecturenotes}). Therefore $M$ takes the role of the concentration parameter in the Dirichlet process and influences the number of clusters.\medskip
+Note that $\prod_{j=1}^{k_{\rho}} c(S_j) $ is proportional to the distribution of $\rho$ in a random partition model induced by a sample from a Dirichlet process as in \cite[Section 8.1.3]{lecturenotes}. Therefore $M$ takes the role of the concentration parameter in the Dirichlet process and influences the number of clusters.\medskip
 
 For the similarity function $g$ that incorporates the spatial information there are four options available. \medskip
 
@@ -412,7 +414,7 @@ and for $t \in \{1, \dots, T \}$ the $\PP(\rho_t\vert \gamma_t, \rho_{t-1})$ is 
 \subsection{Extensions}
 \label{subsec:DRPMExtensions}
 
-For the DPRM Model we considered the extensions listed below. All of them were available in the \textit{drpm} package \cite{drpm}. The full extended model is taken from section 4 in \cite{Page2021-Temporal}. \medskip
+For the DPRM Model we considered the extensions listed below. All of them were available in the \drpm{} package \cite{drpm}. The full extended model is taken from \cite[Section 4]{Page2021-Temporal}. \medskip
 
 ?? Does not really match with drpm package: in the package $\eta_1, \phi_1$ are updated??; we can provide a scale prior for xi?; we cannot set $\phi_1$? :(
 
@@ -423,7 +425,7 @@ Instead of drawing an $\alpha_t$ in each time step, we considered using a consta
 
 
 \textbf{Spatially informed DRPM}\\
-This extension combines the DRPM and the sPPM model. The EPPF in the temporal random partition model is changed to the function that was used as a prior in the sPPM-model, i.e. \ref{sPPM-prior}. For similarity functions \textit{Auxiliary Cohesion} and \textit{Double Dipper} ($g_3$ and $g_4$ in section \ref{subsec:sPPM-model}) were considered. (In section 4.1 of \cite{Page2021-Temporal} it is stated [...] that when standardizing the spatial coordinates and setting $\mathbf{\mu_0} = \mathbf{0}, \kappa_0 = 1$ and $\Delta_0 = 1$ for the NIW-parameters in $g_3$, we get a EPPF that preserves sample size consistency. In this case larger $\nu_0$ implies larger influence of spatial data on the clustering) \medskip
+This extension combines the DRPM and the sPPM model. The EPPF in the temporal random partition model is changed to the function that was used as a prior in the sPPM-model, i.e. \ref{sPPM-prior}. For similarity functions \textit{Auxiliary Cohesion} and \textit{Double Dipper} ($g_3$ and $g_4$ in section \ref{subsec:sPPM-model}) were considered. (In \cite[Section 4.1]{Page2021-Temporal} it is stated [...] that when standardizing the spatial coordinates and setting $\mathbf{\mu_0} = \mathbf{0}, \kappa_0 = 1$ and $\Delta_0 = 1$ for the NIW-parameters in $g_3$, we get a EPPF that preserves sample size consistency. In this case larger $\nu_0$ implies larger influence of spatial data on the clustering) \medskip
 
 \textbf{AR(1) structure in the Likelihood}\\
 As it is reasonable to assume that there is a temporal dependence for the time series at each measurement unit, a temporal structure in the likelihood is considered. For that purpose a measurement-unit specific time dependence parameter $\eta_i$ with $|\eta_i| \leq 1$ is introduced. The resulting model is obtained when setting $\phi_1 = 0$ in the model presented below.
@@ -472,13 +474,13 @@ list data loss, number of stations
 To indicate goodness-of-fit of the used models the following criteria are considered.
 
 \textbf{LPML = log pseudo marginal likelihood} (higher is better)
-The LPML is a predictive information criterion based on the idea of leave-on-out cross validation \cite{lecturenotes}. Let $\mathbf{y} = (y_1, \dots , y_n )$ denote our data, $\mathbf{y}_{(-i)} = (y_1, \dots , y_{i-1}, y_{i+1}, \dots, y_n )$ and $m(y_i | \mathbf{y}_{(-i)}) $ the marginal likelihood of $y_i$ given $\mathbf{y}_{(-i)}$ in the considered model. Then the LPML is defined as
+The LPML is a predictive information criterion based on the idea of leave-on-out cross validation, the following definition is taken from \cite{lecturenotes}. Let $\mathbf{y} = (y_1, \dots , y_n )$ denote our data, $\mathbf{y}_{(-i)} = (y_1, \dots , y_{i-1}, y_{i+1}, \dots, y_n )$ and $m(y_i | \mathbf{y}_{(-i)}) $ the marginal likelihood of $y_i$ given $\mathbf{y}_{(-i)}$ in the considered model. Then the LPML is defined as
 \begin{align*}
     \text{LPML} = \sum_{i=1}^n \log m(y_i | \mathbf{y}_{(-i)}).
 \end{align*}
     
 \textbf{WAIC = widely applicable information criterion} (lower is better)
-The WAIC is another predictive information criteria that accounts for the over-estimation of log pointwise predictive density $\sum_{i=1}^n \log m(y_i | \mathbf{y})$ by subtracting a penalization term $p_{WAIC}$ \cite{lecturenotes}. In our definition the WAIC is obtained by multiplying this difference with $-2$. In the following $\mathbf{\theta}$ denotes the parameters and $f$ the likelihood of the given model. The WAIC is defined as
+The WAIC is another predictive information criteria that accounts for the over-estimation of log pointwise predictive density $\sum_{i=1}^n \log m(y_i | \mathbf{y})$ by subtracting a penalization term $p_{WAIC}$, see \cite{lecturenotes}. In our definition the WAIC is obtained by multiplying this difference with $-2$. In the following $\mathbf{\theta}$ denotes the parameters and $f$ the likelihood of the given model. The WAIC is defined as
 \begin{align*}
     \text{WAIC} &= -2 \left( \sum_{i=1}^n \log m(y_i | \mathbf{y} ) - 
     p_{\text{WAIC}} \right), \\
@@ -552,7 +554,7 @@ and we consider this model as a baseline. Since our early explorations showed th
 (most of the times the model only returned one or two clusters), we modified the prior values to incorporate a lower standard deviation
 for the likelihood, nameley Lower Std, and we provide a third set of prior values which additionally integrate the mean PM2.5 value
 of the year 2018 as a prior value for the predictive mean. To make the experiments comparable and reproducable, we use the same
-random see for each of the experiments.
+random seed for each of the experiments.
 
 The results are comprehensively available in the folder \texttt{/report/tables/results} of the Github
 repository.\footnote{See \url{https://github.com/Flo-Wo/PM25-Clustering/tree/main/report/tables/results}}
@@ -567,7 +569,7 @@ as it is obvious that a clustering of all stations in one cluster is absolutely 
 an higher MSE, our prior values are favorable. An exemplary clustering of the three models is visualized in 
 \cref{fig:DRPMClusteringBaseModels}. In \cref{fig:drpm_base_models_comparison} we analyzed the three different models
 with respect to their number and sizes of clusters. Although the time-evolvement of $\alpha_t$ is somehow similar for all
-three models, the number of clusters significantly differ and the mean-informed Mean 2018 version favors slighly more
+three models, the number of clusters significantly differ and the mean-informed Mean 2018 version favors slightly more
 clusters than the zero-centered mean version Lower Std. The MSE of the model using our two priors is nearly equal.
 
 In order to analyze the convergence behaviour of the MCMC, we exemplarily visualize trace plots for the parameters of
@@ -619,7 +621,8 @@ was not able to compute the corresponding values due to unknown reasons. Bold va
     $3.103 \cdot 10^{+03}$ while our models achieved a WAIC score of $-1.285 \cdot 10^{+03}$ and
     $-9.548 \cdot 10^{+02}$ for the Lower Std and Mean 2018 models respectively. For the cluster sizes,
     the minimum (min) and maximum (max) number of stations for each timestep is shown, as well as the number of
-    singletons, i.e. clusters consisting of only one station.}
+    singletons, i.e. clusters consisting of only one station. $\bar{\alpha}_t$ indicates the mean of the MCMC
+    samples at each time step $t=1, \ldots, T$.}
     \label{fig:drpm_base_models_comparison}
 \end{figure}
 
@@ -666,15 +669,17 @@ was not able to compute the corresponding values due to unknown reasons. Bold va
 \subsubsection{Spatially informed: Hyperparameter Gridsearch}
 We performed the same hyperparameter grid search for $M$ and $\alpha_0$ as in \cref{subsubsec:DPRMNoSpatialGridsearch} but now the
 DRPM model is spatially informed, i.e. has access to the stations' longitude and latitude, allowing us to simultaneously 
-test the two cohesion functions 3 and 4 of \cref{subsec:PPMxClusteringCohesionFuctions} in our large experiment.\footnote{Cf.
+test the two cohesion functions 3 and 4 (indicated by $g_i$) of \cref{subsec:PPMxClusteringCohesionFuctions} in our large experiment.\footnote{Cf.
 \cite[Section 4.2]{Page2021-Temporal} for more details.}
-As before, we results are comprehensively available in the Github repository and \cref{tab:DRPMSpatialBaselineSummary}
+As before, the results are comprehensively available in the Github repository and \cref{tab:DRPMSpatialBaselineSummary}
 provides a summarizing overview of
 the best performing models for each of the three prior combinations. We picked the best performing case for each model and
 for the reason of comparability, we display the results using the secondary cohesion function as well. Interestingly,
 the spatial-informed models prefer a slightly higher value of $\alpha_0$ but the same value for the concentration parameter
 $M$. Overall, but especially for the Lower Std Prior values, the performance is slightly decreased and simultaneously
 the higher model complexity caused a significant increase in the computational time.
+
+TODO: maybe another plot? --> qualitative evaluation
 
 \begin{table}
     \centering
@@ -710,7 +715,7 @@ $t = 1, \ldots, T$. Finally, $g_i$ is the type of cohesion function used by the 
 The results for our baseline version using the DRPM-Paper prior values is shown in \cref{tab:DRPMExtensionDRPMPaper} and
 for the Lower Std and Mean 2018 version in \cref{tab:DRPMExtensionLowerStd} and \cref{tab:DRPMExtensionMean2018} respectively.
 
-TODO: Evalation of the experiments and maybe another plot?
+TODO: Evaluation of the experiments and maybe another plot?
 
 \begin{table}
 \centering\begin{tabular}{cccccccc}
