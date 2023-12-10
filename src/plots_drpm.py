@@ -222,7 +222,7 @@ def main():
         print(prior)
         drpm_args = {
             "M": 0.1,
-            "starting_alpha": 0.25,
+            "starting_alpha": 0.5,
             "unit_specific_alpha": False,  # diff alpha for each station --> prior needs to be adjusted
             "time_specific_alpha": True,  # diff alpha is drawn for each time-step
             "alpha_0": False,
