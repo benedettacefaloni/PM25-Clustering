@@ -179,7 +179,7 @@ The Lombardy region in Italy faces significant air pollution challenges, ranking
 
  Understanding the temporal patterns of PM2.5 levels is crucial for identifying trends, potential sources, and developing effective pollution control strategies. Clustering techniques will be employed to categorize weeks with similar PM2.5 concentration profiles, providing insights into the underlying patterns and contributing factors.
  In order to do this, our project analyzes a dataset spanning the years 2016 to 2021 \cite{AgrimoniaDataset}, collecting daily values of air quality, weather conditions, emissions, livestock, and land and soil use. Pollutant data are sourced from the European Environmental Agency and the Lombardy Regional Environment Protection Agency, Weather and emissions data are obtained from the European Copernicus program, livestock data from the Italian zootechnical registry, and land and soil use data from the CORINE Land Cover project.
-  The project focuses on analyzing and clustering weekly data of PM2.5 concentrations over the course of one year (2019),%da confermare!!
+  The project focuses on analyzing and clustering weekly data of PM2.5 concentrations over the course of one year (2019), %da confermare!!
   trying to assess the impact of agriculture on air quality in the selected area through statistical techniques and highlighting the relationship between the lifestock sector and the air pollutant concentrations. 
 
 %begin{tcolorbox}
@@ -307,7 +307,7 @@ The prior for the clusters is
 \begin{align*}
     \PP(\rho | \pmb{x} ) \propto \prod_{j=1}^{k_{\rho}} c(\vert S_j \vert)g(\pmb{x}^*_j \vert \pmb{\theta}).
 \end{align*}
-For the so-called cohesion function $c$ either the same function as in \Cref{sPPM-model} (that is proportional to the partition probabilities in a random partition model derived from a Dirichlet process), or a uniform cohesion $c \equiv 1$ can be chosen. \medskip
+For the so-called cohesion function $c$ either the same function as in \Cref{subsec:sPPM-model} (that is proportional to the partition probabilities in a random partition model derived from a Dirichlet process), or a uniform cohesion $c \equiv 1$ can be chosen. \medskip
 
 In the following discussion $p=1$ is assumed if not stated otherwise. If $p$ covariates are available, in general
 \begin{align*}
@@ -421,9 +421,6 @@ For the DPRM Model we considered the extensions listed below. All of them were a
 \textbf{Fixed $\alpha$ for each time step}\\
 Instead of drawing an $\alpha_t$ in each time step, we considered using a constant, user-supplied $\alpha_0$ (?) for the probability of non-relocation for each measurement unit. To be precise this is not an extension, but was considered as we wanted to see if the resulting models are worse and if they run significantly faster. \medskip
 
-\textbf{Unit, i.e. station, specific $\alpha$ values}\\ -- adjust the prior size accordingly \medskip
-
-
 \textbf{Spatially informed DRPM}\\
 This extension combines the DRPM and the sPPM model. The EPPF in the temporal random partition model is changed to the function that was used as a prior in the sPPM-model, i.e. \ref{sPPM-prior}. For similarity functions \textit{Auxiliary Cohesion} and \textit{Double Dipper} ($g_3$ and $g_4$ in section \ref{subsec:sPPM-model}) were considered. (In \cite[Section 4.1]{Page2021-Temporal} it is stated [...] that when standardizing the spatial coordinates and setting $\mathbf{\mu_0} = \mathbf{0}, \kappa_0 = 1$ and $\Delta_0 = 1$ for the NIW-parameters in $g_3$, we get a EPPF that preserves sample size consistency. In this case larger $\nu_0$ implies larger influence of spatial data on the clustering) \medskip
 
@@ -473,11 +470,14 @@ list data loss, number of stations
 \subsubsection{Goodness-of-fit}
 To indicate goodness-of-fit of the used models the following criteria are considered.
 
-\textbf{LPML = log pseudo marginal likelihood} (higher is better)
+\textbf{LPML = log pseudo marginal likelihood}\footnote{We refer to
+\cite[Section 4.1]{Page2021-Temporal} for details on numerical problems
+when computing the LPML.} (higher is better)
 The LPML is a predictive information criterion based on the idea of leave-on-out cross validation, the following definition is taken from \cite{lecturenotes}. Let $\mathbf{y} = (y_1, \dots , y_n )$ denote our data, $\mathbf{y}_{(-i)} = (y_1, \dots , y_{i-1}, y_{i+1}, \dots, y_n )$ and $m(y_i | \mathbf{y}_{(-i)}) $ the marginal likelihood of $y_i$ given $\mathbf{y}_{(-i)}$ in the considered model. Then the LPML is defined as
 \begin{align*}
     \text{LPML} = \sum_{i=1}^n \log m(y_i | \mathbf{y}_{(-i)}).
 \end{align*}
+
     
 \textbf{WAIC = widely applicable information criterion} (lower is better)
 The WAIC is another predictive information criteria that accounts for the over-estimation of log pointwise predictive density $\sum_{i=1}^n \log m(y_i | \mathbf{y})$ by subtracting a penalization term $p_{WAIC}$, see \cite{lecturenotes}. In our definition the WAIC is obtained by multiplying this difference with $-2$. In the following $\mathbf{\theta}$ denotes the parameters and $f$ the likelihood of the given model. The WAIC is defined as
@@ -507,17 +507,17 @@ as an indication on how closely related the target variable's
 values are given the partition $\rho$.
 
 
-\subsubsection{Predictive Performance}
-The predictive performance of the models is measured by the mean squared prediction error.
-
-\textbf{MSPE = mean squared prediction error} (lower is better)\\
-Denote by $\Tilde{y}_i$ the testing observation for the $i$-th measurement unit, then
-\begin{align*}
-    \text{MSPE} = \frac{1}{n} \sum_{i=1}^n (\Tilde{y}_i - \hat{y}_i)^2.
-\end{align*}
+% \subsubsection{Predictive Performance}
+% The predictive performance of the models is measured by the mean squared prediction error.
+% 
+% \textbf{MSPE = mean squared prediction error} (lower is better)\\
+% Denote by $\Tilde{y}_i$ the testing observation for the $i$-th measurement unit, then
+% \begin{align*}
+%     \text{MSPE} = \frac{1}{n} \sum_{i=1}^n (\Tilde{y}_i - \hat{y}_i)^2.
+% \end{align*}
 
 \subsubsection{Cluster estimation}
-Once a model is fit to the data the question remains how to summarize the obtained posterior for the clusters in a meaningful way. One number that we report is the posterior mean of the number of clusters. Furthermore, a general idea is to find an estimate $\hat{\rho}^*$ that minimizes a certain partition loss function $L$. Assuming that there is a ``true'' $\rho$ (we take the posterior distribution), this becomes
+Once a model is fit to the data the question remains how to summarize the obtained posterior for the clusters in a meaningful way. One number that we report is the posterior mean of the number of clusters. Furthermore, a general idea is to find an estimate $\hat{\rho}^*$ that minimizes a certain partition loss function $L$. Assuming that there is a \enquote{true} $\rho$ (we take the posterior distribution), this becomes
 \begin{align*}
     \hat{\rho}^* = \text{argmin}_{\hat{\rho}} \ \mathbb{E} ( L(\rho, \hat{\rho}) | \mathbf{y} ) \approx \frac{1}{M} \sum_{m=1}^M L (\rho^{(m)} , \hat{\rho} ),
 \end{align*}
@@ -539,7 +539,7 @@ Large values mean a larger similarity between the partitions. We obtain another 
 
 \section{Results}
 We used the same seed for every experiments to make the results
-reproducible and comparable
+reproducible and comparable.
 \subsection{sPPM}
 \subsection{PPMx}
 \subsection{DRPM}
@@ -606,7 +606,8 @@ Mean 2018 & 0.1& 0.25& $-$ & $-9.548 \cdot 10^{+02}$ & $90.26 $ & $1.699 $ & $1.
 \bottomrule
 \end{tabular}
 \caption{Non-spatially informed DRPM model performances for different prior values. A dash value indicates that the \texttt{drpm$\_$fit} function
-was not able to compute the corresponding values due to unknown reasons. Bold values indicate the column-wise best result.}
+was not able to compute the corresponding values due to unknown reasons. Bold values indicate the column-wise best result.
+}
 \label{tab:DRPMNoSpatialSummary}
 \end{table}
 
@@ -677,7 +678,7 @@ the best performing models for each of the three prior combinations. We picked t
 for the reason of comparability, we display the results using the secondary cohesion function as well. Interestingly,
 the spatial-informed models prefer a slightly higher value of $\alpha_0$ but the same value for the concentration parameter
 $M$. Overall, but especially for the Lower Std Prior values, the performance is slightly decreased and simultaneously
-the higher model complexity caused a significant increase in the computational time.
+the higher model complexity caused a significant increase in the computational time. As can be seen from \ref{fig:drpm_spatial-informed_comparison} the number of clusters in the models with the Mean 2018-prior is clearly smaller for the best spatially-informed model compared to the best model without spatial information. 
 
 TODO: maybe another plot? --> qualitative evaluation
 
@@ -700,10 +701,26 @@ was not able to compute the corresponding values due to unknown reasons. Bold va
 \label{tab:DRPMSpatialBaselineSummary}
 \end{table}
 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.95\linewidth]{./imgs/drpm/drpm_spatial-informed_comparison.pdf}
+    \caption{Comparison of the best model based on WAIC value for each prior for DRPM with spatial cohesion.
+    The used prior values are listed in \cref{tab:DRPMPriorParam}. For the DRPM model itself we use
+    $M=0.1$ as the concentration parameter. The chosen similarity function was $g_3$ for the DRPM-Paper prior and $g_4$ for the other two priors. The MCMC uses 10000 draws with a burn-in of 1000 and a
+    thinning of 10, resulting in 900 total MCMC samples. The DRPM-Paper model reached a WAIC (lower is better) of
+    $2.422 \cdot 10^{+03}$ while our models achieved a WAIC score of $-4.022 \cdot 10^{+03}$ and
+    $-5.403 \cdot 10^{+02}$ for the Lower Std and Mean 2018 models respectively. For the cluster sizes,
+    the minimum (min) and maximum (max) number of stations for each timestep is shown, as well as the number of
+    singletons, i.e. clusters consisting of only one station. $\bar{\alpha}_t$ indicates the mean of the MCMC
+    samples at each time step $t=1, \ldots, T$.}
+    \label{fig:drpm_spatial-informed_comparison}
+\end{figure}
+
 \subsubsection{Spatially informed: Time-dependency Extensions}
-We fix a value of $M= 0.1$ and $\alpha_0 = 0.5$ for all of the experiments in this section, since our previous results emphasized
+We fix the values of $M= 0.1$ and $\alpha_0 = 0.5$ for all of the experiments in this section, since our previous results emphasized
 these two values as a good trade-off for all methods. Furthermore, the MSE is computed for all values in the log-space and is the
-yearly-maximum MSE computed over all weekly MSEs. Given our
+average MSE computed over all weekly MSEs. Given our
 extension described in \cref{subsec:DRPMExtensions}, we compare our three base models by using a spatial-informed version of
 DRPM and contrasting all possible combinations of temporal-dependency extensions.
 
@@ -715,7 +732,16 @@ $t = 1, \ldots, T$. Finally, $g_i$ is the type of cohesion function used by the 
 The results for our baseline version using the DRPM-Paper prior values is shown in \cref{tab:DRPMExtensionDRPMPaper} and
 for the Lower Std and Mean 2018 version in \cref{tab:DRPMExtensionLowerStd} and \cref{tab:DRPMExtensionMean2018} respectively.
 
-TODO: Evaluation of the experiments and maybe another plot?
+Upon analyzing the results from \cref{tab:DRPMExtensionDRPMPaper} to \cref{tab:DRPMExtensionMean2018}, it becomes evident that more 
+complex models come with increased computational complexity. 
+Unfortunately, similar to the previous chapter, more complex temporal-dependencies cannot significantly enhance the models' 
+performance. The intra-group comparison reveals the same pattern as in the non-spatially informed case: 
+the DRPM-Paper version performs poorly compared to the Lower Std and Mean 2018 versions, with the latter performing slightly better. 
+Nevertheless, in comparison to our base models in \cref{tab:DRPMNoSpatialSummary}, none of the three models surpass the performance 
+of the non-spatially informed Lower Std version. Interestingly, we observe that for some hyperparameter combinations, the choice of 
+cohesion functions strongly influences the WAIC score (e.g., in \cref{tab:DRPMExtensionLowerStd} with all values being False). In 
+contrast, the different temporal-dependencies only negligibly affect the MSE.
+
 
 \begin{table}
 \centering\begin{tabular}{cccccccc}
@@ -768,7 +794,7 @@ True & True & False & 4 & $-$ & $-1.356 \cdot 10^{+02}$ & $2.083 \cdot 10^{+02}$
 \bottomrule
 \end{tabular}
 \caption{\textbf{Spatially informed} DRPM Model for different hyperparameter configurations with the following prior values: $m_0 = 0.0$, $s_0^2 
-= 200.0$, $A_\sigma = 0.1$, $A_\tau = 1.0$, $A_\lambda = 1.0$, $b = 1.0$, $a_\alpha = 1.0$, $b_\alpha = 1.0$ (\textbf{Lower Std})
+= 200.0$, $A_\sigma = 0.1$, $A_\tau = 1.0$, $A_\lambda = 1.0$, $b = 1.0$, $a_\alpha = 1.0$, $b_\alpha = 1.0$ (\textbf{Lower Std}).
 A dash indicates that the package was not able to calculate the corresponding value.}
 \label{tab:DRPMExtensionLowerStd}
 \end{table}
@@ -804,7 +830,16 @@ A dash indicates that the package was not able to calculate the corresponding va
 \label{tab:DRPMExtensionMean2018}
 \end{table}
 
+\subsubsection{DRPM Conclusion}
 
+Based on the preceding sections, our exploration of various temporal-dependency extensions within the DRPM framework reveals that 
+more complex models entail higher computational complexity without a significant improvement in performance. Despite variations in 
+hyperparameter combinations and cohesion functions, the non-spatially informed Lower Std version consistently outperforms thea
+DRPM-Paper and Mean 2018 versions. It is noteworthy that in the case of clustering, one should not solely rely on computational 
+metrics 
+such as WAIC or MSE. As evidenced in the non-spatially informed DRPM-Paper case, where some metric-based results appear promising, 
+the actual proposed clustering is rather poor and uninformative. In conclusion, we want to highlight the improved model performance 
+induced by the temporal-dependency of the partitions while emphasizing the limited enhancements of more sophisticated models.
 
 \newpage
 
