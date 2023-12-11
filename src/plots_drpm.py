@@ -190,6 +190,7 @@ priors = {
         "modelPriors": ro.FloatVector([0, 100**2, 10, 5, 5, 1]),
         # modelPriors: a_alpha, b_alpha -> most mass on the value of 0.5
         "alphaPriors": ro.r["matrix"](ro.FloatVector([2.0, 2.0]), nrow=1),
+        "SpatialCohesion": 3,
     },
     # tuned params
     "lower_std": {
@@ -197,6 +198,7 @@ priors = {
         # A_tau, A_lambda also smaller to set incentives for smaller clusters
         "modelPriors": ro.FloatVector([0, 100 * 2, 0.1, 1, 1, 1]),
         "alphaPriors": ro.r["matrix"](ro.FloatVector([1.0, 1.0]), nrow=1),
+        "SpatialCohesion": 4,
     },
     "mean_prev_year": {
         # A_sigma is way smaller => smaller clusters in general
@@ -205,6 +207,7 @@ priors = {
         "modelPriors": ro.FloatVector([2.91, 100 * 2, 0.1, 1, 1, 1]),
         # uniform prior
         "alphaPriors": ro.r["matrix"](ro.FloatVector([1.0, 1.0]), nrow=1),
+        "SpatialCohesion": 4,
     },
 }
 
@@ -218,7 +221,7 @@ def main():
     all_results: list[ModelPerformance] = []
 
     # for prior in priors.keys():
-    for prior in ["paper_params"]:
+    for prior in ["paper_params","lower_std","mean_prev_year"]:
         print(prior)
         drpm_args = {
             "M": 0.1,
@@ -233,7 +236,7 @@ def main():
             "alphaPriors": priors[prior]["alphaPriors"],
             "simpleModel": 0,
             "theta_tau2": ro.FloatVector([0, 2]),  # only use with simpleModel=True
-            "SpatialCohesion": 3,
+            "SpatialCohesion": priors[prior]["SpatialCohesion"],
             # cohesionPrior: mu0, k0, v0, L0
             "cParms": ro.FloatVector([0, 1, 2, 1]),
             # params for metropolis updates: sigma2, tau, lambda, eta1, phi1
@@ -275,14 +278,15 @@ def main():
         all_results.append(model_result)
 
     # VISUALIZE the clustering using plotly
-    plot_clustering(save_to_visualize_cluster, method_name=model.name)
+    #plot_clustering(save_to_visualize_cluster, method_name=model.name)
 
     # PLOT the MSE and cluster KPIs
-    # plot_overview(
-    #     all_results=all_results,
-    #     names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
-    #     title="Comparison of different Prior Values for the non-spatial DRPM Model",
-    # )
+    plot_overview(
+        all_results=all_results,
+        names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
+        filename="drpm_spatial-informed_comparison",
+        title="Comparison of different Prior Values for the spatially informed DRPM Model",
+    )
 
 
 if __name__ == "__main__":
