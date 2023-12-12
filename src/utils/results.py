@@ -74,7 +74,10 @@ class YearlyPerformance:
         res["partition"] = np.array(
             [week["salso_partition"] for week in weekly_results]
         )
-        res["alpha"] = np.array([week["alpha"] for week in weekly_results])
+        try:
+            res["alpha"] = np.array([week["alpha"] for week in weekly_results])
+        except:
+            pass
 
         return res
 
@@ -201,7 +204,11 @@ class Analyse:
             prediction=py_res[get_fitted_attr_name(model_name=model_name)].mean(axis=0),
             axis=0,
         )
-        analysis["alpha"] = np.average(py_res["alpha"])
+
+        try:
+            analysis["alpha"] = np.average(py_res["alpha"])
+        except:
+            pass
 
         # analyse number of cluster distribution
         salso_partition = np.array(
