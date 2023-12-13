@@ -3,3 +3,4 @@ plotly
 numpy
 rpy2
 pandas
+scikit-learn
