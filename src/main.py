@@ -85,9 +85,9 @@ def main():
     num_weeks = 53
     num_weeks = 3
 
-    # model = Model("sppm", sppm_args, uses_weekly_data=True)
+    model = Model("sppm", sppm_args, uses_weekly_data=True)
     # model = Model("gaussian_ppmx", gaussian_ppmx_args, uses_weekly_data=True)
-    model = Model("drpm", drpm_args, uses_weekly_data=False)
+    # model = Model("drpm", drpm_args, uses_weekly_data=False)
 
     all_results: list[ModelPerformance] = []
 
