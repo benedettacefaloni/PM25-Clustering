@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import rpy2.robjects.packages as rpackages
 
-from utils.data_loader import to_r_matrix
+from utils.data_loader import to_r_matrix, to_r_int_vector
 from utils.models import get_fitted_attr_name
 
 salso = rpackages.importr("salso")
@@ -218,6 +218,7 @@ class Analyse:
             )
         )
 
+        # analyse time-dependency of partitions with lagged ARI values
         analysis["salso_partition"] = salso_partition
         analysis["max_pm25_diff"] = max_pm25_diff_per_cluster(target, salso_partition)
 
@@ -267,6 +268,8 @@ class Analyse:
             ]
         )
 
+        analysis["laggedRI"] = laggedRI(firstweek=1,lastweek=52,salso_pars=analysis["partition"])
+
         # decompose the yearly clustering into weekly chunks for detailed analysis
         analysis["max_pm25_diff"] = []
         for kpi in cluster_size_weekly_kpi.keys():
@@ -303,3 +306,13 @@ def max_pm25_diff_per_cluster(target: np.ndarray, salso_partition: np.array):
             for i in range(1, np.amax(salso_partition) + 1)
         ]
     )
+
+def laggedRI(firstweek: int, lastweek: int, salso_pars: np.array):
+    len = lastweek-firstweek+1
+    RImatrix = np.zeros((len,len))
+    for i in range(len):
+        for j in range(i+1):
+            ri = salso.RI(to_r_int_vector(salso_pars[i]), to_r_int_vector(salso_pars[j]))[0]
+            RImatrix[i,j] = ri
+            RImatrix[j,i] = ri
+    return RImatrix

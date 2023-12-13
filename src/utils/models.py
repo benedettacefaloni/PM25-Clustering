@@ -70,11 +70,17 @@ class Model:
                 "X": covariates,
             }
         elif self.name == "drpm":
-            return {
-                "y": to_r_matrix(yearly_time_series),
-                "s_coords": to_r_matrix(data[["Latitude", "Longitude"]].to_numpy()),
-                # "s_coords": r_NULL()
-            }
+            if spatial:
+                return{
+                    "y": to_r_matrix(yearly_time_series),
+                    "s_coords": to_r_matrix(data[["Latitude", "Longitude"]].to_numpy())
+                }
+            else:
+                return{
+                    "y": to_r_matrix(yearly_time_series),
+                    "s_coords": r_NULL()
+                }
+
         else:
             raise NotImplementedError
 

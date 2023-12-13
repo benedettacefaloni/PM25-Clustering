@@ -129,6 +129,9 @@ def _normalize_numerical_attributes(
 def to_r_vector(data):
     return ro.FloatVector(data)
 
+def to_r_int_vector(data):
+    return ro.IntVector(data)
+
 
 def to_r_matrix(data: np.ndarray):
     nrow, ncol = data.shape[0], data.shape[1]
