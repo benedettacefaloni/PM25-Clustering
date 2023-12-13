@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import rpy2.robjects.packages as rpackages
+from sklearn.metrics import adjusted_rand_score
 
 from utils.data_loader import to_r_matrix, to_r_int_vector
 from utils.models import get_fitted_attr_name
@@ -269,6 +270,7 @@ class Analyse:
         )
 
         analysis["laggedRI"] = laggedRI(firstweek=1,lastweek=52,salso_pars=analysis["partition"])
+        analysis["laggedARI"] = laggedARI(firstweek=1,lastweek=52, salso_pars=analysis["partition"])
 
         # decompose the yearly clustering into weekly chunks for detailed analysis
         analysis["max_pm25_diff"] = []
@@ -316,3 +318,13 @@ def laggedRI(firstweek: int, lastweek: int, salso_pars: np.array):
             RImatrix[i,j] = ri
             RImatrix[j,i] = ri
     return RImatrix
+
+def laggedARI(firstweek: int, lastweek: int, salso_pars: np.array):
+    len = lastweek-firstweek+1
+    ARImatrix = np.zeros((len,len))
+    for i in range(len):
+        for j in range(i+1):
+            ari = adjusted_rand_score(salso_pars[i], salso_pars[j])
+            ARImatrix[i,j] = ari
+            ARImatrix[j,i] = ari
+    return ARImatrix

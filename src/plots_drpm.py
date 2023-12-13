@@ -182,39 +182,54 @@ def plot_overview(
     plt.savefig("../report/imgs/drpm/{}.png".format(filename))
     plt.show()
 
-def plot_laggedRI(
+def plot_laggedARI(
     ncols: int,
     nrows: int,
     labels: str,
     all_results: list[ModelPerformance],
-    filename: str = "drpm_laggedRI",
+    filename: str = "drpm_laggedARI",
     title: str = "",
-    weeks: int = 5
+    weeks: int = 5,
+    adjusted: bool = True
 ):
+    if adjusted:
+        key = "laggedARI"
+    else:
+        key = "laggedRI"
+
     fig, ax = plt.subplots(nrows=nrows, ncols=ncols)
+
 
     for i, ax in enumerate(fig.axes):
         model = all_results[i]
-        mat = ax.matshow(model.test_cases[0].list_of_weekly["laggedRI"][0:weeks,0:weeks][::-1,:],
+        mat = ax.matshow(model.test_cases[0].list_of_weekly[key][0:weeks,0:weeks][::-1,:],
                             cmap ='Blues',
                             vmin=0,
                             vmax=1)
-        
-        ax.set_title(labels[i], fontsize = 10)
 
-        ax.set_xticklabels(['']+[str(i) for i in range(1,weeks+1)])
-        ax.set_yticklabels(['']+[str(5-i) for i in range(0,weeks)])
+        ax.set_xticklabels(['']+[str(i*10+1) for i in range(0,weeks)])
+        ax.set_yticklabels(['']+[str(weeks-i*10-1) for i in range(0,weeks)])
         ax.xaxis.tick_bottom()
         ax.tick_params(labelsize=7)
 
         cbar = fig.colorbar(mat, ax=ax, shrink =0.5)
-        cbar.ax.tick_params(labelsize=7) 
+        cbar.ax.tick_params(labelsize=7)
+
+        if i== 0:
+            ax.set_ylabel('Non-spatial\n \nweeks', fontdict = {'size':12})
+        
+        if i == ncols:
+            ax.set_ylabel('Spatial\n\nweeks', fontdict={'size':12})
+
+        if i >= (nrows-1)*ncols:
+            ax.set_xlabel('weeks', fontdict={'size':12})
+
+        if i < ncols:
+            ax.set_title(labels[i], fontsize = 12)
 
     plt.tight_layout()
-    plt.suptitle(title)
-
     plt.savefig("../report/imgs/drpm/{}.pdf".format(filename))
-    plt.savefig("../report/imgs/drpm/{}.png".format(filename))
+    plt.savefig("../report/imgs/drpm/{}.pdf".format(filename))
 
 priors = {
     # params as stated in the original drpm paper of page et al.
@@ -362,15 +377,16 @@ def main():
     #           )
 
     # PLOT laggedRI matrices
-    plot_laggedRI(
+    plot_laggedARI(
         ncols = 3,
         nrows = 2,
         labels = ['Paper-Prior Non-spatial', 'Lower Std Prior Non-spatial','Mean 2018 Prior Non-spatial',
                   'Paper-Prior spatial', 'Lower Std Prior spatial','Mean 2018 Prior spatial'],
         all_results = all_results,
-        filename="laggedRI",
-        title = "lagged Rand Indexes for Cluster Estimates",
-        weeks = 10,
+        filename="drpm_laggedARI",
+        title = "Lagged ARI for Cluster Estimates",
+        weeks = 52,
+        adjusted = True
     )
             
 
