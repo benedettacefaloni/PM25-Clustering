@@ -182,7 +182,12 @@ def plot_overview(
     plt.savefig("../report/imgs/drpm/{}.png".format(filename))
     plt.show()
 
+<<<<<<< HEAD
 def plot_laggedARI(
+=======
+
+def plot_laggedRI(
+>>>>>>> 7bb4dc16cfd195da351f2447ac68095e49fef7e9
     ncols: int,
     nrows: int,
     labels: str,
@@ -190,7 +195,10 @@ def plot_laggedARI(
     filename: str = "drpm_laggedARI",
     title: str = "",
     weeks: int = 5,
+<<<<<<< HEAD
     adjusted: bool = True
+=======
+>>>>>>> 7bb4dc16cfd195da351f2447ac68095e49fef7e9
 ):
     if adjusted:
         key = "laggedARI"
@@ -202,6 +210,7 @@ def plot_laggedARI(
 
     for i, ax in enumerate(fig.axes):
         model = all_results[i]
+<<<<<<< HEAD
         mat = ax.matshow(model.test_cases[0].list_of_weekly[key][0:weeks,0:weeks][::-1,:],
                             cmap ='Blues',
                             vmin=0,
@@ -226,10 +235,29 @@ def plot_laggedARI(
 
         if i < ncols:
             ax.set_title(labels[i], fontsize = 12)
+=======
+        mat = ax.matshow(
+            model.test_cases[0].list_of_weekly["laggedRI"][0:weeks, 0:weeks][::-1, :],
+            cmap="Blues",
+            vmin=0,
+            vmax=1,
+        )
+
+        ax.set_title(labels[i], fontsize=10)
+
+        ax.set_xticklabels([""] + [str(i) for i in range(1, weeks + 1)])
+        ax.set_yticklabels([""] + [str(5 - i) for i in range(0, weeks)])
+        ax.xaxis.tick_bottom()
+        ax.tick_params(labelsize=7)
+
+        cbar = fig.colorbar(mat, ax=ax, shrink=0.5)
+        cbar.ax.tick_params(labelsize=7)
+>>>>>>> 7bb4dc16cfd195da351f2447ac68095e49fef7e9
 
     plt.tight_layout()
     plt.savefig("../report/imgs/drpm/{}.pdf".format(filename))
     plt.savefig("../report/imgs/drpm/{}.pdf".format(filename))
+
 
 priors = {
     # params as stated in the original drpm paper of page et al.
@@ -258,15 +286,15 @@ priors = {
         # uniform prior
         "alphaPriors": ro.r["matrix"](ro.FloatVector([1.0, 1.0]), nrow=1),
         "SpatialCohesion": 4,
-        "spatial": False
+        "spatial": False,
     },
     "paper_params_spatial": {
-    # modelPriors: m0, s20, A_sigma, A_tau, A_lambda, b_e (xi)
-    "modelPriors": ro.FloatVector([0, 100**2, 10, 5, 5, 1]),
-    # modelPriors: a_alpha, b_alpha -> most mass on the value of 0.5
-    "alphaPriors": ro.r["matrix"](ro.FloatVector([2.0, 2.0]), nrow=1),
-    "SpatialCohesion": 3,
-    "spatial": True,
+        # modelPriors: m0, s20, A_sigma, A_tau, A_lambda, b_e (xi)
+        "modelPriors": ro.FloatVector([0, 100**2, 10, 5, 5, 1]),
+        # modelPriors: a_alpha, b_alpha -> most mass on the value of 0.5
+        "alphaPriors": ro.r["matrix"](ro.FloatVector([2.0, 2.0]), nrow=1),
+        "SpatialCohesion": 3,
+        "spatial": True,
     },
     # tuned params
     "lower_std_spatial": {
@@ -285,7 +313,7 @@ priors = {
         # uniform prior
         "alphaPriors": ro.r["matrix"](ro.FloatVector([1.0, 1.0]), nrow=1),
         "SpatialCohesion": 4,
-        "spatial": True
+        "spatial": True,
     },
 }
 
@@ -299,8 +327,14 @@ def main():
     all_results: list[ModelPerformance] = []
 
     # for prior in priors.keys():
-    for prior in ["paper_params", "lower_std", "mean_prev_year",
-                  "paper_params_spatial", "lower_std_spatial","mean_prev_year_spatial" ]:
+    for prior in [
+        "paper_params",
+        "lower_std",
+        "mean_prev_year",
+        "paper_params_spatial",
+        "lower_std_spatial",
+        "mean_prev_year_spatial",
+    ]:
         print(prior)
         drpm_args = {
             "M": 0.1,
@@ -336,8 +370,10 @@ def main():
             print("==========================")
             # use yearly data
             model_args = model_params | model.load_model_specific_data(
-                data=data, yearly_time_series=pm25_timeseries, model_params=model_params,
-                spatial = priors[prior]["spatial"]
+                data=data,
+                yearly_time_series=pm25_timeseries,
+                model_params=model_params,
+                spatial=priors[prior]["spatial"],
             )
             res_cluster, time_needed = Cluster.cluster(model=model.name, **model_args)
             yearly_result = YearlyPerformance(
@@ -377,6 +413,7 @@ def main():
     #           )
 
     # PLOT laggedRI matrices
+<<<<<<< HEAD
     plot_laggedARI(
         ncols = 3,
         nrows = 2,
@@ -387,8 +424,25 @@ def main():
         title = "Lagged ARI for Cluster Estimates",
         weeks = 52,
         adjusted = True
+=======
+    plot_laggedRI(
+        ncols=3,
+        nrows=2,
+        labels=[
+            "Paper-Prior Non-spatial",
+            "Lower Std Prior Non-spatial",
+            "Mean 2018 Prior Non-spatial",
+            "Paper-Prior spatial",
+            "Lower Std Prior spatial",
+            "Mean 2018 Prior spatial",
+        ],
+        all_results=all_results,
+        filename="laggedRI",
+        title="lagged Rand Indexes for Cluster Estimates",
+        weeks=10,
+>>>>>>> 7bb4dc16cfd195da351f2447ac68095e49fef7e9
     )
-            
+
 
 if __name__ == "__main__":
     main()
