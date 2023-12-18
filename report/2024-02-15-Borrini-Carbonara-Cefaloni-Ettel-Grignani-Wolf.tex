@@ -43,6 +43,7 @@
 \usepackage{tabularx}
 \usepackage{longtable} % tables that can span several pages
 \usepackage{colortbl}
+\usepackage{multirow}
 
 % PACKAGES FOR ALGORITHMS (PSEUDO-CODE)
 \usepackage{algorithm}
@@ -84,8 +85,10 @@
 \newcommand{\mathbbm}[1]{\text{\usefont{U}{bbm}{m}{n}#1}} % From mathbbm.sty
 \newcommand{\pdev}[2]{\frac{\partial#1}{\partial#2}}
 
-\newcommand{\ppmSuite}{\texttt{ppmSuite}}
-\newcommand{\drpm}{\texttt{drpm}}
+\newcommand*{\ppmSuite}{\texttt{ppmSuite}}
+\newcommand*{\drpm}{\texttt{drpm}}
+\newcommand*{\salso}{\texttt{salso}}
+\newcommand*{\skilearn}{\texttt{scikit-learn}}
 
 \DeclareMathOperator{\Normal}{\mathcal{N}}
 \DeclareMathOperator{\DD}{\mathcal{D}}
@@ -188,7 +191,7 @@ The Lombardy region in Italy faces significant air pollution challenges, ranking
 %\end{tcolorbox}
 \section{Data and Covariates}
 The Agrimonia dataset integrates satellite data, model output, and in-situ measurements sourced from national and international agencies, each with varying spatial and temporal resolutions. 
-\\
+
 \textbf{Source Data Overview:}
 The dataset encompasses five key dimensions: air quality (AQ), weather and climate (WE), pollutant emissions (EM), livestock (LI), and land and soil characteristics (LA). Given the applicability of geostatistical methods in leveraging neighboring territory information for enhanced predictive capability near borders, a 0.3° buffer is applied around the Lombardy region, intersecting with several adjacent regions (\cref{fig:buffered_area}).
 
@@ -203,14 +206,6 @@ The dataset encompasses five key dimensions: air quality (AQ), weather and clima
 Particulate matter with a diameter of 2.5 micrometers or smaller originates from various anthropogenic and natural sources. Among the main causes related to the release of significant amounts of PM2.5 into the atmosphere, we can mention intensive livestock farming, as well as combustion processes, including those from vehicles and industrial activities.
 Moreover, analyzing the provided dataset, it has emerged that one crucial variable influencing PM2.5 concentrations is the Boundary Layer Height (BLH) Max which represents the maximum depth of air next to the Earth's surface that is most affected by the resistance to the transfer of momentum, heat, or moisture across the surface. 
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{./imgs/maps/plot_Bolzano_PM25_BLHmax_years.png}
-    \caption{Correlation between PM2.5 Concentrations and Boundary Layer Height (BLH) max
-     which represents the maximum depth of air next to the Earth’s surface that is most affected by the
-    resistance to the transfer of momentum, heat, or moisture across the surface.}
-    \label{fig:pm_blh_correlation}
-\end{figure} 
 \textbf{Main Problems Associated with PM2.5:}
 In order to understand the relevance of the analysis developed in this project, it is important to focus on the problems and the risks associated with high concentrations of PM2.5
 \begin{itemize}
@@ -226,22 +221,22 @@ The outcomes of this analysis will not only enhance our understanding of PM2.5 v
 
 \section{Models}
 
-Regarding the choice of models, we first focused on three basic modeling approaches: spatial-informed partitioning of the data, covariate-informed partitioning and modeling temporal dependence in partitions. Each of the modeling methods is a hierarchical model with Gaussian likelihood, a Gaussian prior for cluster-specific means and an uniform prior for cluster-specific variances. All of them allow for a number of specifications, e.g. different setting ups of priors. Later, several extensions and combinations were considered. \medskip
+Regarding the choice of models, we first focus on three basic modeling approaches: spatial-informed partitioning of the data, covariate-informed partitioning and modeling temporal dependence in partitions. Each of the modeling methods is a hierarchical model with Gaussian likelihood, a Gaussian prior for cluster-specific means and an uniform prior for cluster-specific variances. All of them allow for a number of specifications, e.g. different setting ups of priors. Later, several extensions and combinations are considered.
 
 In the whole section we denote by $n$ the number of measurement units, by $\rho = \{ S_1, \dots, S_k \}$  a partition of the $n$ measurement units and by $c_i$ the cluster that measurement unit $i$ belongs to, i.e. $c_i = j$ if $i \in S_j$. Furthermore, cluster-specific values are marked with $*$. For example we consider cluster specific means $\pmb{\mu}^* = \{ \mu_1, \dots, \mu_k \}$ and standard deviations $\pmb{\sigma}^{*}$.
 
 \subsection{sPPM Model: Spatial informed Clustering using location-dependent Similarity 
 Functions} \label{subsec:sPPM-model}
 
-The following model is taken from \cite{Page2016-Spatial}. It is implemented as part of the R-package \textit{ppmSuite} \cite{ppmSuite}.
-The overall model structure is the following, where $m \in \RR, s^2 \in [0, \infty )$, the bounds $A, B \in [0, \infty)$ as well as the concentration parameter $M \in (0, \infty)$ and $\mathbf{\theta}$ that will be explained in more detail below are user-defined parameters.
-
+The following model is taken from \cite{Page2016-Spatial}. It is implemented as part of the R-package \texttt{ppmSuite} \cite{ppmSuite}.
+The overall model structure is the following
 \begin{align*}
     Y_i | \pmb{\mu}^*, \pmb{\sigma}^{2*}, c_i &\overset{\tiny{\mathrm{ind}}}{\sim} \Normal (\mu_{c_i}^*, \sigma_{c_i}^{2*}), i = 1, \dots, n \\
     (\mu_j^*, \sigma_j^*)  | \mu_0, \sigma_0^2 &\overset{\tiny{\mathrm{iid}}}{\sim} \Normal ( \mu_0, \sigma_0^2) \times \Uniform (0,A)\\
     (\mu_0, \sigma_0) &\sim \Normal (m, s^2) \times \Uniform (0,B)\\
-    \rho &\sim \sPPM(M, \pmb{\theta})
+    \rho &\sim \sPPM(M, \pmb{\theta}),
 \end{align*}
+where $m \in \RR, s^2 \in [0, \infty )$, the bounds $A, B \in [0, \infty)$ as well as the concentration parameter $M \in (0, \infty)$ and $\mathbf{\theta}$ that will be explained in more detail below are user-defined parameters.
 
 The $\sPPM$ is a prior of the following form, where $\mathbf{s}$ denotes the spatial coordinates of the measurement units:
 
@@ -250,9 +245,9 @@ The $\sPPM$ is a prior of the following form, where $\mathbf{s}$ denotes the spa
 \end{align}
 
 The so-called similarity function $g$ is a non-negative function that measures the togetherness of the stations in the set $S_j$.
-Note that $\prod_{j=1}^{k_{\rho}} c(S_j) $ is proportional to the distribution of $\rho$ in a random partition model induced by a sample from a Dirichlet process as in \cite[Section 8.1.3]{lecturenotes}. Therefore $M$ takes the role of the concentration parameter in the Dirichlet process and influences the number of clusters.\medskip
+Note that $\prod_{j=1}^{k_{\rho}} c(S_j) $ is proportional to the distribution of $\rho$ in a random partition model induced by a sample from a Dirichlet process as in \cite[Section 8.1.3]{lecturenotes}. Therefore $M$ takes the role of the concentration parameter in the Dirichlet process and influences the number of clusters.
 
-For the similarity function $g$ that incorporates the spatial information there are four options available. \medskip
+For the similarity function $g$ that incorporates the spatial information there are four options available:
 
 \begin{enumerate}
     \item $\theta = \alpha \in (0,\infty)$ with the distance measure
@@ -260,26 +255,26 @@ For the similarity function $g$ that incorporates the spatial information there 
         g_1(S_j, \pmb{s}_j^* \vert \theta) := \begin{cases}
             \frac{1}{\Gamma(\alpha \DD_h) \indicator[\DD_h \geq 1] + \DD_h \indicator[\DD_h < 1]}, &\quad \text{ if } \vert S_h \vert > 1\\
             M, &\quad \text{ if } \vert S_h \vert = 1
-        \end{cases}
+        \end{cases},
     \end{align*}
     with a distance function $\DD_h := \sum_{i \in S_h} d(\pmb{s}_i, \bar{\pmb{s}}_h)$ and the cluster centroid
-    $\bar{s}_{hk} = \frac{1}{n_h} \sum_{i\in S_h} s_{ik}$ for coordinates $k=1,2$ and $n_h := \vert S_h \vert$. Larger $\alpha$ favors denser clusters.  \medskip
+    $\bar{s}_{hk} = \frac{1}{n_h} \sum_{i\in S_h} s_{ik}$ for coordinates $k=1,2$ and $n_h := \vert S_h \vert$. Larger $\alpha$ favors denser clusters. 
     
     \item $\theta = a \in (0, \infty)$ with distance measure
     \begin{align*}
         g_2(S_h, \pmb{s}_h^* \vert \theta) := \prod_{i, j \in S_h} \indicator\left[\lVert s_i - s_j\rVert \leq a \right].
     \end{align*}
-    Larger $a$ allows for larger neighborhoods. \medskip
+    Larger $a$ allows for larger neighborhoods.
     
     \item  \textit{(Auxiliary Cohesion)} With dimension $d=2$ and
     $\pmb{\xi} = (\pmb{m}, \pmb{V}) \in \RR^d \times \PosSemDef_+^d = \RR^d \times \{X \in \RR^{d\times d} \vert X \succeq 0\} =: \Xi$, we have (prior predictive conjugate model)
     \begin{align*}
-        g_3(S_h, \pmb{s}_h^* \vert \pmb{\theta}) := \int_{\Xi} \prod_{i \in S_h} q(\pmb{s}_i \vert \xi_h) q(\xi_h) \dd \xi_h
+        g_3(S_h, \pmb{s}_h^* \vert \pmb{\theta}) := \int_{\Xi} \prod_{i \in S_h} q(\pmb{s}_i \vert \xi_h) q(\xi_h) \dd \xi_h,
     \end{align*}
     with $q(\pmb{s}\vert \pmb{\xi}) = \Normal(\pmb{s}\vert \pmb{\xi})$ and $q(\pmb{\xi}) = \NormInvWish(\pmb{m}, \pmb{V} \vert \pmb{\mu_0}, \kappa_0, \nu_0, \Delta_0 \cdot \Identity_d)$
     for user-defined parameters 
     $\pmb{\theta} = \left(\pmb{\mu_0}, \kappa_0, \Delta_0, \nu_0\right) \in \RR^d \times (0, \infty)^2 \times (1, 
-    \infty)$ (last part since $\nu_0 > d -1$ has to be fulfilled) \medskip
+    \infty)$ (last part since $\nu_0 > d -1$ has to be fulfilled).
     
     \item \textit{(Double Dipper)} With same structure as $g_3$, but with a posterior predictive conjugate model
     \begin{align*}
@@ -307,22 +302,19 @@ The prior for the clusters is
 \begin{align*}
     \PP(\rho | \pmb{x} ) \propto \prod_{j=1}^{k_{\rho}} c(\vert S_j \vert)g(\pmb{x}^*_j \vert \pmb{\theta}).
 \end{align*}
-For the so-called cohesion function $c$ either the same function as in \Cref{subsec:sPPM-model} (that is proportional to the partition probabilities in a random partition model derived from a Dirichlet process), or a uniform cohesion $c \equiv 1$ can be chosen. \medskip
+For the so-called cohesion function $c$ either the same function as in \Cref{subsec:sPPM-model} (that is proportional to the partition probabilities in a random partition model derived from a Dirichlet process), or a uniform cohesion $c \equiv 1$ can be chosen. 
 
 In the following discussion $p=1$ is assumed if not stated otherwise. If $p$ covariates are available, in general
 \begin{align*}
     \Tilde{g}(\pmb{x}_j^* \vert \pmb{\theta} ) = \prod_{l=1}^p g(\pmb{x}_{jl}^* \vert \pmb{\theta})
 \end{align*}
-is adopted.\medskip
+is adopted.
 
 As a large number of covariates can lead to either a large number of singleton clusters or one single cluster, there are two optional methods to cap the influence of the covariates on the partitioning.
-
 \begin{align*}
     (1) \ \Tilde{g} (\pmb{x}_j^*) = \frac{g (\pmb{x}_j^*)}{\sum_{i=1}^{k_j} g(\pmb{x}_i^*)} \ \text{\ \ or \ \ } \ (2) \ \Tilde{g} (\pmb{x}_j^*) = g (\pmb{x}_j^*)^{\frac{1}{p}}
 \end{align*}
-
-For similarity functions $g$ there are four options available.\medskip
-
+For similarity functions $g$ there are four options available:
 \begin{enumerate}
  \item With $\theta = \alpha \in (0, \infty)$
     \begin{align*}
@@ -330,10 +322,9 @@ For similarity functions $g$ there are four options available.\medskip
     \end{align*}
     For continuous covariates $
     H(\pmb{x}_j^*)= \frac{1}{n} \sum_{l \in S_j} (x_l - \overline{x}_j)^2$ and for categorical covariates $H(\pmb{x}_j^*)= \sum_{c=1}^C \hat{p}_{cj} \log{\hat{p}_{cj}}$, where $C$ is the number of categories and $\hat{p}_{cj}$ the proportion of observations in category $c$ in cluster $j$.
-    Higher values of $\alpha$ lead to an increased penalty for dissimilar covariate values. Extensions to the multivariate case are possible (determinant of cluster-specific covariate matrices or multivariate entropy respectively). \medskip
+    Higher values of $\alpha$ lead to an increased penalty for dissimilar covariate values. Extensions to the multivariate case are possible (determinant of cluster-specific covariate matrices or multivariate entropy respectively).
 
     \item For any number of covariates $p$ and penalty $\theta = \alpha \in (0, \infty)$
-
     \begin{align*}
         g_2( \pmb{x}_j^* \vert \theta) &:= \exp{- \alpha \sum_{i,k \in S_j, i \neq k} d(\pmb{x}_i, \pmb{x}_k ) }
     \end{align*}
@@ -348,24 +339,21 @@ For similarity functions $g$ there are four options available.\medskip
             \delta_{x_{il} x_{jl}}, &\quad \text{ if } l \text{-th cov. categorical}
         \end{cases}
     \end{align*}
-    and $d(\pmb{x}_i, \pmb{x}_k )$ is the average of the Gower Dissimilarities in the $p$ components. \medskip
-
+    and $d(\pmb{x}_i, \pmb{x}_k )$ is the average of the Gower Dissimilarities in the $p$ components.
     \item  \textit{(Auxiliary Similarity Function)} With an auxiliary parameter
     $\pmb{\xi}_j^*$, we have (prior predictive conjugate model)
     \begin{align*}
         g_4(\pmb{x}_j^* \vert \pmb{\theta}) := \int \prod_{i \in S_j} q(x_i \vert \pmb{\xi}^*_j) q(\pmb{\xi}^*_j) \dd \pmb{\xi}^*_j
     \end{align*}
+    For continuous covariates there are two options as a conjugate model. First, the \textit{Auxiliary N-N Model} with $q(. \vert \xi_j^*) = \Normal (\cdot \vert \xi_j^*, \kappa_1 \hat{S})$  and $q(\xi_j^*) = \Normal (\xi_j^* \vert m_0, s_0^2)$ where $\hat{S}$ denotes the empirical variance of the covariate. 
+    The user-supplied parameters are $\pmb{\theta} = ( \kappa_1, m_0, s_0).$ Second, the \textit{Auxiliary N-NIG Model} with $q (\cdot \vert \pmb{\xi_j^*}) = \Normal(\cdot \vert m_j^*, v_j^*)$ and $q(\pmb{\xi}_j^*) = \text{N-IG} (m_j^*, v_j^* \vert m_0, k_0, v_0, n_0)$. The user-supplied parameters are $\pmb{\theta} = (m_0, k_0,v_0, n_0)$. 
     
-    For continuous covariates there are two options as a conjugate model. First, the \textit{Auxiliary N-N Model} with $q(. \vert \xi_j^*) = \Normal (. \vert \xi_j^*, \kappa_1 \hat{S})$  and $q(\xi_j^*) = \Normal (\xi_j^* \vert m_0, s_0^2)$ where $\hat{S}$ denotes the empirical variance of the covariate. The user-supplied parameters are $\pmb{\theta} = ( \kappa_1, m_0, s_0).$ Second, the \textit{Auxiliary N-NIG Model} with $q (. \vert \pmb{\xi_j^*}) = \Normal(. \vert m_j^*, v_j^*)$ and $q(\pmb{\xi}_j^*) = \text{N-IG} (m_j^*, v_j^* \vert m_0, k_0, v_0, n_0)$. The user-supplied parameters are $\pmb{\theta} = (m_0, k_0,v_0, n_0)$. \medskip
-    
-    For categorical covariates a Multinomial-Dirichlet Model is applied, that is \newline $q(. \vert \pmb{\xi}_j^*) = \Multinomial ( . \vert \pmb{\xi}_j^* )$ and $q( \pmb{\xi}_j^*) = \Dir ( \pmb{\xi}_j^* \vert \pmb{\alpha}_j \equiv a )$ where $C$ is the number of cateogories. The user-supplied parameter is $\theta = a$. \medskip
-
+    For categorical covariates a Multinomial-Dirichlet Model is applied, that is \newline $q(\cdot \vert \pmb{\xi}_j^*) = \Multinomial ( \cdot \vert \pmb{\xi}_j^* )$ and $q( \pmb{\xi}_j^*) = \Dir ( \pmb{\xi}_j^* \vert \pmb{\alpha}_j \equiv a )$ where $C$ is the number of cateogories. The user-supplied parameter is $\theta = a$.
     \item \textit{(Double Dipper)} With an auxiliary parameter
     $\pmb{\xi}_j^*$, we have
     \begin{align*}
         g_5(\pmb{x}_j^* \vert \pmb{\theta}) := \int \prod_{i \in S_j} q(x_i \vert \pmb{\xi}^*_j) q(\pmb{\xi}^*_j \vert \pmb{x}_j^*) \dd \pmb{\xi}^*_j
     \end{align*}
-
     with the same options for the underlying models as for $g_4$. This option gives more weight on the local covariate structure compared to $g_4$. 
 \end{enumerate}
 
@@ -414,24 +402,33 @@ and for $t \in \{1, \dots, T \}$ the $\PP(\rho_t\vert \gamma_t, \rho_{t-1})$ is 
 \subsection{Extensions}
 \label{subsec:DRPMExtensions}
 
-For the DPRM Model we considered the extensions listed below. All of them were available in the \drpm{} package \cite{drpm}. The full extended model is taken from \cite[Section 4]{Page2021-Temporal}. \medskip
-
-?? Does not really match with drpm package: in the package $\eta_1, \phi_1$ are updated??; we can provide a scale prior for xi?; we cannot set $\phi_1$? :(
+For the DPRM Model we consider the extensions listed below. All 
+of them were available in the \drpm{} package \cite{drpm}. The full 
+extended model is taken from \cite[Section 4]{Page2021-Temporal}
+which developed in the context of PM10 clustering.
 
 \textbf{Fixed $\alpha$ for each time step}\\
-Instead of drawing an $\alpha_t$ in each time step, we considered using a constant, user-supplied $\alpha_0$ (?) for the probability of non-relocation for each measurement unit. To be precise this is not an extension, but was considered as we wanted to see if the resulting models are worse and if they run significantly faster. \medskip
+Instead of drawing an $\alpha_t$ in each time step, we consider using the 
+$\alpha_1$ for the probability of non-relocation for each measurement unit in 
+every time step. To be precise this is not a true extension,
+but is considered in order to elaborate, how the models' performance and
+computation time is effected.
 
 \textbf{Spatially informed DRPM}\\
-This extension combines the DRPM and the sPPM model. The EPPF in the temporal random partition model is changed to the function that was used as a prior in the sPPM-model, i.e. \ref{sPPM-prior}. For similarity functions \textit{Auxiliary Cohesion} and \textit{Double Dipper} ($g_3$ and $g_4$ in section \ref{subsec:sPPM-model}) were considered. (In \cite[Section 4.1]{Page2021-Temporal} it is stated [...] that when standardizing the spatial coordinates and setting $\mathbf{\mu_0} = \mathbf{0}, \kappa_0 = 1$ and $\Delta_0 = 1$ for the NIW-parameters in $g_3$, we get a EPPF that preserves sample size consistency. In this case larger $\nu_0$ implies larger influence of spatial data on the clustering) \medskip
+This extension combines the DRPM and the sPPM model. The EPPF in the temporal random partition model is changed to the function that was used as a prior in the sPPM-model, i.e. \cref{sPPM-prior}. For similarity functions \textit{Auxiliary Cohesion} and \textit{Double Dipper} ($g_3$ and $g_4$ in section \ref{subsec:sPPM-model}) are considered.
 
-\textbf{AR(1) structure in the Likelihood}\\
-As it is reasonable to assume that there is a temporal dependence for the time series at each measurement unit, a temporal structure in the likelihood is considered. For that purpose a measurement-unit specific time dependence parameter $\eta_i$ with $|\eta_i| \leq 1$ is introduced. The resulting model is obtained when setting $\phi_1 = 0$ in the model presented below.
-%AR(1)-method using eta not equal to zero (otherwise iid)
+\begin{comment}
+(In \cite[Section 4.1]{Page2021-Temporal} it is stated [...] that when standardizing the spatial coordinates and setting $\mathbf{\mu_0} = \mathbf{0}, \kappa_0 = 1$ and $\Delta_0 = 1$ for the NIW-parameters in $g_3$, we get a EPPF that preserves sample size consistency. In this case larger $\nu_0$ implies larger influence of spatial data on the clustering)
+\end{comment}
 \medskip
 
+\textbf{AR(1) structure in the Likelihood}\\
+As it is reasonable to assume that there is a temporal dependence for the time series at each measurement unit, a temporal structure in the likelihood is considered. For that purpose a measurement-unit specific time dependence parameter $\eta_i$ with $|\eta_i| \leq 1$ is introduced. The resulting model is obtained when setting $\phi_1 = 0$ in the model presented in \cref{eq:DRPMFullModelExtension}.
+
 \textbf{AR(1) structure for $\theta_t$}\\
-In addition a time-dependency in the time specific means $\theta_t$ can be added by bringing in another parameter $\phi_1$. Together with the AR(1) structure in the likelihood the extended model the following.
-\begin{align*}
+In addition a time-dependency in the time specific means $\theta_t$ can be added by bringing in another parameter $\phi_1$. Combined with the AR(1) structure in the likelihood the fully extended model is the following:
+\begin{align}
+\begin{aligned}
     Y_{it} \vert \pmb{\mu}^*_t, \pmb{\sigma}^{2*}_t, \mathbf{c}_t
     \overset{\tiny{\textrm{ind}}} &{\sim} \Normal({\mu}^*_{c_{it}t} + \eta_i Y_{i t-1}, 
     {\sigma}^{2*}_{c_{it}t}(q-\eta_i^2)) \quad \forall i=1,\ldots,n; \, t=1,\ldots, T\\
@@ -444,33 +441,61 @@ In addition a time-dependency in the time specific means $\theta_t$ can be added
     \phi_0, \lambda^2) \times \Uniform\left(0, A_\tau\right) \quad \forall t=1, \ldots, T\\
     (\phi_0, \phi_1, \lambda) &\sim \Normal(m_0, s_0^2) \times \Uniform (-1,1) \times \Uniform(0, A_\lambda)\\
     \{ \pmb{c}_1, \ldots, \pmb{c}_T\} &\sim \tRPM(\pmb{\alpha}, M) \; \textrm{with} \; \alpha_t \iid{} \BetaDist(a_\alpha, b_\alpha).
-\end{align*}
-
-
-
-Note that setting $\eta_i = 0$ and $\phi_1 = 0$ this model is exactly the DRPM model from before.
-%phi value 0 value corresponds to independent atom
-
+\end{aligned}
+\label{eq:DRPMFullModelExtension}
+\end{align}
+Note that setting $\eta_i = 0$ and $\phi_1 = 0$ yields exactly the DRPM 
+model presented in the preceding section.
+In our analysis we consider the full model and all
+possible combinations of the listed extensions to comprehensively
+assess the model's performance and computational time with respect to
+the additional introduced complexity.
 
 \section{Data Preparation and Evaluation}
 
-
-\subsection{The Agrimonia Database}
+\subsection{Data Aggregation}
+siamo passati dai dati giornalieri che avevamo a quelli settimanali, per ogni covariata abbiamo deciso se fare la media o prendere altri valori come massimo, minimo, moda ecc. 
 
 \subsection{Data Exploration}
-TODO: show the correlation plot, show time series over different years
-list data loss, number of stations
+The initial phase of data exploration necessitates a correlation analysis (\cref{fig:correlation_matrix}). The analysis reveals a strong negative correlation between one covariate and the PM2.5 levels (\cref{fig:pm_blh_correlation}). This covariate denotes the maximum Planetary Boundary Layer Height (BLH), which represents the lowermost part of the troposphere. The observed outcome aligns with expectations as the BLH encapsulates the entirety of our planet's pollution. Its negative correlation with PM2.5 levels signifies a significant relationship warranting further investigation.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./imgs/maps/covariates.png}
+    \caption{Correlation matrix between the different covariates of the dataset.}
+    \label{fig:correlation_matrix}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./imgs/maps/plot_Bolzano_PM25_BLHmax_years.png}
+    \caption{Correlation between PM2.5 Concentrations and Boundary Layer Height (BLH) max
+     which represents the maximum depth of air next to the Earth’s surface that is most affected by the
+    resistance to the transfer of momentum, heat, or moisture across the surface.}
+    \label{fig:pm_blh_correlation}
+\end{figure} 
+
+\vspace{12pt}
+The subsequent step involves analyzing the variation in PM2.5 levels throughout the year across different stations and years. Stations in Bolzano, Milano, and Cremona (\cref{fig:bolzano_milano_cremona_2017_2020}) were chosen due to the distinct morphological characteristics of their territories and varying levels of industrialization. Additionally, these stations provide complete PM2.5 data spanning four different years. The findings indicate a discernible U-shaped trend, suggesting pronounced seasonality; PM2.5 levels tend to be lower during the summer months. This pattern could potentially be attributed to reduced household heating impact and differing weather conditions compared to winter.
+Furthermore, notable differences between the year 2020 (amidst the COVID-19 pandemic) and other years were not evident, indicating that the primary factor might not be mobility-related. The plotted data distinctly illustrates that the Bolzano station, situated in a sparsely populated mountainous region, consistently exhibits lower PM2.5 levels compared to the other two stations. However, this station records PM2.5 levels below the recommended threshold set by the World Health Organization only during brief summer periods.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./imgs/maps/bolzano_milano_cremona_2017_2020.pdf}
+    \caption{Time series of PM2.5 in Bolzano, Milano and Cremona (2017-2020).}
+    \label{fig:bolzano_milano_cremona_2017_2020}
+\end{figure} 
 
 \subsection{Imputation of Missing Data}
-
-\subsection{Data Aggregation}
+per prima cosa abbiamo deciso quale anno analizzare in base alla completezza dei nostri valori di pm2.5 --> anno 2019. 
+scrivo come abbiamo considerato i missing data --> prima eliminando le stazioni senza pm2.5, poi eliminando le covariate rimaste con meno valori e successivamente fissando i valori rimasti nulli interpolando con i valori delle settimane vicine 
 
 \subsection{Evaluation}
 
 \subsubsection{Goodness-of-fit}
 To indicate goodness-of-fit of the used models the following criteria are considered.
 
-\textbf{LPML = log pseudo marginal likelihood}\footnote{We refer to
+\textbf{LPML = Log Pseudo Marginal Likelihood}\footnote{We refer to
 \cite[Section 4.1]{Page2021-Temporal} for details on numerical problems
 when computing the LPML.} (higher is better)
 The LPML is a predictive information criterion based on the idea of leave-on-out cross validation, the following definition is taken from \cite{lecturenotes}. Let $\mathbf{y} = (y_1, \dots , y_n )$ denote our data, $\mathbf{y}_{(-i)} = (y_1, \dots , y_{i-1}, y_{i+1}, \dots, y_n )$ and $m(y_i | \mathbf{y}_{(-i)}) $ the marginal likelihood of $y_i$ given $\mathbf{y}_{(-i)}$ in the considered model. Then the LPML is defined as
@@ -479,8 +504,8 @@ The LPML is a predictive information criterion based on the idea of leave-on-out
 \end{align*}
 
     
-\textbf{WAIC = widely applicable information criterion} (lower is better)
-The WAIC is another predictive information criteria that accounts for the over-estimation of log pointwise predictive density $\sum_{i=1}^n \log m(y_i | \mathbf{y})$ by subtracting a penalization term $p_{WAIC}$, see \cite{lecturenotes}. In our definition the WAIC is obtained by multiplying this difference with $-2$. In the following $\mathbf{\theta}$ denotes the parameters and $f$ the likelihood of the given model. The WAIC is defined as
+\textbf{WAIC = Widely Applicable Information Criterion} (lower is better)
+The WAIC is another predictive information criteria that accounts for the over-estimation of log-pointwise predictive density $\sum_{i=1}^n \log m(y_i | \mathbf{y})$ by subtracting a penalization term $p_{WAIC}$, see \cite{lecturenotes}. In our definition the WAIC is obtained by multiplying this difference with $-2$. In the following $\mathbf{\theta}$ denotes the parameters and $f$ the likelihood of the given model. The WAIC is defined as
 \begin{align*}
     \text{WAIC} &= -2 \left( \sum_{i=1}^n \log m(y_i | \mathbf{y} ) - 
     p_{\text{WAIC}} \right), \\
@@ -488,7 +513,7 @@ The WAIC is another predictive information criteria that accounts for the over-e
     f(y_i | \mathbf{\theta} ).
 \end{align*}
 
-\textbf{MSE = mean squared error} (lower is better)
+\textbf{MSE = Mean Squared Error} (lower is better)
 Denote by $\hat{y}_i = \mathbb{E}(Y_i | \mathbf{y})$ the posterior mean of the $i$-th observation, then
 \begin{align*}
     \text{MSE} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2.
@@ -516,7 +541,7 @@ values are given the partition $\rho$.
 %     \text{MSPE} = \frac{1}{n} \sum_{i=1}^n (\Tilde{y}_i - \hat{y}_i)^2.
 % \end{align*}
 
-\subsubsection{Cluster estimation}
+\subsubsection{Cluster Estimation}
 Once a model is fit to the data the question remains how to summarize the obtained posterior for the clusters in a meaningful way. One number that we report is the posterior mean of the number of clusters. Furthermore, a general idea is to find an estimate $\hat{\rho}^*$ that minimizes a certain partition loss function $L$. Assuming that there is a \enquote{true} $\rho$ (we take the posterior distribution), this becomes
 \begin{align*}
     \hat{\rho}^* = \text{argmin}_{\hat{\rho}} \ \mathbb{E} ( L(\rho, \hat{\rho}) | \mathbf{y} ) \approx \frac{1}{M} \sum_{m=1}^M L (\rho^{(m)} , \hat{\rho} ),
@@ -539,8 +564,51 @@ Large values mean a larger similarity between the partitions. We obtain another 
 
 \section{Results}
 We used the same seed for every experiments to make the results
-reproducible and comparable.
+reproducible and comparable. To obtain a single partition from all of our
+MCMC-samples, we use the \texttt{SALSO} function provided by the
+\texttt{salso} package with the Binder loss function
+the parameters $a=1$. The upper bound for the number of clusters is set to 
+\texttt{None} and thus capped by the maximum number of clusters provided in
+the MCMC iterates itself.
+
 \subsection{sPPM}
+\begin{table}[h]
+\centering
+\begin{tabular}{cccccc}
+\toprule
+M & Cohesion & WAIC & LPML & MSE & Clusters \\
+\midrule
+\multirow{4}{*}{$10^{-3}$} & $C_{1_{\alpha=1}}$ & $24.72$ & $14.94$ & $0.12$ & $1$ \\
+& $C_{1_{\alpha=2}}$ & $24.08$ & $13.01$ & $0.12$ & $2$ \\
+& $C_{2_{a=0.5}}$ & $90.05$ & $-25.80$ & $0.17$ & $15$ \\
+& $C_{2_{a=1.5}}$ & $24.92$ & $13.42$ & $0.13$ & $1$ \\
+\midrule
+\multirow{4}{*}{$10^{-2}$} & $C_{1_{\alpha=1}}$ & $26.39$ & $14.20$ & $0.12$ & $1$ \\
+& $C_{1_{\alpha=2}}$ & $25.09$ & $11.99$ & $0.16$ & $5$ \\
+& $C_{2_{a=0.5}}$ & $\infty$ & $-23.35$ & $0.15$ & $15$ \\
+& $C_{2_{a=1.5}}$ & $24.63$ & $14.20$ & $0.12$ & $1$ \\
+\midrule
+\multirow{4}{*}{$10^{-1}$} & $C_{1_{\alpha=1}}$ & $27.72$ & $12.35$ & $0.41$ & $6$ \\
+& $C_{1_{\alpha=2}}$ & $31.82$ & $10.35$ & $0.19$ & $7$ \\
+& $C_{2_{a=0.5}}$ & $85.11$ & $-28.14$ & $0.15$ & $16$ \\
+& $C_{2_{a=1.5}}$ & $25.27$ & $13.66$ & $0.13$ & $1$ \\
+\midrule
+\multirow{4}{*}{$1$} & $C_{1_{\alpha=1}}$ & $34.40$ & $6.94$ & $0.11$ & $9$ \\
+& $C_{1_{\alpha=2}}$ & $48.05$ & $-1.26$ & $0.12$ & $13$ \\
+& $C_{2_{a=0.5}}$ & $93.75$ & $-28.31$ & $0.19$ & $18$ \\
+& $C_{2_{a=1.5}}$ & $29.24$ & $9.85$ & $0.11$ & $3$ \\
+\midrule
+\multirow{4}{*}{$10$} & $C_{1_{\alpha=1}}$ & $70.37$ & $-16.25$ & $0.12$ & $15$ \\
+& $C_{1_{\alpha=2}}$ & $97.07$ & $-30.71$ & $0.16$ & $20$ \\
+& $C_{2_{a=0.5}}$ & $152.56$ & $-57.61$ & $0.31$ & $25$ \\
+& $C_{2_{a=1.5}}$ & $57.98$ & $-9.95$ & $0.11$ & $12
+$ \\
+\bottomrule
+\end{tabular}
+\caption{sPPM performances for different cohesion and M parameter values.}
+\label{tab:sPPMPerformances}
+\end{table}
+
 \subsection{PPMx}
 \subsection{DRPM}
 
@@ -678,9 +746,33 @@ the best performing models for each of the three prior combinations. We picked t
 for the reason of comparability, we display the results using the secondary cohesion function as well. Interestingly,
 the spatial-informed models prefer a slightly higher value of $\alpha_0$ but the same value for the concentration parameter
 $M$. Overall, but especially for the Lower Std Prior values, the performance is slightly decreased and simultaneously
-the higher model complexity caused a significant increase in the computational time. As can be seen from \ref{fig:drpm_spatial-informed_comparison} the number of clusters in the models with the Mean 2018-prior is clearly smaller for the best spatially-informed model compared to the best model without spatial information. 
+the higher model complexity caused a significant increase in the computational time. As can be seen from \ref{fig:drpm_spatial-informed_comparison} the number of clusters in the models with the Mean 2018-prior is clearly smaller for the best spatially-informed model compared to the best model without spatial information.
 
-TODO: maybe another plot? --> qualitative evaluation
+Similarly to \cite{Page2022-SpatioTemporal} we provide a
+lagged ARI value comparison for spatially
+and non-spatially informed models using the three
+different priors. Each matrix in 
+\cref{fig:drpm_spatial-informed_comparison}
+contains at the entry 
+$(i,j)$ the lagged ARI value between the partition at week
+$i$ and week $j$, for $i, j= 1, \ldots, T$. Here, it is evident
+that the DRPM-Paper prior is not informative, 
+since all the stations are in the same cluster for all of
+the weeks.
+
+Regarding the overall structure for the Lower Std Prior, both,
+the non-spatial and spatial informed ARI matrices, exhibit a similar
+structure. Nevertheless, the spatial informed version show
+a generally higher time-connectivity.
+
+Interestingly, for the non-spatially informed Mean 2018 prior, we
+observe an outlier-like behavior for week 23, which seems to be
+unrelated with the previous and the upcoming weeks. This behavior
+vanishes for the spatially informed version, for which
+we observe
+a clean and nearly time-uniform relationship for all weeks, which is
+similar to the corresponding Lower Std Prior version.
+
 
 \begin{table}
     \centering
@@ -715,6 +807,13 @@ was not able to compute the corresponding values due to unknown reasons. Bold va
     singletons, i.e. clusters consisting of only one station. $\bar{\alpha}_t$ indicates the mean of the MCMC
     samples at each time step $t=1, \ldots, T$.}
     \label{fig:drpm_spatial-informed_comparison}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.95\linewidth]{./imgs/drpm/drpm_laggedARI.pdf}
+    \caption{Comparison of the lagged Adjusted Rand Index (ARI). For better comparability all models use parameters $M=0.1$ and $\alpha_0=0.5$. For the spatially-informed models the optimal cohesion functions for each prior are used, that is $g_3$ for the Paper-Prior and $g_4$ for the Lower Std-Prior and the Mean 2018-Prior. The ARI is computed for the partition estimates that we obtain using the Binder Loss Function with parameters $a=b=1$ in the \salso package. The ARI is computed using the python-package \skilearn .}
+    \label{fig:drpm_laggedARI_nonspatial_spatial}
 \end{figure}
 
 \subsubsection{Spatially informed: Time-dependency Extensions}
@@ -857,11 +956,4 @@ induced by the temporal-dependency of the partitions while emphasizing the limit
 \nocite{*}
 \newpage
 \printbibliography
-
-\newpage
-
-\section{Acknowledgements}
-% \newpage
-% \appendix
-% \section{DRPM Model Results}
 \end{document}
