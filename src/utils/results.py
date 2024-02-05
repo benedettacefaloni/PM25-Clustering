@@ -60,10 +60,10 @@ class YearlyPerformance:
     ):
         self.config = config
 
-        if weekly_results is not None:
-            self.list_of_weekly: dict = self.combine_weekly_to_yearly(weekly_results)
-        else:
+        if weekly_results is None:
             self.list_of_weekly: dict = yearly_result_decomposed
+        else:
+            self.list_of_weekly: dict = self.combine_weekly_to_yearly(weekly_results)
 
     def combine_weekly_to_yearly(self, weekly_results: list) -> dict:
         res = {}
@@ -208,6 +208,7 @@ class Analyse:
 
         try:
             analysis["alpha"] = np.average(py_res["alpha"])
+            analysis["alpha_std"] = np.std(py_res["alpha"])
         except:
             pass
 
@@ -255,6 +256,7 @@ class Analyse:
             target=target, prediction=py_res["fitted"].mean(axis=2).T, axis=0
         )
         analysis["alpha"] = py_res["alpha"].mean(axis=0)
+        analysis["alpha_std"] = py_res["alpha"].std(axis=0)
 
         num_weeks = SI_np.shape[0]
         analysis["partition"] = np.array(
@@ -269,8 +271,12 @@ class Analyse:
             ]
         )
 
-        analysis["laggedRI"] = laggedRI(firstweek=1,lastweek=52,salso_pars=analysis["partition"])
-        analysis["laggedARI"] = laggedARI(firstweek=1,lastweek=52, salso_pars=analysis["partition"])
+        analysis["laggedRI"] = laggedRI(
+            firstweek=1, lastweek=52, salso_pars=analysis["partition"]
+        )
+        analysis["laggedARI"] = laggedARI(
+            firstweek=1, lastweek=52, salso_pars=analysis["partition"]
+        )
 
         # decompose the yearly clustering into weekly chunks for detailed analysis
         analysis["max_pm25_diff"] = []
@@ -309,22 +315,26 @@ def max_pm25_diff_per_cluster(target: np.ndarray, salso_partition: np.array):
         ]
     )
 
+
 def laggedRI(firstweek: int, lastweek: int, salso_pars: np.array):
-    len = lastweek-firstweek+1
-    RImatrix = np.zeros((len,len))
+    len = lastweek - firstweek + 1
+    RImatrix = np.zeros((len, len))
     for i in range(len):
-        for j in range(i+1):
-            ri = salso.RI(to_r_int_vector(salso_pars[i]), to_r_int_vector(salso_pars[j]))[0]
-            RImatrix[i,j] = ri
-            RImatrix[j,i] = ri
+        for j in range(i + 1):
+            ri = salso.RI(
+                to_r_int_vector(salso_pars[i]), to_r_int_vector(salso_pars[j])
+            )[0]
+            RImatrix[i, j] = ri
+            RImatrix[j, i] = ri
     return RImatrix
 
+
 def laggedARI(firstweek: int, lastweek: int, salso_pars: np.array):
-    len = lastweek-firstweek+1
-    ARImatrix = np.zeros((len,len))
+    len = lastweek - firstweek + 1
+    ARImatrix = np.zeros((len, len))
     for i in range(len):
-        for j in range(i+1):
+        for j in range(i + 1):
             ari = adjusted_rand_score(salso_pars[i], salso_pars[j])
-            ARImatrix[i,j] = ari
-            ARImatrix[j,i] = ari
+            ARImatrix[i, j] = ari
+            ARImatrix[j, i] = ari
     return ARImatrix

@@ -25,24 +25,7 @@ from utils.visualize import (
     trace_plots,
 )
 
-"""
-Take aways:
-- First experiment: using the parameters presented by page et al. -> huge Problems with too big clusters
-    - nearly all stations are in the same cluster
-    - best performing clusters tested for diff. combination of hyperparams
-- 2nd Experiment: lowered value of sigma prior --> make cluster smaller
-    - takes way longer
-    - TODO: best 3 models taken for fine-tuning test
-
-TODO:
-* Further experiments:
-    - use three/4 modifications for each of the three models and make a smaller table
-* Plots: For one model of each category?
-    - Trace plots 
-    - Plot weekly errors over time (waic, mse, etc.)
-    - plot cluster kpis over time
-    - image of clustering for a time stamp to compare the results
-"""
+"""Main script to run all experiments for the DRPM model."""
 
 priors = {
     # params as stated in the original drpm paper of page et al.

@@ -13,6 +13,11 @@ import numpy as np
 
 from utils.visualize import YearlyClustering, _n_colors, plot_clustering, trace_plots
 
+"""
+Main script to plot the results of the DRPM clustering and visualize the
+clustering itself.
+"""
+
 # PLOTTING -> LaTeX
 use_tex = True
 if use_tex:
@@ -123,13 +128,24 @@ def plot_overview(
             marker=".",
         )
 
+        alpha_mean = model.test_cases[0].list_of_weekly["alpha"]
         ax[2].plot(
             weeks,
-            model.test_cases[0].list_of_weekly["alpha"],
+            alpha_mean,
             # label=names[idx],
             color=colors[idx],
             linestyle="--",
             marker=".",
+        )
+
+        ci = 1.6449 * model.test_cases[0].list_of_weekly["alpha_std"] / np.sqrt(52)
+        ax[2].fill_between(
+            weeks,
+            alpha_mean - ci,
+            alpha_mean + ci,
+            # label=names[idx],
+            color=colors[idx],
+            alpha=0.1,
         )
 
         # cluster sizes in the third plot
@@ -303,9 +319,9 @@ def main():
 
     # for prior in priors.keys():
     for prior in [
-        # "paper_params",
+        "paper_params",
         "lower_std",
-        # "mean_prev_year",
+        "mean_prev_year",
         # "paper_params_spatial",
         # "lower_std_spatial",
         # "mean_prev_year_spatial",
@@ -369,15 +385,15 @@ def main():
         all_results.append(model_result)
 
     # VISUALIZE the clustering using plotly
-    plot_clustering(save_to_visualize_cluster, method_name=model.name)
+    # plot_clustering(save_to_visualize_cluster, method_name=model.name)
 
     # PLOT the MSE and cluster KPIs
-    # plot_overview(
-    #     all_results=all_results,
-    #     names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
-    #     filename="drpm_spatial-informed_comparison",
-    #     title="Comparison of different Prior Values for the spatially informed DRPM Model",
-    # )
+    plot_overview(
+        all_results=all_results,
+        names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
+        filename="drpm_spatial-informed_comparison",
+        title="Comparison of different Prior Values for the spatially informed DRPM Model",
+    )
 
     # PRINT the ARImatrix
     # for idx,model_result in enumerate(all_results):

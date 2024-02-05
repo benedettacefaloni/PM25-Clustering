@@ -55,3 +55,8 @@ Run the main-file with your experiment
 python main.py
 ```
 
+
+## DRPM-Clustering
+We provide two files:
+1. ``analyze_drpm.py``: used to run all large experiments and create the tables of the report
+1. ``plots_drpm.py``: used to plot the results and visualize the clustering
