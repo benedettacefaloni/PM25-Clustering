@@ -640,8 +640,12 @@ as it is obvious that a clustering of all stations in one cluster is absolutely 
 an higher MSE, our prior values are favorable. An exemplary clustering of the three models is visualized in 
 \cref{fig:DRPMClusteringBaseModels}. In \cref{fig:drpm_base_models_comparison} we analyzed the three different models
 with respect to their number and sizes of clusters. Although the time-evolvement of $\alpha_t$ is somehow similar for all
-three models, the number of clusters significantly differ and the mean-informed Mean 2018 version favors slightly more
+three models, the DRPM-Paper osciallates less but exhibits a bigger
+confidence interval while the other two models exhibit slight
+oscillations with relatively sharp confidence intervals.
+The number of clusters significantly differ and the mean-informed Mean 2018 version favors slightly more
 clusters than the zero-centered mean version Lower Std. The MSE of the model using our two priors is nearly equal.
+
 
 In order to analyze the convergence behaviour of the MCMC, we exemplarily visualize trace plots for the parameters of
 our Lower Std prior model, as it was the best performing one in our initial test. The plots in
@@ -693,8 +697,10 @@ was not able to compute the corresponding values due to unknown reasons. Bold va
     $3.103 \cdot 10^{+03}$ while our models achieved a WAIC score of $-1.285 \cdot 10^{+03}$ and
     $-9.548 \cdot 10^{+02}$ for the Lower Std and Mean 2018 models respectively. For the cluster sizes,
     the minimum (min) and maximum (max) number of stations for each timestep is shown, as well as the number of
-    singletons, i.e. clusters consisting of only one station. $\bar{\alpha}_t$ indicates the mean of the MCMC
-    samples at each time step $t=1, \ldots, T$.}
+    singletons, i.e. clusters consisting of only one station.
+    $\bar{\alpha}_t$ indicates the mean combined with the 95\% confidence 
+    interval of the MCMC
+    samples at each time step $t=1, \ldots, T$}
     \label{fig:drpm_base_models_comparison}
 \end{figure}
 
@@ -748,7 +754,11 @@ provides a summarizing overview of
 the best performing models for each of the three prior combinations. We picked the best performing case for each model and
 for the reason of comparability, we display the results using the secondary cohesion function as well. Interestingly,
 the spatial-informed models prefer a slightly higher value of $\alpha_0$ but the same value for the concentration parameter
-$M$. Overall, but especially for the Lower Std Prior values, the performance is slightly decreased and simultaneously
+$M$. Similar to the non-spatial plots, the DRPM-Paper exhibits
+a bigger confidence interval and interestingly favors larger
+values of $\alpha_t$. Meanwhile, the other two models oscillate slightly
+more but have again relatively sharp confidence intervals. 
+Overall, but especially for the Lower Std Prior values, the performance is slightly decreased and simultaneously
 the higher model complexity caused a significant increase in the computational time. As can be seen from \ref{fig:drpm_spatial_informed_comparison} the number of clusters in the models with the Mean 2018-prior is clearly smaller for the best spatially-informed model compared to the best model without spatial information.
 
 Similarly to \cite{Page2022-SpatioTemporal} we provide a
@@ -807,8 +817,9 @@ was not able to compute the corresponding values due to unknown reasons. Bold va
     $2.422 \cdot 10^{+03}$ while our models achieved a WAIC score of $-4.022 \cdot 10^{+03}$ and
     $-5.403 \cdot 10^{+02}$ for the Lower Std and Mean 2018 models respectively. For the cluster sizes,
     the minimum (min) and maximum (max) number of stations for each timestep is shown, as well as the number of
-    singletons, i.e. clusters consisting of only one station. $\bar{\alpha}_t$ indicates the mean of the MCMC
-    samples at each time step $t=1, \ldots, T$.}
+    singletons, i.e. clusters consisting of only one station. $\bar{\alpha}_t$ 
+    indicates the mean combined with the 95\% confidence interval
+    of the MCMC samples at each time step $t=1, \ldots, T$.}
     \label{fig:drpm_spatial_informed_comparison}
 \end{figure}
 

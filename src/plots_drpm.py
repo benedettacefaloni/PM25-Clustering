@@ -138,7 +138,8 @@ def plot_overview(
             marker=".",
         )
 
-        ci = 1.6449 * model.test_cases[0].list_of_weekly["alpha_std"] / np.sqrt(52)
+        # we use the quantile for ci = 0.05 and thus cdf(1 - 0.05/2) = cdf(0.975) = 1.96
+        ci = 1.96 * model.test_cases[0].list_of_weekly["alpha_std"] / np.sqrt(52)
         ax[2].fill_between(
             weeks,
             alpha_mean - ci,
@@ -320,11 +321,11 @@ def main():
     # for prior in priors.keys():
     for prior in [
         # "paper_params",
-        # "lower_std",
+        "lower_std",
         # "mean_prev_year",
-        "paper_params_spatial",
-        "lower_std_spatial",
-        "mean_prev_year_spatial",
+        # "paper_params_spatial",
+        # "lower_std_spatial",
+        # "mean_prev_year_spatial",
     ]:
         print(prior)
         drpm_args = {
@@ -385,17 +386,17 @@ def main():
         all_results.append(model_result)
 
     # VISUALIZE the clustering using plotly
-    # plot_clustering(save_to_visualize_cluster, method_name=model.name)
+    plot_clustering(save_to_visualize_cluster, method_name=model.name)
 
     # PLOT the MSE and cluster KPIs
-    plot_overview(
-        all_results=all_results,
-        names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
-        filename="drpm_spatial_informed_comparison",
-        title="Comparison of different Prior Values for the spatially informed DRPM Model",
-        # filename="drpm_base_models_comparison",
-        # title="Comparison of different Prior Values for the non-spatial informed DRPM Model",
-    )
+    # plot_overview(
+    #     all_results=all_results,
+    #     names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
+    #     # filename="drpm_spatial_informed_comparison",
+    #     # title="Comparison of different Prior Values for the spatially informed DRPM Model",
+    #     filename="drpm_base_models_comparison",
+    #     title="Comparison of different Prior Values for the non-spatial informed DRPM Model",
+    # )
 
     # PRINT the ARImatrix
     # for idx,model_result in enumerate(all_results):
