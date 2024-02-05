@@ -72,10 +72,10 @@ def get_numerical_covariates():
     return [x for x in all_covariates if x not in categorical_covariates]
 
 
-def load_data(
-    year: int = 2019,
-    week: int = None,
-) -> pd.DataFrame:
+def load_data( #i call it at line 31 of the main 
+    year: int = 2019, #setting a default value for the int variable. we are considering the 2019 as year so if the year argument is not provided when calling the function, it will default to the value 2019.
+    week: int = None, # if the week argument is not provided when calling the function, it will default to None. when i firstly call the funtion in the main (line 31), i do not provide any input value so i will be considering 2019 for the year and none as week  
+) -> pd.DataFrame: #the expected return type for this function is a Pandas DataFrame 
     data = pd.read_csv(data_path.format(year))
     for col in ordinal_categorical_covariates:
         data[col] = data[col].astype(str, copy=True)
