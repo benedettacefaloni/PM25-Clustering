@@ -319,12 +319,12 @@ def main():
 
     # for prior in priors.keys():
     for prior in [
-        "paper_params",
-        "lower_std",
-        "mean_prev_year",
-        # "paper_params_spatial",
-        # "lower_std_spatial",
-        # "mean_prev_year_spatial",
+        # "paper_params",
+        # "lower_std",
+        # "mean_prev_year",
+        "paper_params_spatial",
+        "lower_std_spatial",
+        "mean_prev_year_spatial",
     ]:
         print(prior)
         drpm_args = {
@@ -391,8 +391,10 @@ def main():
     plot_overview(
         all_results=all_results,
         names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
-        filename="drpm_spatial-informed_comparison",
+        filename="drpm_spatial_informed_comparison",
         title="Comparison of different Prior Values for the spatially informed DRPM Model",
+        # filename="drpm_base_models_comparison",
+        # title="Comparison of different Prior Values for the non-spatial informed DRPM Model",
     )
 
     # PRINT the ARImatrix

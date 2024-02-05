@@ -749,13 +749,13 @@ the best performing models for each of the three prior combinations. We picked t
 for the reason of comparability, we display the results using the secondary cohesion function as well. Interestingly,
 the spatial-informed models prefer a slightly higher value of $\alpha_0$ but the same value for the concentration parameter
 $M$. Overall, but especially for the Lower Std Prior values, the performance is slightly decreased and simultaneously
-the higher model complexity caused a significant increase in the computational time. As can be seen from \ref{fig:drpm_spatial-informed_comparison} the number of clusters in the models with the Mean 2018-prior is clearly smaller for the best spatially-informed model compared to the best model without spatial information.
+the higher model complexity caused a significant increase in the computational time. As can be seen from \ref{fig:drpm_spatial_informed_comparison} the number of clusters in the models with the Mean 2018-prior is clearly smaller for the best spatially-informed model compared to the best model without spatial information.
 
 Similarly to \cite{Page2022-SpatioTemporal} we provide a
 lagged ARI value comparison for spatially
 and non-spatially informed models using the three
 different priors. Each matrix in 
-\cref{fig:drpm_spatial-informed_comparison}
+\cref{fig:drpm_spatial_informed_comparison}
 contains at the entry 
 $(i,j)$ the lagged ARI value between the partition at week
 $i$ and week $j$, for $i, j= 1, \ldots, T$. Here, it is evident
@@ -799,7 +799,7 @@ was not able to compute the corresponding values due to unknown reasons. Bold va
 
 \begin{figure}
     \centering
-    \includegraphics[width=.95\linewidth]{./imgs/drpm/drpm_spatial-informed_comparison.pdf}
+    \includegraphics[width=.95\linewidth]{./imgs/drpm/drpm_spatial_informed_comparison.pdf}
     \caption{Comparison of the best model based on WAIC value for each prior for DRPM with spatial cohesion.
     The used prior values are listed in \cref{tab:DRPMPriorParam}. For the DRPM model itself we use
     $M=0.1$ as the concentration parameter. The chosen similarity function was $g_3$ for the DRPM-Paper prior and $g_4$ for the other two priors. The MCMC uses 10000 draws with a burn-in of 1000 and a
@@ -809,7 +809,7 @@ was not able to compute the corresponding values due to unknown reasons. Bold va
     the minimum (min) and maximum (max) number of stations for each timestep is shown, as well as the number of
     singletons, i.e. clusters consisting of only one station. $\bar{\alpha}_t$ indicates the mean of the MCMC
     samples at each time step $t=1, \ldots, T$.}
-    \label{fig:drpm_spatial-informed_comparison}
+    \label{fig:drpm_spatial_informed_comparison}
 \end{figure}
 
 \begin{figure}
