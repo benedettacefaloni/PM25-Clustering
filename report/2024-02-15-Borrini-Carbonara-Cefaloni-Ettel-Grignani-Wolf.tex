@@ -221,9 +221,9 @@ The outcomes of this analysis will not only enhance our understanding of PM2.5 v
 
 \section{Models}
 
-Regarding the choice of models, we first focus on three basic modeling approaches: spatial-informed partitioning of the data, covariate-informed partitioning and modeling temporal dependence in partitions. Each of the modeling methods is a hierarchical model with Gaussian likelihood, a Gaussian prior for cluster-specific means and an uniform prior for cluster-specific variances. All of them allow for a number of specifications, e.g. different setting ups of priors. Later, several extensions and combinations are considered.
+Regarding the choice of models, we first focus on three basic modeling approaches: spatial-informed partitioning of the data, covariate-informed partitioning and modeling temporal dependence in partitions. Each of the modeling methods is a hierarchical model with Gaussian likelihood, a Gaussian prior for cluster-specific means and a uniform prior for cluster-specific variances. All of them allow for a number of specifications, e.g. different setting ups of priors. Later, several extensions and combinations are considered.
 
-In the whole section we denote by $n$ the number of measurement units, by $\rho = \{ S_1, \dots, S_k \}$  a partition of the $n$ measurement units and by $c_i$ the cluster that measurement unit $i$ belongs to, i.e. $c_i = j$ if $i \in S_j$. Furthermore, cluster-specific values are marked with $*$. For example we consider cluster specific means $\pmb{\mu}^* = \{ \mu_1, \dots, \mu_k \}$ and standard deviations $\pmb{\sigma}^{*}$.
+In the whole section we denote by $n$ the number of measurement units, by $\rho = \{ S_1, \dots, S_k \}$  a partition of the $n$ measurement units and by $c_i$ the index of the cluster that measurement unit $i$ belongs to, i.e. $c_i = j$ if $i \in S_j$. Furthermore, cluster-specific values are marked with $*$. For example we consider cluster specific means $\pmb{\mu}^* = \{ \mu_1, \dots, \mu_k \}$ and standard deviations $\pmb{\sigma}^{*}$.
 
 \subsection{sPPM Model: Spatial informed Clustering using location-dependent Similarity 
 Functions} \label{subsec:sPPM-model}
@@ -304,13 +304,16 @@ The prior for the clusters is
 \end{align*}
 For the so-called cohesion function $c$ either the same function as in \Cref{subsec:sPPM-model} (that is proportional to the partition probabilities in a random partition model derived from a Dirichlet process), or a uniform cohesion $c \equiv 1$ can be chosen. 
 
-In the following discussion $p=1$ is assumed if not stated otherwise. If $p$ covariates are available, in general
+In the following discussion $p=1$ is assumed if not stated otherwise. If $p$ dimensional covariate vectors are available,
 \begin{align*}
     \Tilde{g}(\pmb{x}_j^* \vert \pmb{\theta} ) = \prod_{l=1}^p g(\pmb{x}_{jl}^* \vert \pmb{\theta})
 \end{align*}
 is adopted.
 
-As a large number of covariates can lead to either a large number of singleton clusters or one single cluster, there are two optional methods to cap the influence of the covariates on the partitioning.
+The PPMx has been successfully employed in a variety
+of settings when a relatively small number of covariates are
+available.
+However, as a large number of covariates can lead to either a large number of singleton clusters or one single large cluster, we consider two methods that cap the covariates' influence on the partitioning.
 \begin{align*}
     (1) \ \Tilde{g} (\pmb{x}_j^*) = \frac{g (\pmb{x}_j^*)}{\sum_{i=1}^{k_j} g(\pmb{x}_i^*)} \ \text{\ \ or \ \ } \ (2) \ \Tilde{g} (\pmb{x}_j^*) = g (\pmb{x}_j^*)^{\frac{1}{p}}
 \end{align*}
@@ -933,7 +936,7 @@ A dash indicates that the package was not able to calculate the corresponding va
 
 Based on the preceding sections, our exploration of various temporal-dependency extensions within the DRPM framework reveals that 
 more complex models entail higher computational complexity without a significant improvement in performance. Despite variations in 
-hyperparameter combinations and cohesion functions, the non-spatially informed Lower Std version consistently outperforms thea
+hyperparameter combinations and cohesion functions, the non-spatially informed Lower Std version consistently outperforms the
 DRPM-Paper and Mean 2018 versions. It is noteworthy that in the case of clustering, one should not solely rely on computational 
 metrics 
 such as WAIC or MSE. As evidenced in the non-spatially informed DRPM-Paper case, where some metric-based results appear promising, 
