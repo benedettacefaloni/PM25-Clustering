@@ -130,7 +130,12 @@ def select_params_based_on_method(method_name: str):
     if method_name == "sppm":
         return ["cohesion", "M"]
     elif method_name == "gaussian_ppmx":
-        return ["meanModel", "cohesion", "M", "PPM", "similarity_function", "consim"]
+        return ["meanModel", 
+                "cohesion",
+                #"M", #the precision paramter M does not influence anything 
+                "PPM",
+                "similarity_function", 
+                "consim"]
     elif method_name == "drpm":
         return [
             "M",

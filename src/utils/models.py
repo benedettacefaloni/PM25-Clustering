@@ -9,7 +9,7 @@ from utils.data_loader import to_r_matrix, to_r_vector, r_NULL
 
 class Model:
     def __init__(
-        self, name: str, func_args: dict, uses_weekly_data: bool = True
+        self, name: str, func_args: dict, uses_weekly_data: bool = True #we always use weekly data apart from the drpm model
     ) -> None:
         self.name = name
         # parameters the model used
