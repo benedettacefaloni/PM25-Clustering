@@ -135,7 +135,8 @@ def select_params_based_on_method(method_name: str):
                 #"M", #the precision paramter M does not influence anything 
                 "PPM",
                 "similarity_function", 
-                "consim"]
+                "consim",
+                "calibrate"]
     elif method_name == "drpm":
         return [
             "M",
