@@ -150,10 +150,10 @@ def select_params_based_on_method(method_name: str):
         raise NotImplementedError
 
 
-class ModelPerformance:
+class ModelPerformance: #class designed to track the performance of a specific Bayesian model. It has attributes to store the model's name and a list of YearlyPerformance instances.
     def __init__(self, name: str):
-        self.name = name
-        self.test_cases: list[YearlyPerformance] = []
+        self.name = name #gaussian_ppmx
+        self.test_cases: list[YearlyPerformance] = [] #test_cases is a list of elements of the YearlyPerfromance class and it is initialized as empty
 
     def add_testcase(
         self, yearly_result: YearlyPerformance, show_to_console: bool = False
