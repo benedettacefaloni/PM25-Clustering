@@ -28,21 +28,12 @@ colors = ["darkorange", "green", "royalblue"]
 
 
 def trace_plots(res: dict, model: str, filename: str = "gaussian_ppmx_lower_std_trace_plots"): #This function, trace_plots, is designed to create trace plots for specific parameters of a Bayesian model. Trace plots are commonly used in Bayesian statistics to visually inspect the evolution of parameter values over MCMC (Markov Chain Monte Carlo) samples. Parameters: res: A dictionary containing the results of a Bayesian model. The keys of this dictionary are parameter names, and the values are the corresponding MCMC samples. model: A string representing the name of the model. filename: A string representing the base filename for saving the generated plots.
-    to_analyse = [
-        "mu",
-        "sig2",
-        "theta",
-        "tau2",
-        "phi0",
-        "lam2",
-    ]
+    to_analyse = ["mu", "sig2", "mu0", "sig20"] 
     names = [
-        "$\\mu^*_{c_1 t}$",
-        "$\\sigma^{2*}_{c_1 t}$",
-        "$\\theta_t$",
-        "$\\tau^2_t$",
-        "$\\phi_0$",
-        "$\\lambda^2$",
+        "$\\mu^*_{c_1}$",
+        "$\\sigma^{2*}_{c_1}$",
+        "$\\mu_0$",
+        "$\\sigma^{2}_{0}$",
     ]
     n_trace_plots = len(to_analyse)
 
@@ -59,9 +50,7 @@ def trace_plots(res: dict, model: str, filename: str = "gaussian_ppmx_lower_std_
             ax = axes[row, col]
         else:
             ax = axes[col]
-
-        print(param_name)
-        print(res[param_name].shape)
+        ax.plot(res[param_name])        
         if res[param_name].ndim == 3:
             for week in range(3):
                 ax.plot(
@@ -71,8 +60,6 @@ def trace_plots(res: dict, model: str, filename: str = "gaussian_ppmx_lower_std_
                     color=colors[week],
                 )
             ax.legend(loc="upper right")
-        elif param_name in ["phi0", "lam2"]:
-            ax.plot(res[param_name], "--", color="firebrick")
         else:
             # res[param_name].ndim == 2:
             for week in range(3):
@@ -88,7 +75,7 @@ def trace_plots(res: dict, model: str, filename: str = "gaussian_ppmx_lower_std_
             ax.set_xlabel("MCMC samples")
         # ax.set_ylabel("Y-axis")
 
-    plt.suptitle("Trace Plots for the DRPM Model with Lower Std Prior Values")
+    plt.suptitle("Trace Plots for the PPM Model with Lower Std Prior Values")
     plt.tight_layout()
     plt.savefig("../report/imgs/drpm/{}.pdf".format(filename))
     plt.savefig("../report/imgs/drpm/{}.png".format(filename))

@@ -17,10 +17,10 @@ class Model:
         self.uses_weekly_data = uses_weekly_data
     #I'm calling the function yeld_test_cases at line 96 of the main fucntion for the model created with the gaussian_ppmx specifications
     def yield_test_cases(self): #i'm calling it for the model that has name = gaussian_ppmx, func_args = gaussian_ppmx_args and uses_weekly_data equal to True 
-        test_cases = self._combine_dict_lists(self.func_args) #I'm calling the function combine_dict_lists where input_dict is the dictionary gaussian_ppmx_args *which contains like "meanModel": 1, "cohesion": 1 and so on. test cases will be a list of dictionaries where the keys are the gaussian_ppmx_args and the values are all the combinations for the values inside (useless for this case bc we didn't define values as lists of values)
+        test_cases = self._combine_dict_lists(self.func_args) #I'm calling the function combine_dict_lists where input_dict is the dictionary gaussian_ppmx_args (which contains like "meanModel": 1, "cohesion": 1 and so on). test cases will be a list of dictionaries where the keys are the gaussian_ppmx_args and the values are all the combinations for the values inside (useless for this case bc we didn't define values as lists of values)
         self.num_experiments = len(test_cases) #test_cases is a list of dictionaries, each representing a unique combinations for the parameter (but every dictionary contains all the keys of course). num_experiments is the length of that lists so it corresponds to the number of simulations we are doing (for gaussian_ppmx i'm actually doing one simulation at a time so it has to be 1)
-        for test_case in test_cases:
-            yield test_case
+        for test_case in test_cases: #test cases is a list of dictoonaries (the one returned by combine_dict_list) so now i'm iterating over teh elements of that list 
+            yield test_case #the single test_case returned each time is just a dictionary
 
     def _combine_dict_lists(self, input_dict): #input_dict is the dictionary gaussian_ppmx_args *which contains like "meanModel": 1, "cohesion": 1 and so on
         """

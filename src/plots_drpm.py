@@ -28,7 +28,7 @@ colors = ["darkorange", "green", "royalblue"]
 
 
 def trace_plots(res: dict, model: str, filename: str = "drpm_lower_std_trace_plots"):
-    to_analyse = [
+    to_analyse = [ #see mh
         "mu",
         "sig2",
         "theta",

@@ -64,9 +64,9 @@ class YearlyClustering(VisualizeClustering):
     def get_data(self):
         return self.database
 
-
-class WeeklyClustering(VisualizeClustering):
-    def __init__(self):
+#hhfirstline
+class WeeklyClustering(VisualizeClustering): #inherits from VisualizeClustering
+    def __init__(self): #constructor that initializes a new instance of the WeeklyClustering class
         self.database = pd.DataFrame(
             columns=visualize_clustering_cols,
             index=["IDStations"],

@@ -45,12 +45,12 @@ def main():
 
     gaussian_ppmx_args = {
         "meanModel": 1,  # type of mean model to be included in the likelihood. 1 means that we use cluster specific means with no covariates in the likelihood while 2 means cluster-specific intercepts and a global regression of the type Xbeta is included in the likelihood
-        "cohesion": 1, #type of cohesion function for the PPMx prior. option 1 is for the cohesion function that connects with the Dirichlet process (c(S) = M * (|S| - 1)!) while option 2 is for the uniform cohesion function (c(S) = 1) 
+        "cohesion": 2, #type of cohesion function for the PPMx prior. option 1 is for the cohesion function that connects with the Dirichlet process (c(S) = M * (|S| - 1)!) while option 2 is for the uniform cohesion function (c(S) = 1) 
         "M": 1, #precision parameter/ the default value is 1
         "PPM": False,  #Logical argument that indicates if the PPM or PPMx partition model should be employed. If PPM = FALSE, then an X matrix must be supplied (where the X matrix is a data frame whose columns consist of covariates that will be incorporated in the partition model. Those with class of "character" or "factor" will be treated as categorical covariates. All others will be treated as continuous covariates.)
-        "similarity_function": 2,
-        "consim": 1,
-        "calibrate": 0,
+        "similarity_function": 1,
+        "consim": 2,
+        "calibrate": 1,
         "simParms": ro.FloatVector([0.0, 1.0, 0.1, 1.0, 2.0, 0.1, 1]), #the second to last parameter is the dirichlet weight for categorical similarity with default of 0.1 (smaller values place more weight on partitions with individuals that are in the same category.) indeed, as reported in the reference "Calibrating covariate...", when we have categorical covariates, it is natural to use a Multinomial-Dirichlet conjugate pairing resulting in a Multinomial for the q(.|.) and a Dirichlet for q(.). indeed, q(.) = Dirichlet (pi|alphaj) and this is exaclty that alphaj (for whcih we are following the suggestions of Muller et al, setting it to a C-dimensional vector of 0.1 where C is the number of covariates)
         "modelPriors": ro.FloatVector([0, 100**2, 10, 10]),
         "mh": ro.FloatVector([0.5, 0.5]), # vector used for tuning the Metropolis-Hastings updates for specific parameters in the Markov Chain Monte Carlo (MCMC) algorithm. The mh vector has two elements, and each element corresponds to a specific tuning parameter associated with an MH update. Let's break down the details of the mh vector: "mh": ro.FloatVector([0.5, 0.5]) First Element (0.5): This value represents the tuning parameter associated with the Metropolis-Hastings update for the parameter sigma2. sigma2 likely corresponds to some variance parameter in the model. The value of 0.5 is a starting point for the tuning parameter. The specific value of this tuning parameter affects the step size or proposal distribution in the Metropolis-Hastings algorithm. A higher value would result in larger steps, while a lower value would result in smaller steps. Second Element (0.5): This value represents the tuning parameter associated with the Metropolis-Hastings update for the parameter sigma20. Similarly, sigma20 likely corresponds to another variance parameter in the model. Like the first element, the value of 0.5 is a starting point for tuning the Metropolis-Hastings update for sigma20. In summary, the mh vector provides the initial values for tuning parameters that control the step sizes in the Metropolis-Hastings updates for specific parameters (sigma2 and sigma20) during the MCMC sampling process. Fine-tuning these parameters is crucial for achieving an effective and efficient MCMC sampling process, ensuring that the algorithm explores the parameter space effectively and converges to the target distribution. Adjusting these tuning parameters may be necessary based on the characteristics of the specific model and data being analyzed.
@@ -90,13 +90,12 @@ def main():
     # model = Model("drpm", drpm_args, uses_weekly_data=False)
 
     all_results: list[ModelPerformance] = [] #The all_results variable is a list that is intended to store instances of the ModelPerformance class. It is initialized as an empty list.
-
     model_result = ModelPerformance(name=model.name) #creating an instance of the model performance class and assigning to the variable model_result. I'm calling here the constructor (initializer) of the ModelPerformance class. The name parameter is set to the name of the model, which is obtained from model.name (gaussian_ppmx in my case)
     #so now model result is an instance of the ModelPerformance class with the name attribute equal to gaussian_ppmx and the test_cases attribute equal to an empty list of elements belonging to the YearlyPerfromance class 
-    for model_params in model.yield_test_cases():
-        if model.uses_weekly_data:
-            save_to_visualize_cluster = WeeklyClustering()
-
+    for model_params in model.yield_test_cases(): #model.yield_test_cases() is a generator function that yields different combinations of parameter values for your model. Each iteration of the loop (for model_params in model.yield_test_cases():) assigns model_params the value yielded by the generator, which is a dictionary representing a specific combination of parameters. So, model_params is a dictionary, and each iteration of the loop corresponds to a different combination of parameter values for your model. Inside the loop, you can access and use the individual parameter values using keys from the model_params dictionary
+        if model.uses_weekly_data: #we enter in this if bc we are considering gaussian_ppmx. the only one for which we do not use weekly data is drpm. WHY???
+            save_to_visualize_cluster = WeeklyClustering() #creating an instance of the WeeklyClustering class and assigning it to the variable save_to_visualize_cluster.
+        
             weekly_results = []
             for week in range(1, num_weeks):
                 logging.info("Week {}/{}".format(week, num_weeks)) #logging informational messages. These messages are typically used for general information about the program's execution. Indeed I have imported the logging library at the beginning 
@@ -172,7 +171,6 @@ def main():
     #     )
     # )
     all_results.append(model_result)
-
 
 if __name__ == "__main__":
     main()
