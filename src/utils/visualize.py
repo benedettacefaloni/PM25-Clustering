@@ -169,7 +169,10 @@ def param_distribution(res: dict, model_name: str):
 
     plt.tight_layout()
     plt.suptitle("Trace plots for {} model".format(model_name))
-    plt.show()
+    plt.show(block=False)
+    plt.pause(0.1)
+    input("Press [enter] to close the plots...")
+
 
 
 def trace_plots(res: dict, model: str):

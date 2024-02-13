@@ -347,8 +347,8 @@ def main():
             # params for metropolis updates: sigma2, tau, lambda, eta1, phi1
             "mh": ro.FloatVector([0.5, 1, 0.1, 0.1, 0.1]),
             "verbose": False,
-            "draws": 10000,
-            "burn": 1000,
+            "draws": 100,
+            "burn": 10,
             "thin": 10,
         }
         model = Model("drpm", drpm_args, uses_weekly_data=False)
@@ -386,44 +386,44 @@ def main():
         all_results.append(model_result)
 
     # VISUALIZE the clustering using plotly
-    plot_clustering(save_to_visualize_cluster, method_name=model.name)
+    # plot_clustering(save_to_visualize_cluster, method_name=model.name)
 
-    # PLOT the MSE and cluster KPIs
-    # plot_overview(
-    #     all_results=all_results,
-    #     names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
-    #     # filename="drpm_spatial_informed_comparison",
-    #     # title="Comparison of different Prior Values for the spatially informed DRPM Model",
-    #     filename="drpm_base_models_comparison",
-    #     title="Comparison of different Prior Values for the non-spatial informed DRPM Model",
-    # )
+    #PLOT the MSE and cluster KPIs
+    plot_overview(
+        all_results=all_results,
+        names=["DRPM-Paper (Page et al. 2021)", "Lower Std (ours)", "Mean 2018 (ours)"],
+        # filename="drpm_spatial_informed_comparison",
+        # title="Comparison of different Prior Values for the spatially informed DRPM Model",
+        filename="drpm_base_models_comparison",
+        title="Comparison of different Prior Values for the non-spatial informed DRPM Model",
+    )
 
-    # PRINT the ARImatrix
-    # for idx,model_result in enumerate(all_results):
-    #     # plot the MSE for all three models per week
-    #     print(idx,
-    #           model_result.test_cases[0].list_of_weekly["partition"],
-    #           model_result.test_cases[0].list_of_weekly["laggedRI"]
-    #           )
+    #PRINT the ARImatrix
+    for idx,model_result in enumerate(all_results):
+        # plot the MSE for all three models per week
+        print(idx,
+              model_result.test_cases[0].list_of_weekly["partition"],
+              model_result.test_cases[0].list_of_weekly["laggedRI"]
+              )
 
-    # PLOT laggedRI matrices
-    # plot_laggedARI(
-    #     ncols=3,
-    #     nrows=2,
-    #     labels=[
-    #         "Paper-Prior Non-spatial",
-    #         "Lower Std Prior Non-spatial",
-    #         "Mean 2018 Prior Non-spatial",
-    #         "Paper-Prior spatial",
-    #         "Lower Std Prior spatial",
-    #         "Mean 2018 Prior spatial",
-    #     ],
-    #     all_results=all_results,
-    #     filename="drpm_laggedARI",
-    #     title="Lagged ARI for Cluster Estimates",
-    #     weeks=52,
-    #     adjusted=True,
-    # )
+    #PLOT laggedRI matrices
+    plot_laggedARI(
+        ncols=3,
+        nrows=2,
+        labels=[
+            "Paper-Prior Non-spatial",
+            "Lower Std Prior Non-spatial",
+            "Mean 2018 Prior Non-spatial",
+            "Paper-Prior spatial",
+            "Lower Std Prior spatial",
+            "Mean 2018 Prior spatial",
+        ],
+        all_results=all_results,
+        filename="drpm_laggedARI",
+        title="Lagged ARI for Cluster Estimates",
+        weeks=52,
+        adjusted=True,
+    )
 
 
 if __name__ == "__main__":
